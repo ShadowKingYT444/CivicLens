@@ -15,6 +15,7 @@ const MAX_ACTION_SOURCES = 3;
 const MAX_SOURCE_EXCERPT_LENGTH = 1_200;
 const BILL_EXPLAINER_DEADLINE_MS = 12_000;
 const MAX_PROVIDER_CALLS = 2;
+const MIN_PROVIDER_ATTEMPT_MS = 50;
 
 const citedTextSchema = z
   .object({
@@ -304,7 +305,7 @@ export async function generateBillExplainer(
 
   for (const provider of providers) {
     const remainingMs = deadlineAt - Date.now();
-    if (remainingMs <= 0) {
+    if (remainingMs < MIN_PROVIDER_ATTEMPT_MS) {
       break;
     }
 

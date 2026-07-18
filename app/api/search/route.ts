@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SearchQuerySchema } from "../../../lib/ai/schemas";
 import {
+  DEMO_BILL,
   fetchCongressBill,
   getDemoBill,
   parseBillReference,
@@ -22,7 +23,12 @@ export async function GET(request: NextRequest) {
 
   if (billRef) {
     const congress = billRef.congress || Number(process.env.CURRENT_CONGRESS ?? 119);
-    const bill = (await fetchCongressBill(congress, billRef.type, billRef.number)) || getDemoBill(congress, billRef.type, billRef.number);
+    const bill =
+      (await fetchCongressBill(congress, billRef.type, billRef.number)) ||
+      getDemoBill(congress, billRef.type, billRef.number) ||
+      (!billRef.congress
+        ? getDemoBill(DEMO_BILL.congress, billRef.type, billRef.number)
+        : null);
     if (bill) {
       results.push({
         type: "bill",
