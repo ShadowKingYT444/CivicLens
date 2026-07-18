@@ -1,0 +1,47 @@
+{
+  "mode": "fixture",
+  "stateCode": "CA",
+  "district": "11",
+  "sourceDate": "2026-07-06",
+  "members": [
+    {
+      "bioguideId": "P000197",
+      "firstName": "Nancy",
+      "lastName": "Pelosi",
+      "fullName": "Nancy Pelosi",
+      "party": "D",
+      "state": "CA",
+      "district": "11",
+      "chamber": "House",
+      "currentMember": true,
+      "officialUrl": "https://pelosi.house.gov/",
+      "sourceUrl": "https://pelosi.house.gov/biography"
+    },
+    {
+      "bioguideId": "P000145",
+      "firstName": "Alex",
+      "lastName": "Padilla",
+      "fullName": "Alex Padilla",
+      "party": "D",
+      "state": "CA",
+      "district": null,
+      "chamber": "Senate",
+      "currentMember": true,
+      "officialUrl": "https://www.padilla.senate.gov/",
+      "sourceUrl": "https://www.senate.gov/states/CA/intro.htm"
+    },
+    {
+      "bioguideId": "S001150",
+      "firstName": "Adam",
+      "lastName": "Schiff",
+      "fullName": "Adam B. Schiff",
+      "party": "D",
+      "state": "CA",
+      "district": null,
+      "chamber": "Senate",
+      "currentMember": true,
+      "officialUrl": "https://www.schiff.senate.gov/",
+      "sourceUrl": "https://www.senate.gov/states/CA/intro.htm"
+    }
+  ]
+}

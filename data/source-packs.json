@@ -1,0 +1,699 @@
+[
+  {
+    "id": "source-pack-constitution",
+    "title": "National Archives: Constitution Transcript",
+    "excerpt": "The National Archives provides the text of the U.S. Constitution, including the structure of Congress, the President, the courts, federal powers, and amendments.",
+    "body": "Use this source for claims about separation of powers, federalism, Article I lawmaking, presidential powers, the judiciary, constitutional amendments, and the basic structure of the national government.",
+    "url": "https://www.archives.gov/founding-docs/constitution-transcript",
+    "sourceType": "constitution",
+    "tags": [
+      "constitution",
+      "article i",
+      "article ii",
+      "article iii",
+      "separation of powers",
+      "federalism",
+      "checks and balances",
+      "amendments"
+    ],
+    "citation": {
+      "id": "source-pack-constitution",
+      "sourceDocumentId": "archives-constitution-transcript",
+      "sourceType": "constitution",
+      "title": "National Archives: Constitution Transcript",
+      "url": "https://www.archives.gov/founding-docs/constitution-transcript",
+      "excerpt": "The National Archives provides the text of the U.S. Constitution."
+    }
+  },
+  {
+    "id": "source-pack-bill-of-rights",
+    "title": "National Archives: Bill of Rights Transcript",
+    "excerpt": "The National Archives provides the text of the first ten amendments, commonly known as the Bill of Rights.",
+    "body": "Use this source for student questions about speech, religion, press, assembly, petition, searches, criminal procedure, jury trials, punishment, and why rights claims need a government actor and legal context.",
+    "url": "https://www.archives.gov/founding-docs/bill-of-rights-transcript",
+    "sourceType": "constitution",
+    "tags": [
+      "bill of rights",
+      "first amendment",
+      "fourth amendment",
+      "fifth amendment",
+      "sixth amendment",
+      "jury",
+      "rights",
+      "liberties"
+    ],
+    "citation": {
+      "id": "source-pack-bill-of-rights",
+      "sourceDocumentId": "archives-bill-of-rights-transcript",
+      "sourceType": "constitution",
+      "title": "National Archives: Bill of Rights Transcript",
+      "url": "https://www.archives.gov/founding-docs/bill-of-rights-transcript",
+      "excerpt": "The National Archives provides the text of the Bill of Rights."
+    }
+  },
+  {
+    "id": "source-pack-congress-bills",
+    "title": "Congress.gov: Bills and Resolutions",
+    "excerpt": "Congress.gov explains that bills and resolutions have official records including text, actions, sponsors, committees, summaries, and related activity.",
+    "body": "Use this source for general student questions about bill status, official bill pages, actions, summaries, sponsors, committees, and why introduction is not the same as enactment.",
+    "url": "https://www.congress.gov/help/learn-about-the-legislative-process/bills",
+    "sourceType": "congress",
+    "tags": [
+      "bill",
+      "bills",
+      "resolution",
+      "legislation",
+      "congress",
+      "actions",
+      "sponsors",
+      "summary",
+      "committee",
+      "introduced",
+      "passed"
+    ],
+    "citation": {
+      "id": "source-pack-congress-bills",
+      "sourceDocumentId": "congress-help-bills",
+      "sourceType": "congress",
+      "title": "Congress.gov: Bills and Resolutions",
+      "url": "https://www.congress.gov/help/learn-about-the-legislative-process/bills",
+      "excerpt": "Congress.gov explains bill and resolution records, including text, actions, sponsors, committees, summaries, and related activity."
+    }
+  },
+  {
+    "id": "source-pack-house-legislative-process",
+    "title": "House.gov: The Legislative Process",
+    "excerpt": "House.gov describes a bill path from idea and sponsorship through committee review, House action, Senate action, and presidential consideration.",
+    "body": "Use this source for how a bill moves through Congress, what committees do, why both chambers matter, and why a final law normally requires the same text to clear the House and Senate before presidential action.",
+    "url": "https://www.house.gov/the-house-explained/the-legislative-process",
+    "sourceType": "house",
+    "tags": [
+      "house",
+      "legislative process",
+      "committee",
+      "floor vote",
+      "senate",
+      "president",
+      "bill becomes law"
+    ],
+    "citation": {
+      "id": "source-pack-house-legislative-process",
+      "sourceDocumentId": "house-legislative-process",
+      "sourceType": "house",
+      "title": "House.gov: The Legislative Process",
+      "url": "https://www.house.gov/the-house-explained/the-legislative-process",
+      "excerpt": "House.gov describes the legislative process from sponsorship through committee, chamber action, and presidential consideration."
+    }
+  },
+  {
+    "id": "source-pack-house-votes",
+    "title": "Office of the Clerk: House Roll Call Votes",
+    "excerpt": "The House Clerk publishes official roll call vote records for the U.S. House of Representatives.",
+    "body": "Use this source for House votes, roll calls, vote totals, yeas and nays, passage claims, and verifying whether the House approved or rejected a measure.",
+    "url": "https://clerk.house.gov/Votes",
+    "sourceType": "house",
+    "tags": [
+      "house",
+      "vote",
+      "votes",
+      "roll call",
+      "yea",
+      "nay",
+      "passed the house",
+      "representatives",
+      "clerk"
+    ],
+    "citation": {
+      "id": "source-pack-house-votes",
+      "sourceDocumentId": "house-clerk-votes",
+      "sourceType": "house",
+      "title": "Office of the Clerk: House Roll Call Votes",
+      "url": "https://clerk.house.gov/Votes",
+      "excerpt": "The Office of the Clerk publishes official roll call vote information for the U.S. House of Representatives."
+    }
+  },
+  {
+    "id": "source-pack-senate-votes",
+    "title": "U.S. Senate: Votes",
+    "excerpt": "The U.S. Senate publishes official vote records for Senate roll call votes.",
+    "body": "Use this source for Senate votes, roll calls, vote totals, yeas and nays, passage claims, and checking official Senate action records.",
+    "url": "https://www.senate.gov/legislative/votes_new.htm",
+    "sourceType": "senate",
+    "tags": [
+      "senate",
+      "vote",
+      "votes",
+      "roll call",
+      "yea",
+      "nay",
+      "passed the senate",
+      "senators"
+    ],
+    "citation": {
+      "id": "source-pack-senate-votes",
+      "sourceDocumentId": "senate-votes",
+      "sourceType": "senate",
+      "title": "U.S. Senate: Votes",
+      "url": "https://www.senate.gov/legislative/votes_new.htm",
+      "excerpt": "The U.S. Senate publishes official records of Senate roll call votes."
+    }
+  },
+  {
+    "id": "source-pack-senate-rules-cloture",
+    "title": "U.S. Senate: Filibusters and Cloture",
+    "excerpt": "The Senate explains filibusters, unlimited debate, and cloture as procedures that can delay debate or move toward a vote.",
+    "body": "Use this source for Senate procedure questions, including filibuster, cloture, debate, why some matters need more than a simple majority to end debate, and why procedure can affect whether a final vote happens.",
+    "url": "https://www.senate.gov/about/powers-procedures/filibusters-cloture.htm",
+    "sourceType": "senate",
+    "tags": [
+      "senate",
+      "filibuster",
+      "cloture",
+      "debate",
+      "procedure",
+      "rules",
+      "60 votes"
+    ],
+    "citation": {
+      "id": "source-pack-senate-rules-cloture",
+      "sourceDocumentId": "senate-filibusters-cloture",
+      "sourceType": "senate",
+      "title": "U.S. Senate: Filibusters and Cloture",
+      "url": "https://www.senate.gov/about/powers-procedures/filibusters-cloture.htm",
+      "excerpt": "The Senate explains filibusters, unlimited debate, and cloture."
+    }
+  },
+  {
+    "id": "source-pack-govinfo-public-laws",
+    "title": "GovInfo: Public and Private Laws",
+    "excerpt": "GovInfo provides official public law and private law documents after enactment.",
+    "body": "Use this source for claims about whether a bill became law, public law text, enacted law, statutes, signed bills, and official law documents after a measure is enacted.",
+    "url": "https://www.govinfo.gov/app/collection/PLAW",
+    "sourceType": "govinfo",
+    "tags": [
+      "public law",
+      "law",
+      "signed",
+      "enacted",
+      "govinfo",
+      "statute",
+      "became law"
+    ],
+    "citation": {
+      "id": "source-pack-govinfo-public-laws",
+      "sourceDocumentId": "govinfo-public-laws",
+      "sourceType": "govinfo",
+      "title": "GovInfo: Public and Private Laws",
+      "url": "https://www.govinfo.gov/app/collection/PLAW",
+      "excerpt": "GovInfo provides official public and private law documents after enactment."
+    }
+  },
+  {
+    "id": "source-pack-federal-courts",
+    "title": "United States Courts: Court Role and Structure",
+    "excerpt": "United States Courts explains the federal judiciary's role, structure, judicial review, and relationship with the other branches.",
+    "body": "Use this source for federal courts, judicial review, appeals, precedent basics, jury service, court independence, and the difference between a legal ruling and a policy preference.",
+    "url": "https://www.uscourts.gov/about-federal-courts/court-role-and-structure",
+    "sourceType": "courts",
+    "tags": [
+      "courts",
+      "judicial review",
+      "precedent",
+      "appeals",
+      "jury",
+      "federal judiciary",
+      "supreme court"
+    ],
+    "citation": {
+      "id": "source-pack-federal-courts",
+      "sourceDocumentId": "uscourts-role-structure",
+      "sourceType": "courts",
+      "title": "United States Courts: Court Role and Structure",
+      "url": "https://www.uscourts.gov/about-federal-courts/court-role-and-structure",
+      "excerpt": "United States Courts explains the federal judiciary's role, structure, and relationship with the other branches."
+    }
+  },
+  {
+    "id": "source-pack-rulemaking",
+    "title": "Federal Register: A Guide to the Rulemaking Process",
+    "excerpt": "The Federal Register explains how agencies publish proposed and final rules and how public comments can fit into the rulemaking process.",
+    "body": "Use this source for agency rulemaking, proposed rules, final rules, public comment, the Administrative Procedure Act, and the difference between a statute passed by Congress and a regulation issued by an agency.",
+    "url": "https://uploads.federalregister.gov/uploads/2013/09/The-Rulemaking-Process.pdf",
+    "sourceType": "federal-register",
+    "tags": [
+      "rulemaking",
+      "regulation",
+      "agency",
+      "federal register",
+      "public comment",
+      "administrative procedure act",
+      "final rule"
+    ],
+    "citation": {
+      "id": "source-pack-rulemaking",
+      "sourceDocumentId": "federal-register-rulemaking-guide",
+      "sourceType": "federal-register",
+      "title": "Federal Register: A Guide to the Rulemaking Process",
+      "url": "https://uploads.federalregister.gov/uploads/2013/09/The-Rulemaking-Process.pdf",
+      "excerpt": "The Federal Register explains proposed rules, final rules, and public comment in agency rulemaking."
+    }
+  },
+  {
+    "id": "source-pack-foia",
+    "title": "FOIA.gov: Freedom of Information Act",
+    "excerpt": "FOIA.gov explains that the Freedom of Information Act gives the public a right to request access to federal agency records, subject to exemptions.",
+    "body": "Use this source for public records, federal agency records, FOIA requests, exemptions, redactions, and why official records can verify civic claims while still having access limits.",
+    "url": "https://www.foia.gov/",
+    "sourceType": "records",
+    "tags": [
+      "foia",
+      "public records",
+      "records",
+      "agency records",
+      "transparency",
+      "exemptions",
+      "redaction"
+    ],
+    "citation": {
+      "id": "source-pack-foia",
+      "sourceDocumentId": "foia-gov-overview",
+      "sourceType": "records",
+      "title": "FOIA.gov: Freedom of Information Act",
+      "url": "https://www.foia.gov/",
+      "excerpt": "FOIA.gov explains the public right to request access to federal agency records."
+    }
+  },
+  {
+    "id": "source-pack-census-geocoder",
+    "title": "U.S. Census Geocoder",
+    "excerpt": "The Census Geocoder supports address lookup workflows for geographic information.",
+    "body": "Use this source for district lookup privacy, address geocoding, congressional district context, and why raw addresses should stay out of language-model prompts.",
+    "url": "https://geocoding.geo.census.gov/geocoder/",
+    "sourceType": "census",
+    "tags": [
+      "district",
+      "address",
+      "privacy",
+      "geocoder",
+      "census",
+      "representative",
+      "who represents me"
+    ],
+    "citation": {
+      "id": "source-pack-census-geocoder",
+      "sourceDocumentId": "census-geocoder",
+      "sourceType": "census",
+      "title": "U.S. Census Geocoder",
+      "url": "https://geocoding.geo.census.gov/geocoder/",
+      "excerpt": "The Census Geocoder supports address lookup workflows for geographic information."
+    }
+  },
+  {
+    "id": "source-pack-apportionment",
+    "title": "Census Bureau: Congressional Apportionment",
+    "excerpt": "The Census Bureau explains apportionment as distributing the 435 seats in the U.S. House among the states after the census.",
+    "body": "Use this source for apportionment, census counts, House seats, representation among states, and the distinction between allocating seats among states and drawing district boundaries within a state.",
+    "url": "https://www.census.gov/topics/public-sector/congressional-apportionment.html",
+    "sourceType": "census",
+    "tags": [
+      "apportionment",
+      "census",
+      "house seats",
+      "representation",
+      "redistricting",
+      "districts",
+      "population"
+    ],
+    "citation": {
+      "id": "source-pack-apportionment",
+      "sourceDocumentId": "census-congressional-apportionment",
+      "sourceType": "census",
+      "title": "Census Bureau: Congressional Apportionment",
+      "url": "https://www.census.gov/topics/public-sector/congressional-apportionment.html",
+      "excerpt": "The Census Bureau explains congressional apportionment after the decennial census."
+    }
+  },
+  {
+    "id": "source-pack-voting-registration",
+    "title": "USA.gov: Voter Registration",
+    "excerpt": "USA.gov explains that registration rules and methods depend on the state or territory and points voters to official state instructions.",
+    "body": "Use this source for voter registration, state election rules, official voter information, deadlines, updating registration, checking status, and avoiding reposted or unsourced election deadlines.",
+    "url": "https://www.usa.gov/register-to-vote",
+    "sourceType": "elections",
+    "tags": [
+      "voting",
+      "elections",
+      "registration",
+      "state rules",
+      "deadlines",
+      "vote.gov",
+      "election office"
+    ],
+    "citation": {
+      "id": "source-pack-voting-registration",
+      "sourceDocumentId": "usa-gov-register-to-vote",
+      "sourceType": "elections",
+      "title": "USA.gov: Voter Registration",
+      "url": "https://www.usa.gov/register-to-vote",
+      "excerpt": "USA.gov explains how to register to vote and points users to official state instructions."
+    }
+  },
+  {
+    "id": "source-pack-state-local-governments",
+    "title": "USA.gov: State and Local Governments",
+    "excerpt": "USA.gov provides official links for state governments, local governments, elected officials, and state and local election offices.",
+    "body": "Use this source for state and local government responsibilities, finding the correct office, local elections, governors, city or county services, school boards, and distinguishing federal issues from state or local ones.",
+    "url": "https://www.usa.gov/state-local-governments",
+    "sourceType": "state-local",
+    "tags": [
+      "state government",
+      "local government",
+      "city",
+      "county",
+      "school board",
+      "elected officials",
+      "local elections"
+    ],
+    "citation": {
+      "id": "source-pack-state-local-governments",
+      "sourceDocumentId": "usa-gov-state-local-governments",
+      "sourceType": "state-local",
+      "title": "USA.gov: State and Local Governments",
+      "url": "https://www.usa.gov/state-local-governments",
+      "excerpt": "USA.gov provides official links for state and local governments and elected officials."
+    }
+  },
+  {
+    "id": "source-pack-state-local-elections",
+    "title": "USA.gov: State and Local Elections",
+    "excerpt": "USA.gov explains that state and local elections involve different offices and rules depending on the state, county, or city.",
+    "body": "Use this source for primaries, general elections, local offices, state and local election responsibilities, and why students should check which election stage and jurisdiction a claim is about.",
+    "url": "https://www.usa.gov/state-local-elections",
+    "sourceType": "elections",
+    "tags": [
+      "state elections",
+      "local elections",
+      "primaries",
+      "general elections",
+      "mayor",
+      "governor",
+      "county",
+      "city"
+    ],
+    "citation": {
+      "id": "source-pack-state-local-elections",
+      "sourceDocumentId": "usa-gov-state-local-elections",
+      "sourceType": "elections",
+      "title": "USA.gov: State and Local Elections",
+      "url": "https://www.usa.gov/state-local-elections",
+      "excerpt": "USA.gov explains state and local elections and elected offices."
+    }
+  },
+  {
+    "id": "source-pack-voting-rights",
+    "title": "Department of Justice: Federal Voting Rights Laws",
+    "excerpt": "The Department of Justice summarizes federal voting rights laws, including the Voting Rights Act and protections against discrimination in voting.",
+    "body": "Use this source for voting rights, vote dilution, discrimination claims, language minority protections, registration protections, accessibility, and why election-law claims require legal standards and evidence.",
+    "url": "https://www.justice.gov/crt/introduction-federal-voting-rights-laws-1",
+    "sourceType": "civil-rights",
+    "tags": [
+      "voting rights",
+      "voting rights act",
+      "election law",
+      "discrimination",
+      "redistricting",
+      "vote dilution"
+    ],
+    "citation": {
+      "id": "source-pack-voting-rights",
+      "sourceDocumentId": "doj-federal-voting-rights-laws",
+      "sourceType": "civil-rights",
+      "title": "Department of Justice: Federal Voting Rights Laws",
+      "url": "https://www.justice.gov/crt/introduction-federal-voting-rights-laws-1",
+      "excerpt": "The Department of Justice summarizes federal voting rights laws."
+    }
+  },
+  {
+    "id": "source-pack-lobbying-disclosure",
+    "title": "LDA.gov: Lobbying Disclosure Reports",
+    "excerpt": "LDA.gov provides federal lobbying registrations, quarterly activity reports, contributions reports, downloads, and API access.",
+    "body": "Use this source for lobbying, advocacy, disclosure, who paid lobbyists report representing, issues lobbied, quarterly reports, and separating legal influence activity from unsupported claims of corruption.",
+    "url": "https://lda.senate.gov/",
+    "sourceType": "lobbying",
+    "tags": [
+      "lobbying",
+      "advocacy",
+      "disclosure",
+      "lda",
+      "registrations",
+      "quarterly reports",
+      "influence"
+    ],
+    "citation": {
+      "id": "source-pack-lobbying-disclosure",
+      "sourceDocumentId": "lda-gov",
+      "sourceType": "lobbying",
+      "title": "LDA.gov: Lobbying Disclosure Reports",
+      "url": "https://lda.senate.gov/",
+      "excerpt": "LDA.gov provides federal lobbying registration and activity report data."
+    }
+  },
+  {
+    "id": "source-pack-federal-spending",
+    "title": "Congressional Budget Office: Budget and Economic Data",
+    "excerpt": "CBO publishes budget and economic information used to understand federal spending, revenues, deficits, debt, and the budget outlook.",
+    "body": "Use this source for federal spending, deficits, debt, appropriations, revenues, and budget claims that need to separate congressional lawmaking, executive implementation, and economic conditions.",
+    "url": "https://www.cbo.gov/topics/budget",
+    "sourceType": "budget",
+    "tags": [
+      "spending",
+      "budget",
+      "deficit",
+      "debt",
+      "appropriations",
+      "cbo",
+      "treasury",
+      "federal spending",
+      "president",
+      "congress"
+    ],
+    "citation": {
+      "id": "source-pack-federal-spending",
+      "sourceDocumentId": "cbo-budget",
+      "sourceType": "other",
+      "title": "Congressional Budget Office: Budget",
+      "url": "https://www.cbo.gov/topics/budget",
+      "excerpt": "CBO publishes budget information that helps explain federal spending, revenues, deficits, debt, and the budget outlook."
+    }
+  },
+  {
+    "id": "source-pack-gas-prices",
+    "title": "U.S. Energy Information Administration: Gasoline Prices",
+    "excerpt": "The EIA explains that gasoline prices are affected by crude oil prices, refining, distribution, marketing, taxes, seasonal demand, and disruptions.",
+    "body": "Use this source for claims that gas prices are caused by one president or one single factor. It grounds the answer in a multi-factor official explanation from the U.S. Energy Information Administration.",
+    "url": "https://www.eia.gov/energyexplained/gasoline/factors-affecting-gasoline-prices.php",
+    "sourceType": "energy",
+    "tags": [
+      "gas",
+      "gasoline",
+      "fuel",
+      "prices",
+      "oil",
+      "president",
+      "energy",
+      "eia",
+      "crude oil",
+      "taxes"
+    ],
+    "citation": {
+      "id": "source-pack-gas-prices",
+      "sourceDocumentId": "eia-gasoline-prices",
+      "sourceType": "other",
+      "title": "U.S. Energy Information Administration: Gasoline Prices",
+      "url": "https://www.eia.gov/energyexplained/gasoline/factors-affecting-gasoline-prices.php",
+      "excerpt": "EIA explains that gasoline prices are affected by multiple factors including crude oil prices, refining costs, distribution, marketing, taxes, and demand."
+    }
+  },
+  {
+    "id": "source-pack-inflation",
+    "title": "Bureau of Labor Statistics: Consumer Price Index",
+    "excerpt": "The BLS Consumer Price Index measures average change over time in prices paid by urban consumers for a market basket of goods and services.",
+    "body": "Use this source for claims about inflation, prices, the CPI, and whether a single person or office fully controls inflation. It supports answers that separate measured price changes from claims about cause.",
+    "url": "https://www.bls.gov/cpi/",
+    "sourceType": "economy",
+    "tags": [
+      "inflation",
+      "prices",
+      "cpi",
+      "consumer price index",
+      "bls",
+      "economy",
+      "cost of living"
+    ],
+    "citation": {
+      "id": "source-pack-inflation",
+      "sourceDocumentId": "bls-cpi",
+      "sourceType": "other",
+      "title": "Bureau of Labor Statistics: Consumer Price Index",
+      "url": "https://www.bls.gov/cpi/",
+      "excerpt": "The Consumer Price Index measures average change over time in prices paid by urban consumers for a market basket of goods and services."
+    }
+  },
+  {
+    "id": "source-pack-social-security",
+    "title": "Social Security Administration: Retirement and Benefit Rules",
+    "excerpt": "SSA explains Social Security benefit programs and how retirement benefits can interact with other public pensions and rules.",
+    "body": "Use this source for Social Security, retirement benefits, public pensions, WEP, GPO, and questions about H.R. 82 that need plain-language context beyond Congress.gov action status.",
+    "url": "https://www.ssa.gov/benefits/retirement/",
+    "sourceType": "social-security",
+    "tags": [
+      "social security",
+      "ssa",
+      "retirement",
+      "benefits",
+      "public pension",
+      "wep",
+      "gpo",
+      "hr82",
+      "h.r. 82"
+    ],
+    "citation": {
+      "id": "source-pack-social-security",
+      "sourceDocumentId": "ssa-retirement",
+      "sourceType": "other",
+      "title": "Social Security Administration: Retirement Benefits",
+      "url": "https://www.ssa.gov/benefits/retirement/",
+      "excerpt": "SSA provides official information about retirement benefits and Social Security benefit rules."
+    }
+  },
+  {
+    "id": "source-pack-immigration-agencies",
+    "title": "USCIS: About Us",
+    "excerpt": "USCIS describes its role in administering lawful immigration benefits and naturalization services.",
+    "body": "Use this source for basic immigration agency role questions, including separating USCIS benefit administration from other DHS immigration enforcement or border functions.",
+    "url": "https://www.uscis.gov/about-us",
+    "sourceType": "immigration",
+    "tags": [
+      "immigration",
+      "uscis",
+      "dhs",
+      "ice",
+      "citizenship",
+      "naturalization",
+      "visa",
+      "asylum",
+      "agency roles"
+    ],
+    "citation": {
+      "id": "source-pack-immigration-agencies",
+      "sourceDocumentId": "uscis-about-us",
+      "sourceType": "other",
+      "title": "USCIS: About Us",
+      "url": "https://www.uscis.gov/about-us",
+      "excerpt": "USCIS describes its role in administering lawful immigration benefits and naturalization services."
+    }
+  },
+  {
+    "id": "source-pack-taxes",
+    "title": "Internal Revenue Service: Filing",
+    "excerpt": "The IRS provides official information on filing federal taxes, taxpayer responsibilities, refunds, credits, and tax administration.",
+    "body": "Use this source for basic federal tax questions, IRS role questions, filing, credits, refunds, and separating tax law from campaign rhetoric.",
+    "url": "https://www.irs.gov/filing",
+    "sourceType": "tax",
+    "tags": [
+      "tax",
+      "taxes",
+      "irs",
+      "filing",
+      "refund",
+      "credit",
+      "treasury",
+      "taxpayer"
+    ],
+    "citation": {
+      "id": "source-pack-taxes",
+      "sourceDocumentId": "irs-filing",
+      "sourceType": "other",
+      "title": "Internal Revenue Service: Filing",
+      "url": "https://www.irs.gov/filing",
+      "excerpt": "The IRS provides official information about federal tax filing and tax administration."
+    }
+  },
+  {
+    "id": "source-pack-school-lunch",
+    "title": "USDA Food and Nutrition Service: National School Lunch Program",
+    "excerpt": "USDA explains that the National School Lunch Program provides low-cost or free lunches to children in public and nonprofit private schools and residential child care institutions.",
+    "body": "Use this source for school lunch, nutrition assistance, USDA school meals, student meals, and claims about federal support for school food programs.",
+    "url": "https://www.fns.usda.gov/nslp",
+    "sourceType": "education",
+    "tags": [
+      "school lunch",
+      "student meals",
+      "free lunch",
+      "nutrition",
+      "usda",
+      "education",
+      "school meals"
+    ],
+    "citation": {
+      "id": "source-pack-school-lunch",
+      "sourceDocumentId": "usda-nslp",
+      "sourceType": "other",
+      "title": "USDA: National School Lunch Program",
+      "url": "https://www.fns.usda.gov/nslp",
+      "excerpt": "USDA explains the National School Lunch Program and its role in providing low-cost or free lunches for eligible students."
+    }
+  },
+  {
+    "id": "source-pack-public-safety-transportation",
+    "title": "U.S. Department of Transportation: Safety",
+    "excerpt": "The Department of Transportation describes transportation safety priorities across roads, vehicles, aviation, rail, transit, pipelines, and maritime systems.",
+    "body": "Use this source for basic transportation safety, road safety, infrastructure safety, and public safety claims tied to transportation systems.",
+    "url": "https://www.transportation.gov/priorities/safety",
+    "sourceType": "transportation",
+    "tags": [
+      "transportation",
+      "public safety",
+      "roads",
+      "streets",
+      "infrastructure",
+      "pedestrian",
+      "dot",
+      "safety"
+    ],
+    "citation": {
+      "id": "source-pack-public-safety-transportation",
+      "sourceDocumentId": "dot-safety",
+      "sourceType": "other",
+      "title": "U.S. Department of Transportation: Safety",
+      "url": "https://www.transportation.gov/priorities/safety",
+      "excerpt": "The Department of Transportation describes safety priorities for transportation systems."
+    }
+  },
+  {
+    "id": "source-pack-energy-environment",
+    "title": "EPA: Environmental Topics",
+    "excerpt": "EPA provides official information about environmental topics such as air, water, climate, chemicals, waste, and environmental health.",
+    "body": "Use this source for environmental basics, energy/environment policy context, pollution, climate, air, water, and environmental health claims.",
+    "url": "https://www.epa.gov/environmental-topics",
+    "sourceType": "environment",
+    "tags": [
+      "environment",
+      "energy",
+      "epa",
+      "climate",
+      "pollution",
+      "air",
+      "water",
+      "environmental health"
+    ],
+    "citation": {
+      "id": "source-pack-energy-environment",
+      "sourceDocumentId": "epa-environmental-topics",
+      "sourceType": "other",
+      "title": "EPA: Environmental Topics",
+      "url": "https://www.epa.gov/environmental-topics",
+      "excerpt": "EPA provides official information about environmental topics including air, water, climate, chemicals, waste, and environmental health."
+    }
+  }
+]

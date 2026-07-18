@@ -1,0 +1,67 @@
+{
+  "mode": "fixture",
+  "vote": {
+    "congress": 118,
+    "session": 2,
+    "chamber": "House",
+    "rollCallNumber": 456,
+    "date": "2024-11-12T18:55:00-05:00",
+    "bill": {
+      "type": "hr",
+      "number": "82",
+      "title": "Social Security Fairness Act"
+    },
+    "question": "On Motion to Suspend the Rules and Pass",
+    "voteType": "2/3 Yea-And-Nay",
+    "result": "Passed",
+    "totals": {
+      "yea": 327,
+      "nay": 75,
+      "present": 1,
+      "notVoting": 29
+    },
+    "partyTotals": [
+      {
+        "party": "Republican",
+        "yea": 136,
+        "nay": 71,
+        "present": 1,
+        "notVoting": 12
+      },
+      {
+        "party": "Democratic",
+        "yea": 191,
+        "nay": 4,
+        "present": 0,
+        "notVoting": 17
+      }
+    ],
+    "samplePositions": [
+      {
+        "name": "Garret Graves",
+        "bioguideId": "G000577",
+        "party": "R",
+        "state": "LA",
+        "district": "6",
+        "voteCast": "Yea"
+      },
+      {
+        "name": "Abigail Spanberger",
+        "bioguideId": "S001209",
+        "party": "D",
+        "state": "VA",
+        "district": "7",
+        "voteCast": "Yea"
+      },
+      {
+        "name": "Nancy Pelosi",
+        "bioguideId": "P000197",
+        "party": "D",
+        "state": "CA",
+        "district": "11",
+        "voteCast": "Yea"
+      }
+    ],
+    "sourceUrl": "https://clerk.house.gov/Votes/2024456"
+  }
+}

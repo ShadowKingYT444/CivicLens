@@ -1,0 +1,45 @@
+{
+  "mode": "fixture",
+  "billRef": {
+    "congress": 118,
+    "type": "hr",
+    "number": "82"
+  },
+  "actions": [
+    {
+      "date": "2023-01-09",
+      "chamber": "House",
+      "type": "Introduction",
+      "text": "Introduced in House.",
+      "sourceUrl": "https://www.congress.gov/bill/118th-congress/house-bill/82/all-actions"
+    },
+    {
+      "date": "2023-01-09",
+      "chamber": "House",
+      "type": "Committee",
+      "text": "Referred to the House Committee on Ways and Means.",
+      "sourceUrl": "https://www.congress.gov/bill/118th-congress/house-bill/82/all-actions"
+    },
+    {
+      "date": "2024-11-12",
+      "chamber": "House",
+      "type": "Floor",
+      "text": "On motion to suspend the rules and pass the bill, the House passed H.R. 82 by roll call vote 327-75, with 1 present.",
+      "sourceUrl": "https://clerk.house.gov/Votes/2024456"
+    },
+    {
+      "date": "2024-12-21",
+      "chamber": "Senate",
+      "type": "Floor",
+      "text": "Passed Senate without amendment by Yea-Nay Vote 76-20.",
+      "sourceUrl": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1182/vote_118_2_00338.htm"
+    },
+    {
+      "date": "2025-01-05",
+      "chamber": "Executive",
+      "type": "BecameLaw",
+      "text": "Signed by the President and became Public Law No: 118-273.",
+      "sourceUrl": "https://www.govinfo.gov/content/pkg/PLAW-118publ273/html/PLAW-118publ273.htm"
+    }
+  ]
+}

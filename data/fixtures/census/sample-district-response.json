@@ -1,0 +1,43 @@
+{
+  "mode": "fixture",
+  "privacyNote": "Demo fixture only. CivicLens must not store, log, or send raw user addresses to an LLM.",
+  "input": {
+    "address": "1 Dr Carlton B Goodlett Pl, San Francisco, CA 94102",
+    "benchmark": "Public_AR_Current",
+    "vintage": "Current_Current"
+  },
+  "result": {
+    "matchedAddress": "1 DR CARLTON B GOODLETT PL, SAN FRANCISCO, CA, 94102",
+    "coordinates": {
+      "x": -122.4188,
+      "y": 37.7793
+    },
+    "geographies": {
+      "119th Congressional Districts": [
+        {
+          "GEOID": "0611",
+          "STATE": "06",
+          "CD119": "11",
+          "NAMELSAD": "Congressional District 11",
+          "BASENAME": "11"
+        }
+      ],
+      "States": [
+        {
+          "STATE": "06",
+          "STUSAB": "CA",
+          "NAME": "California"
+        }
+      ]
+    }
+  },
+  "normalized": {
+    "status": "matched",
+    "stateCode": "CA",
+    "district": "11",
+    "coordinates": {
+      "latitude": 37.7793,
+      "longitude": -122.4188
+    }
+  }
+}

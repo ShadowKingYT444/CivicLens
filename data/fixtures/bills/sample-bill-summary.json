@@ -1,0 +1,27 @@
+{
+  "mode": "fixture",
+  "billRef": {
+    "congress": 118,
+    "type": "hr",
+    "number": "82"
+  },
+  "summaries": [
+    {
+      "source": "Congress.gov CRS-style summary",
+      "versionCode": "00",
+      "actionDate": "2025-01-05",
+      "text": "The Social Security Fairness Act of 2023 repealed two provisions of the Social Security Act: the Government Pension Offset and the Windfall Elimination Provision. Those provisions could reduce monthly Social Security payments for certain people who receive a pension based on work that was not covered by Social Security payroll taxes. The enacted law applies to title II benefits payable for months after December 2023 and directs the Social Security Administration to adjust affected primary insurance amounts as needed.",
+      "sourceUrl": "https://www.govinfo.gov/content/pkg/PLAW-118publ273/html/PLAW-118publ273.htm"
+    }
+  ],
+  "citations": [
+    {
+      "id": "govinfo-plaw-118-273-summary",
+      "sourceType": "public_law",
+      "title": "Public Law 118-273",
+      "url": "https://www.govinfo.gov/content/pkg/PLAW-118publ273/html/PLAW-118publ273.htm",
+      "sourceDate": "2025-01-05",
+      "excerpt": "The Act repeals statutory language for the Government Pension Offset and Windfall Elimination provisions and applies to benefits payable after December 2023."
+    }
+  ]
+}

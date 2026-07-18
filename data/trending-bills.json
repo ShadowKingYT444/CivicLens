@@ -1,0 +1,1168 @@
+{
+  "bills": [
+    {
+      "id": "119-hr-1-reconciliation",
+      "slug": "119-hr-1-reconciliation",
+      "congress": 119,
+      "type": "hr",
+      "number": 1,
+      "title": "H.R. 1 - An act to provide for reconciliation pursuant to title II of H. Con. Res. 14",
+      "shortTitle": "Reconciliation Act, Public Law 119-21",
+      "impactLabel": "High impact: budget and taxes",
+      "issueArea": "Federal budget and taxes",
+      "hook": "The law changes taxes, federal program spending, and the statutory debt limit.",
+      "hookCitationIds": ["congress-119-hr-1-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 1 in the 119th Congress as Public Law No. 119-21.",
+          "citationIds": ["congress-119-hr-1-action"]
+        },
+        {
+          "text": "The CRS summary says the act reduces taxes, changes spending for federal programs, increases the statutory debt limit, and addresses agencies and programs across the federal government.",
+          "citationIds": ["congress-119-hr-1-summary"]
+        },
+        {
+          "text": "Congress.gov places the bill in the Economics and Public Finance policy area.",
+          "citationIds": ["congress-119-hr-1-action"]
+        },
+        {
+          "text": "Congress.gov lists 47 roll call votes for this bill.",
+          "citationIds": ["congress-119-hr-1-action"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2025-07-04",
+        "text": "Became Public Law No. 119-21.",
+        "citationIds": ["congress-119-hr-1-action"]
+      },
+      "whyItMatters": {
+        "text": "The act packages changes to taxes, federal program spending, the statutory debt limit, and agency or program rules in one law.",
+        "citationIds": ["congress-119-hr-1-summary"]
+      },
+      "whatChanges": {
+        "text": "The CRS summary identifies changes involving taxes, federal spending, the statutory debt limit, and agency or program rules across the federal government.",
+        "citationIds": ["congress-119-hr-1-summary"]
+      },
+      "whoIsAffected": {
+        "text": "The cited summary describes changes to taxes, federal program spending, the debt limit, and agencies or programs; it does not separately list every affected person or organization.",
+        "citationIds": ["congress-119-hr-1-summary"]
+      },
+      "detailRouteTarget": "/bills/119/hr/1",
+      "citations": [
+        {
+          "id": "congress-119-hr-1-action",
+          "sourceDocumentId": "119-hr-1",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.1 - An act to provide for reconciliation pursuant to title II of H. Con. Res. 14",
+          "url": "https://www.congress.gov/bill/119th-congress/house-bill/1",
+          "sourceDate": "2025-07-04",
+          "excerpt": "Congress.gov lists H.R. 1 as a law with latest action Became Public Law No. 119-21, places it in the Economics and Public Finance policy area, and lists 47 roll call votes.",
+          "bill": { "congress": 119, "type": "hr", "number": 1 }
+        },
+        {
+          "id": "congress-119-hr-1-summary",
+          "sourceDocumentId": "119-hr-1-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.1",
+          "url": "https://www.congress.gov/bill/119th-congress/house-bill/1",
+          "sourceDate": "2025-07-04",
+          "excerpt": "CRS summarizes the act as reducing taxes, changing spending for federal programs, increasing the statutory debt limit, and addressing agencies and programs across the federal government.",
+          "bill": { "congress": 119, "type": "hr", "number": 1 }
+        }
+      ]
+    },
+    {
+      "id": "119-s-5-laken-riley-act",
+      "slug": "119-s-5-laken-riley-act",
+      "congress": 119,
+      "type": "s",
+      "number": 5,
+      "title": "S. 5 - Laken Riley Act",
+      "shortTitle": "Laken Riley Act",
+      "impactLabel": "High impact: immigration enforcement",
+      "issueArea": "Immigration",
+      "hook": "The law requires DHS detention for certain non-U.S. nationals and authorizes states to sue over specified immigration-enforcement decisions.",
+      "hookCitationIds": ["congress-119-s-5-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists S. 5 in the 119th Congress as Public Law No. 119-1.",
+          "citationIds": ["congress-119-s-5-action"]
+        },
+        {
+          "text": "The CRS summary says the bill requires DHS to detain certain non-U.S. nationals who have been arrested for burglary, theft, larceny, or shoplifting.",
+          "citationIds": ["congress-119-s-5-summary"]
+        },
+        {
+          "text": "The CRS summary says the bill authorizes states to sue the federal government over certain immigration-enforcement decisions or alleged failures.",
+          "citationIds": ["congress-119-s-5-summary"]
+        },
+        {
+          "text": "Congress.gov places the bill in the Immigration policy area and lists eight roll call votes.",
+          "citationIds": ["congress-119-s-5-action"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2025-01-29",
+        "text": "Became Public Law No. 119-1.",
+        "citationIds": ["congress-119-s-5-action"]
+      },
+      "whyItMatters": {
+        "text": "The summary describes federal detention duties and circumstances in which states may sue over immigration-enforcement decisions.",
+        "citationIds": ["congress-119-s-5-summary"]
+      },
+      "whatChanges": {
+        "text": "The CRS summary identifies mandatory detention for specified categories and new state lawsuit authority tied to immigration enforcement.",
+        "citationIds": ["congress-119-s-5-summary"]
+      },
+      "whoIsAffected": {
+        "text": "Certain non-U.S. nationals in the specified arrest categories, DHS officials carrying out detention rules, and states using the new lawsuit authority.",
+        "citationIds": ["congress-119-s-5-summary"]
+      },
+      "detailRouteTarget": "/bills/119/s/5",
+      "citations": [
+        {
+          "id": "congress-119-s-5-action",
+          "sourceDocumentId": "119-s-5",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "S.5 - Laken Riley Act",
+          "url": "https://www.congress.gov/bill/119th-congress/senate-bill/5",
+          "sourceDate": "2025-01-29",
+          "excerpt": "Congress.gov lists S. 5 as a law with latest action Became Public Law No. 119-1, places it in the Immigration policy area, and lists eight roll call votes.",
+          "bill": { "congress": 119, "type": "s", "number": 5 }
+        },
+        {
+          "id": "congress-119-s-5-summary",
+          "sourceDocumentId": "119-s-5-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for S.5",
+          "url": "https://www.congress.gov/bill/119th-congress/senate-bill/5",
+          "sourceDate": "2025-01-06",
+          "excerpt": "CRS summarizes the bill as requiring DHS to detain certain non-U.S. nationals arrested for burglary, theft, larceny, or shoplifting and authorizing states to sue the federal government over specified immigration-enforcement decisions or alleged failures.",
+          "bill": { "congress": 119, "type": "s", "number": 5 }
+        }
+      ]
+    },
+    {
+      "id": "119-hr-1968-continuing-appropriations",
+      "slug": "119-hr-1968-continuing-appropriations",
+      "congress": 119,
+      "type": "hr",
+      "number": 1968,
+      "title": "H.R. 1968 - Full-Year Continuing Appropriations and Extensions Act, 2025",
+      "shortTitle": "Full-Year Continuing Appropriations and Extensions Act, 2025",
+      "impactLabel": "High impact: government funding",
+      "issueArea": "Appropriations",
+      "hook": "Use a funding law to see how Congress can keep agencies operating and extend expiring programs.",
+      "hookCitationIds": ["congress-119-hr-1968-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 1968 in the 119th Congress as Public Law No. 119-4.",
+          "citationIds": ["congress-119-hr-1968-action"]
+        },
+        {
+          "text": "The CRS summary says the bill provides continuing FY2025 appropriations for federal agencies for the remainder of FY2025.",
+          "citationIds": ["congress-119-hr-1968-summary"]
+        },
+        {
+          "text": "The CRS summary says the continuing resolution prevented a government shutdown that would otherwise occur when the prior CR expired on March 14, 2025.",
+          "citationIds": ["congress-119-hr-1968-summary"]
+        },
+        {
+          "text": "The CRS summary says the bill also extends several expiring programs and authorities, including public health, Medicare, Medicaid, flood insurance, cybersecurity, and TANF-related items.",
+          "citationIds": ["congress-119-hr-1968-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2025-03-15",
+        "text": "Became Public Law No. 119-4.",
+        "citationIds": ["congress-119-hr-1968-action"]
+      },
+      "whyItMatters": {
+        "text": "The law continued FY2025 agency funding and extended expiring programs and authorities after the prior continuing resolution's March 14, 2025 expiration.",
+        "citationIds": ["congress-119-hr-1968-summary"]
+      },
+      "whatChanges": {
+        "text": "The bill continues FY2025 federal agency funding and extends selected expiring programs and authorities.",
+        "citationIds": ["congress-119-hr-1968-summary"]
+      },
+      "whoIsAffected": {
+        "text": "Federal agencies and people served by the public health, Medicare, Medicaid, flood insurance, cybersecurity, and other programs whose funding or authority was continued.",
+        "citationIds": ["congress-119-hr-1968-summary"]
+      },
+      "detailRouteTarget": "/bills/119/hr/1968",
+      "citations": [
+        {
+          "id": "congress-119-hr-1968-action",
+          "sourceDocumentId": "119-hr-1968",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.1968 - Full-Year Continuing Appropriations and Extensions Act, 2025",
+          "url": "https://www.congress.gov/bill/119th-congress/house-bill/1968",
+          "sourceDate": "2025-03-15",
+          "excerpt": "Congress.gov lists H.R. 1968 as a law with latest action Became Public Law No. 119-4.",
+          "bill": { "congress": 119, "type": "hr", "number": 1968 }
+        },
+        {
+          "id": "congress-119-hr-1968-summary",
+          "sourceDocumentId": "119-hr-1968-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.1968",
+          "url": "https://www.congress.gov/bill/119th-congress/house-bill/1968",
+          "sourceDate": "2025-03-10",
+          "excerpt": "CRS summarizes the bill as providing continuing FY2025 appropriations for federal agencies for the remainder of FY2025, preventing a shutdown when the prior continuing resolution expired on March 14, 2025, and extending programs or authorities involving public health, Medicare, Medicaid, flood insurance, cybersecurity, and TANF.",
+          "bill": { "congress": 119, "type": "hr", "number": 1968 }
+        }
+      ]
+    },
+    {
+      "id": "119-s-331-halt-fentanyl-act",
+      "slug": "119-s-331-halt-fentanyl-act",
+      "congress": 119,
+      "type": "s",
+      "number": 331,
+      "title": "S. 331 - HALT Fentanyl Act",
+      "shortTitle": "HALT Fentanyl Act",
+      "impactLabel": "High impact: public safety and health",
+      "issueArea": "Crime and law enforcement",
+      "hook": "Compare drug scheduling, criminal penalties, and research access in one public law.",
+      "hookCitationIds": ["congress-119-s-331-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists S. 331 in the 119th Congress as Public Law No. 119-26.",
+          "citationIds": ["congress-119-s-331-action"]
+        },
+        {
+          "text": "The CRS summary says the act permanently places fentanyl-related substances as a class into Schedule I of the Controlled Substances Act.",
+          "citationIds": ["congress-119-s-331-summary"]
+        },
+        {
+          "text": "The CRS summary says offenses involving fentanyl-related substances use the same quantity thresholds and penalties as offenses involving fentanyl analogues.",
+          "citationIds": ["congress-119-s-331-summary"]
+        },
+        {
+          "text": "The CRS summary says the act creates a new alternative registration process for certain Schedule I research.",
+          "citationIds": ["congress-119-s-331-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2025-07-16",
+        "text": "Became Public Law No. 119-26.",
+        "citationIds": ["congress-119-s-331-action"]
+      },
+      "whyItMatters": {
+        "text": "The bill lets students see how Congress can alter both criminal law treatment and research rules for controlled substances.",
+        "citationIds": ["congress-119-s-331-summary"]
+      },
+      "whatChanges": {
+        "text": "The act changes scheduling for fentanyl-related substances, aligns penalty thresholds with fentanyl analogues, and creates a research-registration path.",
+        "citationIds": ["congress-119-s-331-summary"]
+      },
+      "whoIsAffected": {
+        "text": "People charged in cases involving fentanyl-related substances and researchers seeking authorization to study certain Schedule I substances.",
+        "citationIds": ["congress-119-s-331-summary"]
+      },
+      "detailRouteTarget": "/bills/119/s/331",
+      "citations": [
+        {
+          "id": "congress-119-s-331-action",
+          "sourceDocumentId": "119-s-331",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "S.331 - HALT Fentanyl Act",
+          "url": "https://www.congress.gov/bill/119th-congress/senate-bill/331",
+          "sourceDate": "2025-07-16",
+          "excerpt": "Congress.gov lists S. 331 as a law with latest action Became Public Law No. 119-26.",
+          "bill": { "congress": 119, "type": "s", "number": 331 }
+        },
+        {
+          "id": "congress-119-s-331-summary",
+          "sourceDocumentId": "119-s-331-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for S.331",
+          "url": "https://www.congress.gov/bill/119th-congress/senate-bill/331",
+          "sourceDate": "2025-07-17",
+          "excerpt": "CRS summarizes the act as permanently placing fentanyl-related substances as a class into Schedule I, applying the same quantity thresholds and penalties used for fentanyl analogues, and creating an alternative registration process for certain Schedule I research.",
+          "bill": { "congress": 119, "type": "s", "number": 331 }
+        }
+      ]
+    },
+    {
+      "id": "119-s-1582-genius-act",
+      "slug": "119-s-1582-genius-act",
+      "congress": 119,
+      "type": "s",
+      "number": 1582,
+      "title": "S. 1582 - GENIUS Act",
+      "shortTitle": "GENIUS Act",
+      "impactLabel": "High impact: digital finance",
+      "issueArea": "Finance and financial sector",
+      "hook": "Follow Congress setting rules for payment stablecoins and who can issue them.",
+      "hookCitationIds": ["congress-119-s-1582-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists S. 1582 in the 119th Congress as Public Law No. 119-27.",
+          "citationIds": ["congress-119-s-1582-action"]
+        },
+        {
+          "text": "The CRS summary says the bill establishes a regulatory framework for payment stablecoins.",
+          "citationIds": ["congress-119-s-1582-summary"]
+        },
+        {
+          "text": "The CRS summary says only permitted issuers may issue payment stablecoins for use by U.S. persons, with exceptions and safe harbors.",
+          "citationIds": ["congress-119-s-1582-summary"]
+        },
+        {
+          "text": "The CRS summary says permitted issuers must maintain one-to-one reserves using U.S. currency or similarly liquid assets and publish monthly reserve details.",
+          "citationIds": ["congress-119-s-1582-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2025-07-18",
+        "text": "Became Public Law No. 119-27.",
+        "citationIds": ["congress-119-s-1582-action"]
+      },
+      "whyItMatters": {
+        "text": "The bill is a compact example of how Congress can define a regulatory framework for a new financial technology.",
+        "citationIds": ["congress-119-s-1582-summary"]
+      },
+      "whatChanges": {
+        "text": "The act creates issuer categories, reserve requirements, disclosure duties, and federal or state regulatory pathways for payment stablecoins.",
+        "citationIds": ["congress-119-s-1582-summary"]
+      },
+      "whoIsAffected": {
+        "text": "Payment-stablecoin issuers, the federal and state regulators that oversee them, and U.S. users of those payment stablecoins.",
+        "citationIds": ["congress-119-s-1582-summary"]
+      },
+      "detailRouteTarget": "/bills/119/s/1582",
+      "citations": [
+        {
+          "id": "congress-119-s-1582-action",
+          "sourceDocumentId": "119-s-1582",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "S.1582 - GENIUS Act",
+          "url": "https://www.congress.gov/bill/119th-congress/senate-bill/1582",
+          "sourceDate": "2025-07-18",
+          "excerpt": "Congress.gov lists S. 1582 as a law with latest action Became Public Law No. 119-27.",
+          "bill": { "congress": 119, "type": "s", "number": 1582 }
+        },
+        {
+          "id": "congress-119-s-1582-summary",
+          "sourceDocumentId": "119-s-1582-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for S.1582",
+          "url": "https://www.congress.gov/bill/119th-congress/senate-bill/1582",
+          "sourceDate": "2025-05-01",
+          "excerpt": "CRS summarizes the law as establishing a payment-stablecoin framework in which permitted issuers serve U.S. persons, maintain one-to-one reserves using U.S. currency or similarly liquid assets, publish monthly reserve details, and follow federal or state regulatory pathways.",
+          "bill": { "congress": 119, "type": "s", "number": 1582 }
+        }
+      ]
+    },
+    {
+      "id": "119-s-146-take-it-down-act",
+      "slug": "119-s-146-take-it-down-act",
+      "congress": 119,
+      "type": "s",
+      "number": 146,
+      "title": "S. 146 - TAKE IT DOWN Act",
+      "shortTitle": "TAKE IT DOWN Act",
+      "impactLabel": "High impact: online safety",
+      "issueArea": "Science, technology, and communications",
+      "hook": "Study a law about nonconsensual intimate images, deepfakes, and platform removal duties.",
+      "hookCitationIds": ["congress-119-s-146-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists S. 146 in the 119th Congress as Public Law No. 119-12.",
+          "citationIds": ["congress-119-s-146-action"]
+        },
+        {
+          "text": "The CRS summary says the bill generally prohibits nonconsensual online publication of intimate visual depictions, including authentic and computer-generated depictions.",
+          "citationIds": ["congress-119-s-146-summary"]
+        },
+        {
+          "text": "The CRS summary says covered platforms must create a notice process and remove covered depictions within 48 hours after notification.",
+          "citationIds": ["congress-119-s-146-summary"]
+        },
+        {
+          "text": "Congress.gov places the bill in the Science, Technology, Communications policy area.",
+          "citationIds": ["congress-119-s-146-action"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2025-05-19",
+        "text": "Became Public Law No. 119-12.",
+        "citationIds": ["congress-119-s-146-action"]
+      },
+      "whyItMatters": {
+        "text": "The law addresses authentic and computer-generated intimate depictions and sets removal duties for covered online platforms.",
+        "citationIds": ["congress-119-s-146-summary"]
+      },
+      "whatChanges": {
+        "text": "The act creates prohibitions, penalties, and removal-process duties for covered online platforms.",
+        "citationIds": ["congress-119-s-146-summary"]
+      },
+      "whoIsAffected": {
+        "text": "People whose intimate images are published without consent and covered online platforms that receive removal notices.",
+        "citationIds": ["congress-119-s-146-summary"]
+      },
+      "detailRouteTarget": "/bills/119/s/146",
+      "citations": [
+        {
+          "id": "congress-119-s-146-action",
+          "sourceDocumentId": "119-s-146",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "S.146 - TAKE IT DOWN Act",
+          "url": "https://www.congress.gov/bill/119th-congress/senate-bill/146",
+          "sourceDate": "2025-05-19",
+          "excerpt": "Congress.gov lists S. 146 as a law with latest action Became Public Law No. 119-12 and places it in the Science, Technology, Communications policy area.",
+          "bill": { "congress": 119, "type": "s", "number": 146 }
+        },
+        {
+          "id": "congress-119-s-146-summary",
+          "sourceDocumentId": "119-s-146-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for S.146",
+          "url": "https://www.congress.gov/bill/119th-congress/senate-bill/146",
+          "sourceDate": "2025-01-16",
+          "excerpt": "CRS summarizes the law as prohibiting certain nonconsensual online publication of authentic and computer-generated intimate visual depictions, creating related penalties, and requiring covered platforms to create a notice process and remove covered depictions within 48 hours after notification.",
+          "bill": { "congress": 119, "type": "s", "number": 146 }
+        }
+      ]
+    },
+    {
+      "id": "119-hr-2483-support-reauthorization",
+      "slug": "119-hr-2483-support-reauthorization",
+      "congress": 119,
+      "type": "hr",
+      "number": 2483,
+      "title": "H.R. 2483 - SUPPORT for Patients and Communities Reauthorization Act of 2025",
+      "shortTitle": "SUPPORT for Patients and Communities Reauthorization Act of 2025",
+      "impactLabel": "High impact: health programs",
+      "issueArea": "Health",
+      "hook": "Trace how Congress reauthorizes programs for substance use, overdoses, and mental health.",
+      "hookCitationIds": ["congress-119-hr-2483-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 2483 in the 119th Congress as Public Law No. 119-44.",
+          "citationIds": ["congress-119-hr-2483-action"]
+        },
+        {
+          "text": "The CRS summary says the bill reauthorizes and revises HHS programs that address substance use disorders, overdoses, and mental health.",
+          "citationIds": ["congress-119-hr-2483-summary"]
+        },
+        {
+          "text": "The CRS summary says the bill reauthorizes FY2026-FY2030 grant and other programs related to prevention, recovery, treatment, housing, community organizations, and provider loan repayment.",
+          "citationIds": ["congress-119-hr-2483-summary"]
+        },
+        {
+          "text": "The CRS summary says the bill adds requirements including protection of the 988 Lifeline program from cybersecurity threats and a federal fentanyl-contamination working group.",
+          "citationIds": ["congress-119-hr-2483-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2025-12-01",
+        "text": "Became Public Law No. 119-44.",
+        "citationIds": ["congress-119-hr-2483-action"]
+      },
+      "whyItMatters": {
+        "text": "The law reauthorizes and revises existing HHS programs for substance use disorders, overdoses, and mental health through several FY2026-FY2030 program windows.",
+        "citationIds": ["congress-119-hr-2483-summary"]
+      },
+      "whatChanges": {
+        "text": "The act reauthorizes and revises HHS programs for substance use disorders, overdoses, and mental health, including several FY2026-FY2030 program areas.",
+        "citationIds": ["congress-119-hr-2483-summary"]
+      },
+      "whoIsAffected": {
+        "text": "People and communities using substance-use, overdose, or mental-health programs, plus providers and organizations participating in the reauthorized programs.",
+        "citationIds": ["congress-119-hr-2483-summary"]
+      },
+      "detailRouteTarget": "/bills/119/hr/2483",
+      "citations": [
+        {
+          "id": "congress-119-hr-2483-action",
+          "sourceDocumentId": "119-hr-2483",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.2483 - SUPPORT for Patients and Communities Reauthorization Act of 2025",
+          "url": "https://www.congress.gov/bill/119th-congress/house-bill/2483",
+          "sourceDate": "2025-12-01",
+          "excerpt": "Congress.gov lists H.R. 2483 as a law with latest action Became Public Law No. 119-44.",
+          "bill": { "congress": 119, "type": "hr", "number": 2483 }
+        },
+        {
+          "id": "congress-119-hr-2483-summary",
+          "sourceDocumentId": "119-hr-2483-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.2483",
+          "url": "https://www.congress.gov/bill/119th-congress/house-bill/2483",
+          "sourceDate": "2025-03-31",
+          "excerpt": "CRS summarizes the law as reauthorizing and revising FY2026-FY2030 HHS programs for substance use disorders, overdoses, mental health, prevention, recovery, treatment, housing, community organizations, and provider loan repayment, while adding 988 Lifeline cybersecurity requirements and a federal fentanyl-contamination working group.",
+          "bill": { "congress": 119, "type": "hr", "number": 2483 }
+        }
+      ]
+    },
+    {
+      "id": "118-hr-82-social-security-fairness",
+      "slug": "118-hr-82-social-security-fairness",
+      "congress": 118,
+      "type": "hr",
+      "number": 82,
+      "title": "H.R. 82 - Social Security Fairness Act of 2023",
+      "shortTitle": "Social Security Fairness Act of 2023",
+      "impactLabel": "High impact: retirement benefits",
+      "issueArea": "Social welfare",
+      "hook": "Use one enacted bill to see how benefit formulas can change after a public law.",
+      "hookCitationIds": ["congress-118-hr-82-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 82 in the 118th Congress as Public Law No. 118-273.",
+          "citationIds": ["congress-118-hr-82-action"]
+        },
+        {
+          "text": "The CRS summary says the act repeals provisions that reduce Social Security benefits for some people who receive other benefits, such as a state or local government pension.",
+          "citationIds": ["congress-118-hr-82-summary"]
+        },
+        {
+          "text": "The CRS summary identifies the government pension offset and windfall elimination provision as the two eliminated provisions.",
+          "citationIds": ["congress-118-hr-82-summary"]
+        },
+        {
+          "text": "The CRS summary says the changes are effective for benefits payable after December 2023.",
+          "citationIds": ["congress-118-hr-82-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2025-01-05",
+        "text": "Became Public Law No. 118-273.",
+        "citationIds": ["congress-118-hr-82-action"]
+      },
+      "whyItMatters": {
+        "text": "The law changes Social Security benefit calculations by eliminating the government pension offset and windfall elimination provision.",
+        "citationIds": ["congress-118-hr-82-summary"]
+      },
+      "whatChanges": {
+        "text": "The act eliminates the government pension offset and windfall elimination provision for benefits payable after December 2023.",
+        "citationIds": ["congress-118-hr-82-summary"]
+      },
+      "whoIsAffected": {
+        "text": "Some Social Security beneficiaries who also receive another benefit, such as a state or local government pension.",
+        "citationIds": ["congress-118-hr-82-summary"]
+      },
+      "detailRouteTarget": "/bills/118/hr/82",
+      "citations": [
+        {
+          "id": "congress-118-hr-82-action",
+          "sourceDocumentId": "118-hr-82",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.82 - Social Security Fairness Act of 2023",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/82",
+          "sourceDate": "2025-01-05",
+          "excerpt": "Congress.gov lists H.R. 82 as a law with latest action Became Public Law No. 118-273.",
+          "bill": { "congress": 118, "type": "hr", "number": 82 }
+        },
+        {
+          "id": "congress-118-hr-82-summary",
+          "sourceDocumentId": "118-hr-82-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.82",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/82",
+          "sourceDate": "2025-01-05",
+          "excerpt": "CRS summarizes the act as repealing provisions that reduced Social Security benefits for some people receiving other benefits, including state or local government pensions: the government pension offset and windfall elimination provision. The changes apply to benefits payable after December 2023.",
+          "bill": { "congress": 118, "type": "hr", "number": 82 }
+        }
+      ]
+    },
+    {
+      "id": "118-hr-815-national-security-act",
+      "slug": "118-hr-815-national-security-act",
+      "congress": 118,
+      "type": "hr",
+      "number": 815,
+      "title": "H.R. 815 - National Security Act, 2024",
+      "shortTitle": "National Security Act, 2024",
+      "impactLabel": "High impact: international security and aid",
+      "issueArea": "International affairs",
+      "hook": "See how one enacted package provided FY2024 emergency assistance connected to Ukraine, Israel, and Taiwan.",
+      "hookCitationIds": ["congress-118-hr-815-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 815 in the 118th Congress as Public Law No. 118-50.",
+          "citationIds": ["congress-118-hr-815-action"]
+        },
+        {
+          "text": "The CRS summary says the law provides FY2024 supplemental appropriations for assistance to Ukraine, Israel, and Taiwan.",
+          "citationIds": ["congress-118-hr-815-summary"]
+        },
+        {
+          "text": "The CRS summary identifies emergency funding for several federal agencies and related international-security purposes.",
+          "citationIds": ["congress-118-hr-815-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2024-04-24",
+        "text": "Became Public Law No. 118-50.",
+        "citationIds": ["congress-118-hr-815-action"]
+      },
+      "whyItMatters": {
+        "text": "The law combines FY2024 emergency appropriations for several federal agencies and assistance connected to Ukraine, Israel, and Taiwan.",
+        "citationIds": ["congress-118-hr-815-summary"]
+      },
+      "whatChanges": {
+        "text": "The law provides supplemental FY2024 funding through several federal agencies for assistance connected to Ukraine, Israel, and Taiwan.",
+        "citationIds": ["congress-118-hr-815-summary"]
+      },
+      "whoIsAffected": {
+        "text": "The summary names several federal agencies and assistance connected to Ukraine, Israel, and Taiwan; it does not separately list every organization or person reached by the funding.",
+        "citationIds": ["congress-118-hr-815-summary"]
+      },
+      "detailRouteTarget": "/bills/118/hr/815",
+      "citations": [
+        {
+          "id": "congress-118-hr-815-action",
+          "sourceDocumentId": "118-hr-815",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.815 - National Security Act, 2024",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/815",
+          "sourceDate": "2024-04-24",
+          "excerpt": "Congress.gov lists H.R. 815 as a law with latest action Became Public Law No. 118-50.",
+          "bill": { "congress": 118, "type": "hr", "number": 815 }
+        },
+        {
+          "id": "congress-118-hr-815-summary",
+          "sourceDocumentId": "118-hr-815-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.815",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/815/summary/55",
+          "sourceDate": "2024-04-24",
+          "excerpt": "CRS summarizes the law as providing FY2024 supplemental appropriations to several federal agencies for assistance connected to Ukraine, Israel, and Taiwan.",
+          "bill": { "congress": 118, "type": "hr", "number": 815 }
+        }
+      ]
+    },
+    {
+      "id": "118-hr-3935-faa-reauthorization",
+      "slug": "118-hr-3935-faa-reauthorization",
+      "congress": 118,
+      "type": "hr",
+      "number": 3935,
+      "title": "H.R. 3935 - FAA Reauthorization Act of 2024",
+      "shortTitle": "FAA Reauthorization Act of 2024",
+      "impactLabel": "High impact: aviation safety and travel",
+      "issueArea": "Transportation and public works",
+      "hook": "Explore a transportation law covering aviation safety, the FAA workforce, airports, and passenger protections.",
+      "hookCitationIds": ["congress-118-hr-3935-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 3935 in the 118th Congress as Public Law No. 118-63.",
+          "citationIds": ["congress-118-hr-3935-action"]
+        },
+        {
+          "text": "The CRS summary says the law reauthorizes the FAA and National Transportation Safety Board through FY2028.",
+          "citationIds": ["congress-118-hr-3935-summary"]
+        },
+        {
+          "text": "The CRS summary identifies provisions involving air-traffic-controller hiring, aviation workforce programs, passenger accommodations, and drone rules.",
+          "citationIds": ["congress-118-hr-3935-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2024-05-16",
+        "text": "Became Public Law No. 118-63.",
+        "citationIds": ["congress-118-hr-3935-action"]
+      },
+      "whyItMatters": {
+        "text": "The law combines FAA and NTSB reauthorization with aviation-safety, workforce, passenger, airport, and drone provisions.",
+        "citationIds": ["congress-118-hr-3935-summary"]
+      },
+      "whatChanges": {
+        "text": "The law renews FAA and NTSB authorities through FY2028 and adds or revises aviation safety, workforce, passenger, and technology rules.",
+        "citationIds": ["congress-118-hr-3935-summary"]
+      },
+      "whoIsAffected": {
+        "text": "The summary names the FAA, NTSB, air traffic controllers, aviation workers, passengers, airports, air carriers, and drone operators among the affected groups and institutions.",
+        "citationIds": ["congress-118-hr-3935-summary"]
+      },
+      "detailRouteTarget": "/bills/118/hr/3935",
+      "citations": [
+        {
+          "id": "congress-118-hr-3935-action",
+          "sourceDocumentId": "118-hr-3935",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.3935 - FAA Reauthorization Act of 2024",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/3935",
+          "sourceDate": "2024-05-16",
+          "excerpt": "Congress.gov lists H.R. 3935 as a law with latest action Became Public Law No. 118-63.",
+          "bill": { "congress": 118, "type": "hr", "number": 3935 }
+        },
+        {
+          "id": "congress-118-hr-3935-summary",
+          "sourceDocumentId": "118-hr-3935-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.3935",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/3935/summary/00",
+          "sourceDate": "2024-05-16",
+          "excerpt": "CRS summarizes the law as reauthorizing the FAA and NTSB through FY2028 and addressing aviation safety, air-traffic-controller hiring, aviation workforce programs, airport planning, air carriers and passengers, passenger accommodations, and drone rules.",
+          "bill": { "congress": 118, "type": "hr", "number": 3935 }
+        }
+      ]
+    },
+    {
+      "id": "118-hr-2670-fy2024-ndaa",
+      "slug": "118-hr-2670-fy2024-ndaa",
+      "congress": 118,
+      "type": "hr",
+      "number": 2670,
+      "title": "H.R. 2670 - National Defense Authorization Act for Fiscal Year 2024",
+      "shortTitle": "FY2024 National Defense Authorization Act",
+      "impactLabel": "High impact: defense policy",
+      "issueArea": "Armed forces and national security",
+      "hook": "See how Congress authorized Department of Defense activities and programs for FY2024.",
+      "hookCitationIds": ["congress-118-hr-2670-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 2670 in the 118th Congress as Public Law No. 118-31.",
+          "citationIds": ["congress-118-hr-2670-action"]
+        },
+        {
+          "text": "The CRS summary says the bill authorizes Department of Defense activities and programs for FY2024.",
+          "citationIds": ["congress-118-hr-2670-summary"]
+        },
+        {
+          "text": "Congress.gov places the bill in the Armed Forces and National Security policy area.",
+          "citationIds": ["congress-118-hr-2670-action"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2023-12-22",
+        "text": "Became Public Law No. 118-31.",
+        "citationIds": ["congress-118-hr-2670-action"]
+      },
+      "whyItMatters": {
+        "text": "This law shows Congress setting annual policy and program authority for the Department of Defense.",
+        "citationIds": ["congress-118-hr-2670-summary"]
+      },
+      "whatChanges": {
+        "text": "The law authorizes Department of Defense activities and programs for FY2024 and sets related defense policy.",
+        "citationIds": ["congress-118-hr-2670-summary"]
+      },
+      "whoIsAffected": {
+        "text": "The summary identifies Department of Defense activities and programs; the provided excerpt does not separately list every affected person, contractor, or community.",
+        "citationIds": ["congress-118-hr-2670-summary"]
+      },
+      "detailRouteTarget": "/bills/118/hr/2670",
+      "citations": [
+        {
+          "id": "congress-118-hr-2670-action",
+          "sourceDocumentId": "118-hr-2670",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.2670 - National Defense Authorization Act for Fiscal Year 2024",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/2670",
+          "sourceDate": "2023-12-22",
+          "excerpt": "Congress.gov lists H.R. 2670 as a law with latest action Became Public Law No. 118-31 and places it in the Armed Forces and National Security policy area.",
+          "bill": { "congress": 118, "type": "hr", "number": 2670 }
+        },
+        {
+          "id": "congress-118-hr-2670-summary",
+          "sourceDocumentId": "118-hr-2670-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.2670",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/2670/summary/00",
+          "sourceDate": "2023-12-22",
+          "excerpt": "CRS summarizes the law as authorizing Department of Defense activities and programs for FY2024 and setting related defense policy.",
+          "bill": { "congress": 118, "type": "hr", "number": 2670 }
+        }
+      ]
+    },
+    {
+      "id": "118-s-870-fire-grants-advance-act",
+      "slug": "118-s-870-fire-grants-advance-act",
+      "congress": 118,
+      "type": "s",
+      "number": 870,
+      "title": "S. 870 - Fire Grants and Safety Act of 2023 and ADVANCE Act of 2024",
+      "shortTitle": "Fire Grants and Safety Act / ADVANCE Act",
+      "impactLabel": "High impact: fire safety and nuclear regulation",
+      "issueArea": "Emergency management and energy",
+      "hook": "See how one final law can combine firefighter assistance with a separate set of nuclear-energy licensing changes.",
+      "hookCitationIds": ["congress-118-s-870-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists S. 870 in the 118th Congress as Public Law No. 118-67.",
+          "citationIds": ["congress-118-s-870-action"]
+        },
+        {
+          "text": "The CRS summary says the law reauthorizes the U.S. Fire Administration through FY2028 and extends major firefighter grant programs.",
+          "citationIds": ["congress-118-s-870-summary"]
+        },
+        {
+          "text": "The CRS summary also identifies an ADVANCE Act division addressing Nuclear Regulatory Commission work and advanced nuclear-energy deployment.",
+          "citationIds": ["congress-118-s-870-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2024-07-09",
+        "text": "Became Public Law No. 118-67.",
+        "citationIds": ["congress-118-s-870-action"]
+      },
+      "whyItMatters": {
+        "text": "The law combines U.S. Fire Administration and firefighter-grant provisions with ADVANCE Act nuclear-regulation provisions.",
+        "citationIds": ["congress-118-s-870-summary"]
+      },
+      "whatChanges": {
+        "text": "The law extends federal fire-administration and firefighter-grant authorities and changes parts of federal nuclear-energy regulation.",
+        "citationIds": ["congress-118-s-870-summary"]
+      },
+      "whoIsAffected": {
+        "text": "Fire departments seeking federal assistance, the U.S. Fire Administration, the Nuclear Regulatory Commission, and nuclear-energy developers regulated under the new provisions.",
+        "citationIds": ["congress-118-s-870-summary"]
+      },
+      "detailRouteTarget": "/bills/118/s/870",
+      "citations": [
+        {
+          "id": "congress-118-s-870-action",
+          "sourceDocumentId": "118-s-870",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "S.870 - Fire Grants and Safety Act and ADVANCE Act",
+          "url": "https://www.congress.gov/bill/118th-congress/senate-bill/870",
+          "sourceDate": "2024-07-09",
+          "excerpt": "Congress.gov lists S. 870 as a law with latest action Became Public Law No. 118-67.",
+          "bill": { "congress": 118, "type": "s", "number": 870 }
+        },
+        {
+          "id": "congress-118-s-870-summary",
+          "sourceDocumentId": "118-s-870-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for S.870",
+          "url": "https://www.congress.gov/bill/118th-congress/senate-bill/870/summary/55",
+          "sourceDate": "2024-07-09",
+          "excerpt": "CRS summarizes the law as reauthorizing the U.S. Fire Administration through FY2028, extending the Assistance to Firefighters, Fire Prevention and Safety, and SAFER grant programs, and including the ADVANCE Act's provisions concerning Nuclear Regulatory Commission work and advanced nuclear-energy deployment.",
+          "bill": { "congress": 118, "type": "s", "number": 870 }
+        }
+      ]
+    },
+    {
+      "id": "118-hr-7024-tax-relief-families-workers",
+      "slug": "118-hr-7024-tax-relief-families-workers",
+      "congress": 118,
+      "type": "hr",
+      "number": 7024,
+      "title": "H.R. 7024 - Tax Relief for American Families and Workers Act of 2024",
+      "shortTitle": "Tax Relief for American Families and Workers Act",
+      "impactLabel": "High impact: family and business taxes",
+      "issueArea": "Taxation",
+      "hook": "Use a bill that passed the House but did not become law to separate a proposal from current law.",
+      "hookCitationIds": ["congress-118-hr-7024-action"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 7024 as passed by the House; Senate cloture on proceeding to the bill was not invoked.",
+          "citationIds": ["congress-118-hr-7024-action"]
+        },
+        {
+          "text": "The CRS summary says the bill would modify the refundable child tax credit for 2023 through 2025.",
+          "citationIds": ["congress-118-hr-7024-summary"]
+        },
+        {
+          "text": "The CRS summary also identifies business tax provisions, disaster tax relief, low-income housing tax-credit changes, and tax rules involving Taiwan.",
+          "citationIds": ["congress-118-hr-7024-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Passed House; stalled in Senate",
+        "date": "2024-08-01",
+        "text": "Senate cloture on the motion to proceed was not invoked; a motion to reconsider was entered.",
+        "citationIds": ["congress-118-hr-7024-action"]
+      },
+      "whyItMatters": {
+        "text": "Congress.gov records that the House passed the bill and that Senate cloture on proceeding to it was not invoked, so the cited record does not list enactment.",
+        "citationIds": ["congress-118-hr-7024-action"]
+      },
+      "whatChanges": {
+        "text": "If enacted as summarized, the bill would change the child tax credit and several business, housing, disaster, and international tax rules; Congress.gov does not list it as law.",
+        "citationIds": [
+          "congress-118-hr-7024-summary",
+          "congress-118-hr-7024-action"
+        ]
+      },
+      "whoIsAffected": {
+        "text": "Families eligible for the child tax credit, businesses using the named deductions, people claiming specified disaster relief, and participants in low-income housing tax-credit projects.",
+        "citationIds": ["congress-118-hr-7024-summary"]
+      },
+      "detailRouteTarget": "/bills/118/hr/7024",
+      "citations": [
+        {
+          "id": "congress-118-hr-7024-action",
+          "sourceDocumentId": "118-hr-7024",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.7024 - Tax Relief for American Families and Workers Act of 2024",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/7024",
+          "sourceDate": "2024-08-01",
+          "excerpt": "Congress.gov lists H.R. 7024 with status Passed House and records that Senate cloture on the motion to proceed was not invoked on August 1, 2024, followed by a motion to reconsider that vote.",
+          "bill": { "congress": 118, "type": "hr", "number": 7024 }
+        },
+        {
+          "id": "congress-118-hr-7024-summary",
+          "sourceDocumentId": "118-hr-7024-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.7024",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/7024/all-info",
+          "sourceDate": "2024-01-31",
+          "excerpt": "CRS summarizes proposed 2023-2025 changes to the refundable child tax credit, business research deductions and depreciation rules, federal disaster tax relief, low-income housing tax credits, and tax rules involving Taiwan.",
+          "bill": { "congress": 118, "type": "hr", "number": 7024 }
+        }
+      ]
+    },
+    {
+      "id": "118-hr-5378-health-cost-transparency",
+      "slug": "118-hr-5378-health-cost-transparency",
+      "congress": 118,
+      "type": "hr",
+      "number": 5378,
+      "title": "H.R. 5378 - Lower Costs, More Transparency Act",
+      "shortTitle": "Lower Costs, More Transparency Act",
+      "impactLabel": "High impact: health price transparency",
+      "issueArea": "Health care costs",
+      "hook": "Congress.gov lists the bill as Passed House, while CRS describes proposed health-cost disclosure and payment rules.",
+      "hookCitationIds": [
+        "congress-118-hr-5378-action",
+        "congress-118-hr-5378-summary"
+      ],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 5378 with status Passed House, not Became Law.",
+          "citationIds": ["congress-118-hr-5378-action"]
+        },
+        {
+          "text": "The CRS summary says the bill would require health care providers and insurers to disclose specified information about health care costs.",
+          "citationIds": ["congress-118-hr-5378-summary"]
+        },
+        {
+          "text": "The CRS summary identifies hospital price publication, pharmacy-benefit-manager reporting, and changes to certain Medicare and Medicaid payment rules.",
+          "citationIds": ["congress-118-hr-5378-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Passed House",
+        "date": "2023-12-11",
+        "text": "Passed the House; Congress.gov lists no later Senate passage or enactment for this bill.",
+        "citationIds": ["congress-118-hr-5378-action"]
+      },
+      "whyItMatters": {
+        "text": "Congress.gov labels the measure Passed House while the CRS summary describes its health-cost disclosure and payment provisions as a bill, not an enacted law.",
+        "citationIds": [
+          "congress-118-hr-5378-action",
+          "congress-118-hr-5378-summary"
+        ]
+      },
+      "whatChanges": {
+        "text": "If enacted as summarized, the bill would expand health-price disclosures, pharmacy-benefit reporting, and selected federal health-program payment rules.",
+        "citationIds": ["congress-118-hr-5378-summary"]
+      },
+      "whoIsAffected": {
+        "text": "Patients, group health plans, insurers, hospitals and other covered providers, pharmacy benefit managers, and plan sponsors.",
+        "citationIds": ["congress-118-hr-5378-summary"]
+      },
+      "detailRouteTarget": "/bills/118/hr/5378",
+      "citations": [
+        {
+          "id": "congress-118-hr-5378-action",
+          "sourceDocumentId": "118-hr-5378",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.5378 - Lower Costs, More Transparency Act",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/5378",
+          "sourceDate": "2023-12-11",
+          "excerpt": "Congress.gov lists H.R. 5378 with tracker status Passed House, not Became Law, and records its latest House action on December 11, 2023 without a later Senate passage or enactment.",
+          "bill": { "congress": 118, "type": "hr", "number": 5378 }
+        },
+        {
+          "id": "congress-118-hr-5378-summary",
+          "sourceDocumentId": "118-hr-5378-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.5378",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/5378",
+          "sourceDate": "2023-12-11",
+          "excerpt": "CRS summarizes the bill as requiring health care providers and insurers to disclose specified cost information; publishing hospital prices; requiring pharmacy benefit managers to report spending, rebates, and fees to plan sponsors; changing certain Medicare and Medicaid payment rules; and extending public health programs.",
+          "bill": { "congress": 118, "type": "hr", "number": 5378 }
+        }
+      ]
+    },
+    {
+      "id": "118-hr-7521-foreign-adversary-apps",
+      "slug": "118-hr-7521-foreign-adversary-apps",
+      "congress": 118,
+      "type": "hr",
+      "number": 7521,
+      "title": "H.R. 7521 - Protecting Americans from Foreign Adversary Controlled Applications Act",
+      "shortTitle": "Foreign Adversary Controlled Applications Act",
+      "impactLabel": "High impact: social platforms and national security",
+      "issueArea": "Technology and communications",
+      "hook": "Trace a standalone foreign-adversary-controlled applications bill that passed the House and was referred to a Senate committee.",
+      "hookCitationIds": [
+        "congress-118-hr-7521-action",
+        "congress-118-hr-7521-summary"
+      ],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 7521 as passed by the House and referred to the Senate Commerce Committee.",
+          "citationIds": ["congress-118-hr-7521-action"]
+        },
+        {
+          "text": "The CRS summary says the bill would prohibit distributing, maintaining, or hosting a foreign-adversary-controlled application unless a qualified divestiture applied.",
+          "citationIds": ["congress-118-hr-7521-summary"]
+        },
+        {
+          "text": "The CRS summary says covered applications would have to provide users with their available account data before a prohibition took effect.",
+          "citationIds": ["congress-118-hr-7521-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Passed House; referred in Senate",
+        "date": "2024-03-14",
+        "text": "Received in the Senate, read twice, and referred to the Committee on Commerce, Science, and Transportation.",
+        "citationIds": ["congress-118-hr-7521-action"]
+      },
+      "whyItMatters": {
+        "text": "Congress.gov records House passage and a Senate committee referral for this specific measure, not enactment.",
+        "citationIds": ["congress-118-hr-7521-action"]
+      },
+      "whatChanges": {
+        "text": "If enacted as summarized, the bill would restrict covered foreign-adversary-controlled applications unless a qualified divestiture occurred and would create enforcement and user-data duties.",
+        "citationIds": ["congress-118-hr-7521-summary"]
+      },
+      "whoIsAffected": {
+        "text": "Operators and service providers for covered applications, their U.S. users, and the federal officials responsible for enforcement and divestiture determinations.",
+        "citationIds": ["congress-118-hr-7521-summary"]
+      },
+      "detailRouteTarget": "/bills/118/hr/7521",
+      "citations": [
+        {
+          "id": "congress-118-hr-7521-action",
+          "sourceDocumentId": "118-hr-7521",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.7521 - Protecting Americans from Foreign Adversary Controlled Applications Act",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/7521",
+          "sourceDate": "2024-03-14",
+          "excerpt": "Congress.gov lists H.R. 7521 as Passed House and records that on March 14, 2024 it was received in the Senate, read twice, and referred to the Committee on Commerce, Science, and Transportation.",
+          "bill": { "congress": 118, "type": "hr", "number": 7521 }
+        },
+        {
+          "id": "congress-118-hr-7521-summary",
+          "sourceDocumentId": "118-hr-7521-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.7521",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/7521",
+          "sourceDate": "2024-03-13",
+          "excerpt": "CRS summarizes the bill as restricting distribution, maintenance, or internet hosting of covered foreign-adversary-controlled applications unless a qualified divestiture occurs; authorizing Department of Justice enforcement; and requiring covered applications to provide users with available account data before a prohibition takes effect.",
+          "bill": { "congress": 118, "type": "hr", "number": 7521 }
+        }
+      ]
+    },
+    {
+      "id": "118-hr-1042-russian-uranium-imports",
+      "slug": "118-hr-1042-russian-uranium-imports",
+      "congress": 118,
+      "type": "hr",
+      "number": 1042,
+      "title": "H.R. 1042 - Prohibiting Russian Uranium Imports Act",
+      "shortTitle": "Prohibiting Russian Uranium Imports Act",
+      "impactLabel": "High impact: nuclear fuel and trade",
+      "issueArea": "Energy and international trade",
+      "hook": "The law bans specified Russian low-enriched uranium imports and allows Department of Energy waivers under named conditions.",
+      "hookCitationIds": ["congress-118-hr-1042-summary"],
+      "keyPoints": [
+        {
+          "text": "Congress.gov lists H.R. 1042 in the 118th Congress as Public Law No. 118-62.",
+          "citationIds": ["congress-118-hr-1042-action"]
+        },
+        {
+          "text": "The CRS summary says the law bans specified unirradiated low-enriched uranium produced in Russia or by a Russian entity from U.S. import.",
+          "citationIds": ["congress-118-hr-1042-summary"]
+        },
+        {
+          "text": "The CRS summary says the Department of Energy may issue limited waivers under stated supply or national-interest conditions.",
+          "citationIds": ["congress-118-hr-1042-summary"]
+        }
+      ],
+      "currentStep": {
+        "label": "Became law",
+        "date": "2024-05-13",
+        "text": "Became Public Law No. 118-62.",
+        "citationIds": ["congress-118-hr-1042-action"]
+      },
+      "whyItMatters": {
+        "text": "The law provides a compact example of Congress using import restrictions while allowing time-limited exceptions under named conditions.",
+        "citationIds": ["congress-118-hr-1042-summary"]
+      },
+      "whatChanges": {
+        "text": "The law restricts specified Russian-origin low-enriched uranium imports, permits limited Department of Energy waivers, and sets termination dates for the waivers and ban.",
+        "citationIds": ["congress-118-hr-1042-summary"]
+      },
+      "whoIsAffected": {
+        "text": "U.S. nuclear-reactor and nuclear-energy companies that use low-enriched uranium, uranium importers, Russian suppliers, and the Department of Energy.",
+        "citationIds": ["congress-118-hr-1042-summary"]
+      },
+      "detailRouteTarget": "/bills/118/hr/1042",
+      "citations": [
+        {
+          "id": "congress-118-hr-1042-action",
+          "sourceDocumentId": "118-hr-1042",
+          "sourceType": "congress_action",
+          "publisher": "Congress.gov",
+          "title": "H.R.1042 - Prohibiting Russian Uranium Imports Act",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/1042",
+          "sourceDate": "2024-05-13",
+          "excerpt": "Congress.gov lists H.R. 1042 as a law with latest action Became Public Law No. 118-62.",
+          "bill": { "congress": 118, "type": "hr", "number": 1042 }
+        },
+        {
+          "id": "congress-118-hr-1042-summary",
+          "sourceDocumentId": "118-hr-1042-summary",
+          "sourceType": "congress_summary",
+          "publisher": "Congress.gov",
+          "title": "Summary for H.R.1042",
+          "url": "https://www.congress.gov/bill/118th-congress/house-bill/1042/all-info",
+          "sourceDate": "2024-05-13",
+          "excerpt": "CRS summarizes the law as banning specified unirradiated low-enriched uranium produced in Russia or by a Russian entity, while allowing Department of Energy waivers when no viable alternative source can sustain a reactor or U.S. nuclear-energy company or when importation is in the national interest. Waivers end by January 1, 2028, and the ban ends December 31, 2040.",
+          "bill": { "congress": 118, "type": "hr", "number": 1042 }
+        }
+      ]
+    }
+  ]
+}

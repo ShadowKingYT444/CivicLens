@@ -1,0 +1,70 @@
+{
+  "mode": "fixture",
+  "bill": {
+    "congress": 118,
+    "type": "hr",
+    "number": "82",
+    "title": "Social Security Fairness Act of 2023",
+    "shortTitle": "Social Security Fairness Act of 2023",
+    "originChamber": "House",
+    "introducedDate": "2023-01-09",
+    "latestAction": {
+      "date": "2025-01-05",
+      "text": "Became Public Law No: 118-273."
+    },
+    "policyArea": "Social Welfare",
+    "congressGovUrl": "https://www.congress.gov/bill/118th-congress/house-bill/82",
+    "lawNumber": "118-273",
+    "constitutionalAuthorityStatement": "Congress may amend federal benefit statutes under its Article I legislative powers.",
+    "sponsors": [
+      {
+        "bioguideId": "G000577",
+        "fullName": "Garret Graves",
+        "party": "R",
+        "state": "LA",
+        "district": "6",
+        "sponsorType": "Sponsor"
+      },
+      {
+        "bioguideId": "S001209",
+        "fullName": "Abigail Davis Spanberger",
+        "party": "D",
+        "state": "VA",
+        "district": "7",
+        "sponsorType": "Lead cosponsor"
+      }
+    ],
+    "committees": [
+      {
+        "chamber": "House",
+        "name": "Ways and Means Committee"
+      }
+    ],
+    "subjects": [
+      "Social Security",
+      "Public pensions",
+      "Government pension offset",
+      "Windfall elimination provision",
+      "Retirement benefits"
+    ],
+    "summary": "H.R. 82 repealed the Government Pension Offset and Windfall Elimination Provision in title II of the Social Security Act. Those rules could reduce Social Security benefits for some people who also receive pensions from work not covered by Social Security taxes. The enacted law applies to benefits payable for months after December 2023.",
+    "citations": [
+      {
+        "id": "govinfo-plaw-118-273",
+        "sourceType": "public_law",
+        "title": "Public Law 118-273, Social Security Fairness Act of 2023",
+        "url": "https://www.govinfo.gov/content/pkg/PLAW-118publ273/html/PLAW-118publ273.htm",
+        "sourceDate": "2025-01-05",
+        "excerpt": "Public Law 118-273 amends title II of the Social Security Act to repeal the Government Pension Offset and Windfall Elimination provisions."
+      },
+      {
+        "id": "ssa-social-security-fairness-act-update",
+        "sourceType": "agency_guidance",
+        "title": "Social Security Fairness Act: WEP and GPO update",
+        "url": "https://www.ssa.gov/benefits/retirement/social-security-fairness-act.html",
+        "sourceDate": "2025-07-21",
+        "excerpt": "The Social Security Administration describes the Act as ending WEP and GPO for affected beneficiaries."
+      }
+    ]
+  }
+}

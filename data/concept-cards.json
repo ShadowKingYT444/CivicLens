@@ -1,0 +1,1219 @@
+[
+  {
+    "slug": "separation-of-powers",
+    "title": "Separation of Powers",
+    "hook": "Congress writes laws, the President carries them out, and courts decide legal disputes.",
+    "body": "Separation of powers asks which branch has legal authority before asking whether an idea sounds good. Congress, the President, and courts share national power, but each uses different tools and faces different limits. Related action: analyze a claim by naming the branch that could legally act.",
+    "category": "Constitutional Structure",
+    "difficulty": 1,
+    "sourceIds": ["source-pack-constitution", "source-pack-federal-courts"],
+    "visual": {
+      "branch": "three-branches",
+      "category": "Constitutional Structure",
+      "icon": "landmark",
+      "accent": "civic-blue"
+    },
+    "flashcards": [
+      {
+        "id": "separation-of-powers-branches",
+        "title": "Three jobs",
+        "body": "Congress writes laws. The President carries them out. Courts decide legal disputes.",
+        "visual": {
+          "branch": "three-branches",
+          "category": "Constitutional Structure",
+          "icon": "landmark",
+          "accent": "civic-blue"
+        },
+        "citationIds": ["source-pack-constitution", "source-pack-federal-courts"]
+      },
+      {
+        "id": "separation-of-powers-authority",
+        "title": "Ask authority first",
+        "body": "Before judging an idea, ask which branch has legal power to act.",
+        "visual": {
+          "branch": "three-branches",
+          "category": "Constitutional Structure",
+          "icon": "scale",
+          "accent": "civic-blue"
+        },
+        "citationIds": ["source-pack-constitution"]
+      }
+    ],
+    "quizJson": {
+      "question": "What is the best first question in a separation-of-powers dispute?",
+      "options": [
+        "Which party benefits?",
+        "Which branch has authority?",
+        "Which headline is shortest?",
+        "Which office is most popular?"
+      ],
+      "correctIndex": 1,
+      "explanation": "Separation of powers focuses on the legal authority of each branch, not on popularity or speed.",
+      "feedback": {
+        "correct": "Yes. Start by finding the branch with official authority.",
+        "incorrect": "Try again by looking for the branch named in the Constitution or court source.",
+        "citationIds": ["source-pack-constitution", "source-pack-federal-courts"]
+      },
+      "relatedAction": "Use Analyze to ask which branch could legally take a proposed action."
+    },
+    "quizQuestions": [
+      {
+        "id": "separation-of-powers-authority-check",
+        "question": "What is the best first question in a separation-of-powers dispute?",
+        "options": [
+          "Which party benefits?",
+          "Which branch has authority?",
+          "Which headline is shortest?",
+          "Which office is most popular?"
+        ],
+        "correctIndex": 1,
+        "explanation": "Separation of powers focuses on the legal authority of each branch, not on popularity or speed.",
+        "feedback": {
+          "correct": "Yes. The first move is to identify the branch with official authority.",
+          "incorrect": "Look back at the flashcard about legal power, then choose the authority question.",
+          "citationIds": ["source-pack-constitution", "source-pack-federal-courts"]
+        },
+        "citationIds": ["source-pack-constitution", "source-pack-federal-courts"],
+        "relatedAction": "Use Analyze to ask which branch could legally take a proposed action."
+      },
+      {
+        "id": "separation-of-powers-branch-roles",
+        "question": "Which pair matches the basic branch role?",
+        "options": [
+          "Congress carries out laws",
+          "Courts pass federal budgets",
+          "The President carries out laws",
+          "States sign federal bills"
+        ],
+        "correctIndex": 2,
+        "explanation": "The President leads the executive branch, which carries out federal law.",
+        "feedback": {
+          "correct": "Correct. The executive branch carries out federal law.",
+          "incorrect": "Review the branch-role flashcard and match the action to the branch.",
+          "citationIds": ["source-pack-constitution"]
+        },
+        "citationIds": ["source-pack-constitution"]
+      }
+    ],
+    "orderIndex": 1,
+    "isPublished": true
+  },
+  {
+    "slug": "checks-and-balances",
+    "title": "Checks and Balances",
+    "hook": "One branch can sometimes slow, review, approve, fund, or reject another branch's action.",
+    "body": "Checks and balances are tools, not magic reset buttons. A veto, confirmation vote, funding choice, investigation, or court ruling can matter only when the Constitution or law gives that check to someone. Related action: identify the exact check before judging a political fight.",
+    "category": "Constitutional Structure",
+    "difficulty": 1,
+    "sourceIds": ["source-pack-constitution", "source-pack-federal-courts"],
+    "visual": {
+      "branch": "checks-and-balances",
+      "category": "Constitutional Structure",
+      "icon": "scale",
+      "accent": "civic-teal"
+    },
+    "flashcards": [
+      {
+        "id": "checks-and-balances-checks",
+        "title": "A check is a legal tool",
+        "body": "A veto, confirmation vote, funding choice, investigation, or court ruling can limit another branch.",
+        "visual": {
+          "branch": "checks-and-balances",
+          "category": "Constitutional Structure",
+          "icon": "scale",
+          "accent": "civic-teal"
+        },
+        "citationIds": ["source-pack-constitution", "source-pack-federal-courts"]
+      },
+      {
+        "id": "checks-and-balances-limits",
+        "title": "Checks have limits",
+        "body": "A check matters only when the Constitution or a law gives someone that power.",
+        "visual": {
+          "branch": "checks-and-balances",
+          "category": "Constitutional Structure",
+          "icon": "gavel",
+          "accent": "civic-teal"
+        },
+        "citationIds": ["source-pack-constitution"]
+      }
+    ],
+    "quizJson": {
+      "question": "Which example is a check on another branch?",
+      "options": [
+        "A court reviews a challenged law",
+        "A student posts an opinion",
+        "A city opens a park",
+        "A senator reads a newspaper"
+      ],
+      "correctIndex": 0,
+      "explanation": "Judicial review can check government action by deciding whether it follows controlling law.",
+      "feedback": {
+        "correct": "Right. Court review can be a legal check when a dispute is properly before the court.",
+        "incorrect": "Choose the option where one branch uses an official legal power.",
+        "citationIds": ["source-pack-federal-courts", "source-pack-constitution"]
+      },
+      "relatedAction": "Analyze a claim and ask what check, if any, is available."
+    },
+    "quizQuestions": [
+      {
+        "id": "checks-and-balances-branch-check",
+        "question": "Which example is a check on another branch?",
+        "options": [
+          "A court reviews a challenged law",
+          "A student posts an opinion",
+          "A city opens a park",
+          "A senator reads a newspaper"
+        ],
+        "correctIndex": 0,
+        "explanation": "Judicial review can check government action by deciding whether it follows controlling law.",
+        "feedback": {
+          "correct": "Right. This is an official branch checking another government action.",
+          "incorrect": "Look for the option that uses an official power, not a private opinion.",
+          "citationIds": ["source-pack-federal-courts", "source-pack-constitution"]
+        },
+        "citationIds": ["source-pack-federal-courts", "source-pack-constitution"],
+        "relatedAction": "Analyze a claim and ask what check, if any, is available."
+      },
+      {
+        "id": "checks-and-balances-source-check",
+        "question": "What makes a check valid in a civic argument?",
+        "options": [
+          "It is popular online",
+          "It appears in a speech",
+          "It is tied to legal authority",
+          "It happens quickly"
+        ],
+        "correctIndex": 2,
+        "explanation": "Checks and balances depend on authority from the Constitution or law.",
+        "feedback": {
+          "correct": "Correct. The key is official legal authority.",
+          "incorrect": "Review the limits card and choose the answer about legal authority.",
+          "citationIds": ["source-pack-constitution"]
+        },
+        "citationIds": ["source-pack-constitution"]
+      }
+    ],
+    "orderIndex": 2,
+    "isPublished": true
+  },
+  {
+    "slug": "federalism",
+    "title": "Federalism",
+    "hook": "National, state, and local governments often control different parts of the same problem.",
+    "body": "Federalism means policy responsibility is divided. Congress may control interstate or national issues, while states and local governments often handle schools, policing, licensing, elections, and health rules. Related action: before contacting an official, check which level of government controls the decision.",
+    "category": "Federalism",
+    "difficulty": 1,
+    "sourceIds": [
+      "source-pack-constitution",
+      "source-pack-state-local-governments"
+    ],
+    "visual": {
+      "branch": "federal-state-local",
+      "category": "Federalism",
+      "icon": "map",
+      "accent": "civic-green"
+    },
+    "flashcards": [
+      {
+        "id": "federalism-levels",
+        "title": "Power is divided",
+        "body": "National, state, and local governments can control different parts of the same issue.",
+        "visual": {
+          "branch": "federal-state-local",
+          "category": "Federalism",
+          "icon": "map",
+          "accent": "civic-green"
+        },
+        "citationIds": ["source-pack-constitution", "source-pack-state-local-governments"]
+      },
+      {
+        "id": "federalism-find-office",
+        "title": "Find the right level",
+        "body": "Before contacting an official, check whether the decision is federal, state, county, city, or school-based.",
+        "visual": {
+          "branch": "state-local",
+          "category": "Federalism",
+          "icon": "building-2",
+          "accent": "civic-green"
+        },
+        "citationIds": ["source-pack-state-local-governments"]
+      }
+    ],
+    "quizJson": {
+      "question": "Why can the same policy issue vary by state?",
+      "options": [
+        "States have no laws",
+        "Federalism gives states authority over many areas",
+        "Courts write all state budgets",
+        "Congress runs every school board"
+      ],
+      "correctIndex": 1,
+      "explanation": "Federalism leaves many policy areas to state or local governments, so rules can differ across places.",
+      "feedback": {
+        "correct": "Yes. Federalism explains why state and local rules can differ.",
+        "incorrect": "Look for the option that says authority can belong to states or local governments.",
+        "citationIds": ["source-pack-constitution", "source-pack-state-local-governments"]
+      },
+      "relatedAction": "Use District Lookup or official state/local pages to find the responsible office."
+    },
+    "quizQuestions": [
+      {
+        "id": "federalism-state-variation",
+        "question": "Why can the same policy issue vary by state?",
+        "options": [
+          "States have no laws",
+          "Federalism gives states authority over many areas",
+          "Courts write all state budgets",
+          "Congress runs every school board"
+        ],
+        "correctIndex": 1,
+        "explanation": "Federalism leaves many policy areas to state or local governments, so rules can differ across places.",
+        "feedback": {
+          "correct": "Correct. Different levels of government can have different authority.",
+          "incorrect": "Review the divided-power card and choose the state-authority answer.",
+          "citationIds": ["source-pack-constitution", "source-pack-state-local-governments"]
+        },
+        "citationIds": ["source-pack-constitution", "source-pack-state-local-governments"],
+        "relatedAction": "Use District Lookup or official state/local pages to find the responsible office."
+      },
+      {
+        "id": "federalism-right-office",
+        "question": "What should you check before sending a message about a public issue?",
+        "options": [
+          "Which government level controls the decision",
+          "Which post got the most shares",
+          "Which office has the shortest name",
+          "Which headline sounds strongest"
+        ],
+        "correctIndex": 0,
+        "explanation": "Federalism makes the responsible level of government an important first check.",
+        "feedback": {
+          "correct": "Yes. Find the responsible level before choosing a next step.",
+          "incorrect": "Try again with the flashcard about finding the right office.",
+          "citationIds": ["source-pack-state-local-governments"]
+        },
+        "citationIds": ["source-pack-state-local-governments"]
+      }
+    ],
+    "orderIndex": 3,
+    "isPublished": true
+  },
+  {
+    "slug": "rights-need-context",
+    "title": "Rights Need Context",
+    "hook": "A rights claim is stronger when it names the government actor, the right, and the action.",
+    "body": "The Bill of Rights limits government power, but rights are not always absolute and usually need facts. Ask who acted, what right is involved, and what rule or test might apply. Related action: separate a rights claim from a general fairness complaint.",
+    "category": "Rights and Liberties",
+    "difficulty": 2,
+    "sourceIds": ["source-pack-bill-of-rights", "source-pack-constitution"],
+    "visual": {
+      "branch": "rights",
+      "category": "Rights and Liberties",
+      "icon": "shield",
+      "accent": "civic-purple"
+    },
+    "flashcards": [
+      {
+        "id": "rights-need-context-actor",
+        "title": "Name the actor",
+        "body": "Most constitutional rights claims start with government action, not only private unfairness.",
+        "visual": {
+          "branch": "rights",
+          "category": "Rights and Liberties",
+          "icon": "shield",
+          "accent": "civic-purple"
+        },
+        "citationIds": ["source-pack-bill-of-rights", "source-pack-constitution"]
+      },
+      {
+        "id": "rights-need-context-facts",
+        "title": "Facts still matter",
+        "body": "A strong rights question names the right, the government action, and the facts that may change the rule.",
+        "visual": {
+          "branch": "rights",
+          "category": "Rights and Liberties",
+          "icon": "file-search",
+          "accent": "civic-purple"
+        },
+        "citationIds": ["source-pack-bill-of-rights"]
+      }
+    ],
+    "quizJson": {
+      "question": "What detail is usually needed for a constitutional rights claim?",
+      "options": [
+        "A government action",
+        "A celebrity opinion",
+        "A campaign slogan",
+        "A private rumor"
+      ],
+      "correctIndex": 0,
+      "explanation": "Most constitutional rights claims require government action and a specific legal right.",
+      "feedback": {
+        "correct": "Right. A rights claim usually needs a government action and a named right.",
+        "incorrect": "Try again by looking for the option tied to government action.",
+        "citationIds": ["source-pack-bill-of-rights", "source-pack-constitution"]
+      },
+      "relatedAction": "Use Analyze to identify the right, actor, and missing facts."
+    },
+    "quizQuestions": [
+      {
+        "id": "rights-need-context-government-action",
+        "question": "What detail is usually needed for a constitutional rights claim?",
+        "options": [
+          "A government action",
+          "A celebrity opinion",
+          "A campaign slogan",
+          "A private rumor"
+        ],
+        "correctIndex": 0,
+        "explanation": "Most constitutional rights claims require government action and a specific legal right.",
+        "feedback": {
+          "correct": "Right. Start by naming the government actor and action.",
+          "incorrect": "Review the actor card and choose the answer about government action.",
+          "citationIds": ["source-pack-bill-of-rights", "source-pack-constitution"]
+        },
+        "citationIds": ["source-pack-bill-of-rights", "source-pack-constitution"],
+        "relatedAction": "Use Analyze to identify the right, actor, and missing facts."
+      },
+      {
+        "id": "rights-need-context-right-and-facts",
+        "question": "What makes a rights claim easier to check?",
+        "options": [
+          "Naming the right and facts",
+          "Using only a slogan",
+          "Skipping who acted",
+          "Choosing the loudest reaction"
+        ],
+        "correctIndex": 0,
+        "explanation": "A rights claim is easier to check when it names the right, actor, action, and facts.",
+        "feedback": {
+          "correct": "Correct. Specific facts and the right involved make the claim checkable.",
+          "incorrect": "Try the answer that adds context instead of removing it.",
+          "citationIds": ["source-pack-bill-of-rights"]
+        },
+        "citationIds": ["source-pack-bill-of-rights"]
+      }
+    ],
+    "orderIndex": 4,
+    "isPublished": true
+  },
+  {
+    "slug": "due-process-equal-protection",
+    "title": "Due Process and Equal Protection",
+    "hook": "Due process asks about fair procedure; equal protection asks about justified treatment.",
+    "body": "Due process usually focuses on notice, a chance to respond, and a fair decision maker. Equal protection asks whether government treated people differently without enough legal justification. Related action: decide whether a complaint is about procedure, unequal treatment, or both.",
+    "category": "Rights and Liberties",
+    "difficulty": 2,
+    "sourceIds": ["source-pack-constitution", "source-pack-bill-of-rights"],
+    "visual": {
+      "branch": "rights",
+      "category": "Rights and Liberties",
+      "icon": "scale",
+      "accent": "civic-purple"
+    },
+    "flashcards": [
+      {
+        "id": "due-process-procedure",
+        "title": "Due process asks about fairness",
+        "body": "Look for notice, a chance to respond, and a fair decision maker.",
+        "visual": {
+          "branch": "rights",
+          "category": "Rights and Liberties",
+          "icon": "clipboard-check",
+          "accent": "civic-purple"
+        },
+        "citationIds": ["source-pack-constitution", "source-pack-bill-of-rights"]
+      },
+      {
+        "id": "equal-protection-treatment",
+        "title": "Equal protection asks about treatment",
+        "body": "Ask whether government treated people differently and what legal reason it gives.",
+        "visual": {
+          "branch": "rights",
+          "category": "Rights and Liberties",
+          "icon": "scale",
+          "accent": "civic-purple"
+        },
+        "citationIds": ["source-pack-constitution"]
+      }
+    ],
+    "quizJson": {
+      "question": "Which concern is closest to due process?",
+      "options": [
+        "A student is punished without a chance to respond",
+        "A bill has a short title",
+        "A senator gives a speech",
+        "A city changes its logo"
+      ],
+      "correctIndex": 0,
+      "explanation": "Due process is about fair procedures before government takes important interests away.",
+      "feedback": {
+        "correct": "Yes. Due process focuses on fair procedure.",
+        "incorrect": "Look for the option about notice or a chance to respond.",
+        "citationIds": ["source-pack-constitution", "source-pack-bill-of-rights"]
+      },
+      "relatedAction": "Analyze a scenario and label the procedure issue or classification issue."
+    },
+    "quizQuestions": [
+      {
+        "id": "due-process-fair-procedure",
+        "question": "Which concern is closest to due process?",
+        "options": [
+          "A student is punished without a chance to respond",
+          "A bill has a short title",
+          "A senator gives a speech",
+          "A city changes its logo"
+        ],
+        "correctIndex": 0,
+        "explanation": "Due process is about fair procedures before government takes important interests away.",
+        "feedback": {
+          "correct": "Correct. The missing chance to respond is a procedure issue.",
+          "incorrect": "Review the due process card and choose the answer about procedure.",
+          "citationIds": ["source-pack-constitution", "source-pack-bill-of-rights"]
+        },
+        "citationIds": ["source-pack-constitution", "source-pack-bill-of-rights"],
+        "relatedAction": "Analyze a scenario and label the procedure issue or classification issue."
+      },
+      {
+        "id": "equal-protection-different-treatment",
+        "question": "Which question sounds most like equal protection?",
+        "options": [
+          "Were people treated differently by government?",
+          "Was the headline short?",
+          "Did a private rumor spread?",
+          "Was a bill introduced on a Tuesday?"
+        ],
+        "correctIndex": 0,
+        "explanation": "Equal protection focuses on different government treatment and whether it is legally justified.",
+        "feedback": {
+          "correct": "Yes. Equal protection asks about different treatment by government.",
+          "incorrect": "Try the answer that asks about different government treatment.",
+          "citationIds": ["source-pack-constitution"]
+        },
+        "citationIds": ["source-pack-constitution"]
+      }
+    ],
+    "orderIndex": 5,
+    "isPublished": true
+  },
+  {
+    "slug": "how-a-bill-becomes-law",
+    "title": "How a Bill Becomes Law",
+    "hook": "Introduction is only the start; law usually requires both chambers and presidential action.",
+    "body": "Most federal bills must pass the House and Senate in identical form before going to the President. A bill can die in committee, pass one chamber only, be vetoed, or become public law. Related action: open a bill page and read the latest action before sharing a claim.",
+    "category": "Congress",
+    "difficulty": 1,
+    "sourceIds": [
+      "source-pack-congress-bills",
+      "source-pack-house-legislative-process",
+      "source-pack-govinfo-public-laws"
+    ],
+    "visual": {
+      "branch": "legislative",
+      "category": "Congress",
+      "icon": "scroll-text",
+      "accent": "civic-gold"
+    },
+    "flashcards": [
+      {
+        "id": "bill-becomes-law-introduction",
+        "title": "Introduction is the start",
+        "body": "A bill being introduced means it was formally proposed, not that it passed.",
+        "visual": {
+          "branch": "legislative",
+          "category": "Congress",
+          "icon": "file-plus",
+          "accent": "civic-gold"
+        },
+        "citationIds": ["source-pack-congress-bills", "source-pack-house-legislative-process"]
+      },
+      {
+        "id": "bill-becomes-law-same-text",
+        "title": "Both chambers matter",
+        "body": "Most federal bills need the House and Senate to pass the same text before presidential action.",
+        "visual": {
+          "branch": "legislative",
+          "category": "Congress",
+          "icon": "landmark",
+          "accent": "civic-gold"
+        },
+        "citationIds": ["source-pack-house-legislative-process"]
+      },
+      {
+        "id": "bill-becomes-law-public-law",
+        "title": "Public law is the finish line",
+        "body": "When a bill becomes law, official public-law sources can verify enactment.",
+        "visual": {
+          "branch": "legislative",
+          "category": "Congress",
+          "icon": "badge-check",
+          "accent": "civic-gold"
+        },
+        "citationIds": ["source-pack-govinfo-public-laws"]
+      }
+    ],
+    "quizJson": {
+      "question": "What does introduction alone prove about a bill?",
+      "options": [
+        "It is already law",
+        "It was formally proposed",
+        "Both chambers passed it",
+        "The President signed it"
+      ],
+      "correctIndex": 1,
+      "explanation": "Introduction means a bill was formally proposed; it does not mean the bill passed or became law.",
+      "feedback": {
+        "correct": "Right. Introduction proves proposal, not passage or enactment.",
+        "incorrect": "Check the introduction card and choose the answer about formal proposal.",
+        "citationIds": ["source-pack-congress-bills", "source-pack-house-legislative-process"]
+      },
+      "relatedAction": "Open Bills and compare introduced, passed, presented, and public-law status."
+    },
+    "quizQuestions": [
+      {
+        "id": "bill-becomes-law-introduced",
+        "question": "What does introduction alone prove about a bill?",
+        "options": [
+          "It is already law",
+          "It was formally proposed",
+          "Both chambers passed it",
+          "The President signed it"
+        ],
+        "correctIndex": 1,
+        "explanation": "Introduction means a bill was formally proposed; it does not mean the bill passed or became law.",
+        "feedback": {
+          "correct": "Correct. Introduced means proposed.",
+          "incorrect": "Review the first bill-process card and choose the proposal answer.",
+          "citationIds": ["source-pack-congress-bills", "source-pack-house-legislative-process"]
+        },
+        "citationIds": ["source-pack-congress-bills", "source-pack-house-legislative-process"],
+        "relatedAction": "Open Bills and compare introduced, passed, presented, and public-law status."
+      },
+      {
+        "id": "bill-becomes-law-final-status",
+        "question": "Which official source helps verify a bill became law?",
+        "options": [
+          "GovInfo public law records",
+          "A reposted caption",
+          "A campaign slogan",
+          "A private comment thread"
+        ],
+        "correctIndex": 0,
+        "explanation": "GovInfo provides official public law documents after enactment.",
+        "feedback": {
+          "correct": "Yes. Public law records are official evidence of enactment.",
+          "incorrect": "Look for the official public-law source, not a repost or slogan.",
+          "citationIds": ["source-pack-govinfo-public-laws"]
+        },
+        "citationIds": ["source-pack-govinfo-public-laws"]
+      }
+    ],
+    "orderIndex": 6,
+    "isPublished": true
+  },
+  {
+    "slug": "bill-status-words",
+    "title": "Bill Status Words",
+    "hook": "Introduced, reported, passed, presented, signed, and public law are different stages.",
+    "body": "Bill status words are evidence clues. Reported means a committee sent the bill forward. Passed means a chamber approved it. Presented means it reached the President. Public law means enactment. Related action: translate the latest action into one plain-English status sentence.",
+    "category": "Congress",
+    "difficulty": 1,
+    "sourceIds": [
+      "source-pack-congress-bills",
+      "source-pack-govinfo-public-laws"
+    ],
+    "visual": {
+      "branch": "legislative",
+      "category": "Congress",
+      "icon": "list-checks",
+      "accent": "civic-gold"
+    },
+    "flashcards": [
+      {
+        "id": "bill-status-words-stages",
+        "title": "Status words are clues",
+        "body": "Introduced, reported, passed, presented, signed, and public law mean different things.",
+        "visual": {
+          "branch": "legislative",
+          "category": "Congress",
+          "icon": "list-checks",
+          "accent": "civic-gold"
+        },
+        "citationIds": ["source-pack-congress-bills", "source-pack-govinfo-public-laws"]
+      },
+      {
+        "id": "bill-status-words-latest-action",
+        "title": "Read the latest action",
+        "body": "The latest official action is the safest place to start a plain-English status sentence.",
+        "visual": {
+          "branch": "legislative",
+          "category": "Congress",
+          "icon": "file-search",
+          "accent": "civic-gold"
+        },
+        "citationIds": ["source-pack-congress-bills"]
+      }
+    ],
+    "quizJson": {
+      "question": "Which status shows a bill became law?",
+      "options": [
+        "Introduced",
+        "Referred to committee",
+        "Became Public Law",
+        "Read twice"
+      ],
+      "correctIndex": 2,
+      "explanation": "A public-law action shows enactment; earlier actions show movement but not final law.",
+      "feedback": {
+        "correct": "Correct. Public law is the status that shows enactment.",
+        "incorrect": "Try again by separating movement from final enactment.",
+        "citationIds": ["source-pack-govinfo-public-laws", "source-pack-congress-bills"]
+      },
+      "relatedAction": "Open Bills and check whether the latest action says public law or only an earlier step."
+    },
+    "quizQuestions": [
+      {
+        "id": "bill-status-public-law",
+        "question": "Which status shows a bill became law?",
+        "options": [
+          "Introduced",
+          "Referred to committee",
+          "Became Public Law",
+          "Read twice"
+        ],
+        "correctIndex": 2,
+        "explanation": "A public-law action shows enactment; earlier actions show movement but not final law.",
+        "feedback": {
+          "correct": "Correct. Public law is final enactment evidence.",
+          "incorrect": "Review the status-words card and choose the enacted status.",
+          "citationIds": ["source-pack-govinfo-public-laws", "source-pack-congress-bills"]
+        },
+        "citationIds": ["source-pack-govinfo-public-laws", "source-pack-congress-bills"],
+        "relatedAction": "Open Bills and check whether the latest action says public law or only an earlier step."
+      },
+      {
+        "id": "bill-status-latest-action",
+        "question": "What should you read before summarizing a bill's current status?",
+        "options": [
+          "The latest official action",
+          "Only the bill nickname",
+          "Only the sponsor's party",
+          "Only a headline"
+        ],
+        "correctIndex": 0,
+        "explanation": "The latest official action helps translate bill status accurately.",
+        "feedback": {
+          "correct": "Yes. Latest official action is the best starting point.",
+          "incorrect": "Choose the answer that points to an official action record.",
+          "citationIds": ["source-pack-congress-bills"]
+        },
+        "citationIds": ["source-pack-congress-bills"]
+      }
+    ],
+    "orderIndex": 7,
+    "isPublished": true
+  },
+  {
+    "slug": "committees-do-the-detail-work",
+    "title": "Committees Do the Detail Work",
+    "hook": "Committees hold hearings, review text, consider amendments, and often decide what moves.",
+    "body": "A committee is where many bills receive their first serious review. Some bills get hearings or reports; many never move further. Committee records can show what evidence, witnesses, and amendments shaped debate. Related action: check a bill's committee and actions before judging its momentum.",
+    "category": "Congress",
+    "difficulty": 1,
+    "sourceIds": [
+      "source-pack-congress-bills",
+      "source-pack-house-legislative-process"
+    ],
+    "visual": {
+      "branch": "legislative",
+      "category": "Congress",
+      "icon": "users",
+      "accent": "civic-gold"
+    },
+    "flashcards": [
+      {
+        "id": "committees-detail-work-review",
+        "title": "Committees review details",
+        "body": "Committees can hold hearings, review text, consider amendments, and write reports.",
+        "visual": {
+          "branch": "legislative",
+          "category": "Congress",
+          "icon": "users",
+          "accent": "civic-gold"
+        },
+        "citationIds": ["source-pack-congress-bills", "source-pack-house-legislative-process"]
+      },
+      {
+        "id": "committees-detail-work-momentum",
+        "title": "Committee status affects momentum",
+        "body": "Many bills never move beyond committee, so referral and report records matter.",
+        "visual": {
+          "branch": "legislative",
+          "category": "Congress",
+          "icon": "route",
+          "accent": "civic-gold"
+        },
+        "citationIds": ["source-pack-congress-bills"]
+      }
+    ],
+    "quizJson": {
+      "question": "Why does committee status matter?",
+      "options": [
+        "Most bills skip committees",
+        "Committees can review, revise, or stop bills",
+        "Committees sign bills into law",
+        "Committees replace elections"
+      ],
+      "correctIndex": 1,
+      "explanation": "Committees do detailed work and can strongly affect whether a bill reaches the full chamber.",
+      "feedback": {
+        "correct": "Right. Committees can review, revise, or stop bills.",
+        "incorrect": "Look for the answer about committee review and movement.",
+        "citationIds": ["source-pack-congress-bills", "source-pack-house-legislative-process"]
+      },
+      "relatedAction": "Open a bill and find its committee referral or report."
+    },
+    "quizQuestions": [
+      {
+        "id": "committees-status-matters",
+        "question": "Why does committee status matter?",
+        "options": [
+          "Most bills skip committees",
+          "Committees can review, revise, or stop bills",
+          "Committees sign bills into law",
+          "Committees replace elections"
+        ],
+        "correctIndex": 1,
+        "explanation": "Committees do detailed work and can strongly affect whether a bill reaches the full chamber.",
+        "feedback": {
+          "correct": "Correct. Committees shape whether many bills move forward.",
+          "incorrect": "Review the committee momentum card and choose the movement answer.",
+          "citationIds": ["source-pack-congress-bills", "source-pack-house-legislative-process"]
+        },
+        "citationIds": ["source-pack-congress-bills", "source-pack-house-legislative-process"],
+        "relatedAction": "Open a bill and find its committee referral or report."
+      },
+      {
+        "id": "committees-records",
+        "question": "Which record can help show a bill's committee path?",
+        "options": [
+          "Committee referral or report",
+          "A private rumor",
+          "A celebrity comment",
+          "A city park map"
+        ],
+        "correctIndex": 0,
+        "explanation": "Committee referrals and reports are official records that help explain a bill's path.",
+        "feedback": {
+          "correct": "Yes. Committee records help show what happened to a bill.",
+          "incorrect": "Choose the official committee record, not a private source.",
+          "citationIds": ["source-pack-congress-bills"]
+        },
+        "citationIds": ["source-pack-congress-bills"]
+      }
+    ],
+    "orderIndex": 8,
+    "isPublished": true
+  },
+  {
+    "slug": "senate-procedure",
+    "title": "Senate Procedure",
+    "hook": "A Senate majority may support a bill and still face debate rules before a final vote.",
+    "body": "The Senate has rules and practices that can affect timing and vote thresholds. Cloture limits debate for many matters, while other procedures use different rules. Related action: when a Senate bill stalls, check whether the issue is support, debate, scheduling, or procedure.",
+    "category": "Congress",
+    "difficulty": 3,
+    "sourceIds": [
+      "source-pack-senate-rules-cloture",
+      "source-pack-senate-votes"
+    ],
+    "quizJson": {
+      "question": "What does cloture usually help the Senate do?",
+      "options": [
+        "Limit debate and move toward a vote",
+        "Draw district maps",
+        "Sign a bill",
+        "Appoint governors"
+      ],
+      "correctIndex": 0,
+      "explanation": "Cloture is a Senate procedure for limiting debate and moving toward final action on many matters.",
+      "relatedAction": "Check Senate vote records and ask whether the vote was final passage or a procedural vote."
+    },
+    "orderIndex": 9,
+    "isPublished": true
+  },
+  {
+    "slug": "budget-appropriations",
+    "title": "Budget and Appropriations",
+    "hook": "Authorizing a program and funding a program are related but not the same.",
+    "body": "Congress can create or change programs through authorizing laws, but agencies usually need appropriations to spend money. Budget debates also include revenues, deficits, debt, and timing. Related action: ask whether a claim is about legal authority, actual funding, or spending results.",
+    "category": "Congress",
+    "difficulty": 2,
+    "sourceIds": [
+      "source-pack-federal-spending",
+      "source-pack-house-legislative-process"
+    ],
+    "quizJson": {
+      "question": "What is a useful distinction in federal budget claims?",
+      "options": [
+        "Authorization versus funding",
+        "Weather versus climate only",
+        "Mayors versus juries",
+        "Headlines versus fonts"
+      ],
+      "correctIndex": 0,
+      "explanation": "A program may be authorized by law, but spending usually depends on appropriations and implementation.",
+      "relatedAction": "Analyze a spending claim and label the authority, funding, and evidence."
+    },
+    "orderIndex": 10,
+    "isPublished": true
+  },
+  {
+    "slug": "executive-orders-and-laws",
+    "title": "Executive Orders and Laws",
+    "hook": "Executive orders direct the executive branch; they do not replace statutes passed by Congress.",
+    "body": "A President can direct executive agencies, but an order must fit within constitutional or statutory authority. Courts can review legal challenges, and later presidents may change some orders. Related action: ask what law or constitutional power the order claims to use.",
+    "category": "Executive Branch",
+    "difficulty": 2,
+    "sourceIds": [
+      "source-pack-constitution",
+      "source-pack-rulemaking",
+      "source-pack-federal-courts"
+    ],
+    "quizJson": {
+      "question": "What should you check when evaluating an executive order?",
+      "options": [
+        "The claimed legal authority",
+        "The number of TV clips",
+        "Whether it has a catchy name",
+        "Whether a private group likes it"
+      ],
+      "correctIndex": 0,
+      "explanation": "Executive orders depend on legal authority and can be challenged or changed.",
+      "relatedAction": "Analyze an executive-action claim and identify the authority it cites."
+    },
+    "orderIndex": 11,
+    "isPublished": true
+  },
+  {
+    "slug": "agency-rulemaking",
+    "title": "Agency Rulemaking",
+    "hook": "Agencies often turn laws into detailed regulations through notice, comments, and final rules.",
+    "body": "Congress writes statutes, but agencies often implement them through regulations. Many rules start with a proposal, receive public comments, and later become final rules with explanations. Related action: find whether a rule is proposed, final, delayed, or challenged in court.",
+    "category": "Executive Branch",
+    "difficulty": 2,
+    "sourceIds": ["source-pack-rulemaking"],
+    "quizJson": {
+      "question": "What is public comment in rulemaking?",
+      "options": [
+        "A chance to submit views on a proposed rule",
+        "A final court judgment",
+        "A secret party vote",
+        "A bill signing ceremony"
+      ],
+      "correctIndex": 0,
+      "explanation": "Many agency rules include a notice-and-comment stage before a final rule is issued.",
+      "relatedAction": "Analyze an agency claim and ask whether the cited document is proposed or final."
+    },
+    "orderIndex": 12,
+    "isPublished": true
+  },
+  {
+    "slug": "courts-and-precedent",
+    "title": "Courts and Precedent",
+    "hook": "Courts decide legal disputes; precedent guides later cases but facts still matter.",
+    "body": "A court ruling is not just a quote. The holding, facts, issue, and court level all affect what the decision means later. A court can say a policy is unlawful without saying whether it is wise. Related action: separate the legal holding from the political reaction.",
+    "category": "Courts",
+    "difficulty": 2,
+    "sourceIds": ["source-pack-federal-courts"],
+    "quizJson": {
+      "question": "What makes precedent useful?",
+      "options": [
+        "It guides similar later cases",
+        "It makes every case identical",
+        "It replaces statutes",
+        "It counts public likes"
+      ],
+      "correctIndex": 0,
+      "explanation": "Precedent guides later courts, especially when the legal issue and facts are similar.",
+      "relatedAction": "Analyze a court claim and identify the holding, not just a quoted sentence."
+    },
+    "orderIndex": 13,
+    "isPublished": true
+  },
+  {
+    "slug": "state-and-local-power",
+    "title": "State and Local Power",
+    "hook": "Many daily civic issues are decided by states, counties, cities, school boards, or agencies.",
+    "body": "Not every public problem belongs to Congress or the President. Local governments may control zoning, roads, libraries, policing, utilities, and school policies, while states set many statewide rules. Related action: find the exact office before sending a message or reading a claim.",
+    "category": "State and Local Government",
+    "difficulty": 1,
+    "sourceIds": ["source-pack-state-local-governments"],
+    "quizJson": {
+      "question": "Why should students identify the correct local body?",
+      "options": [
+        "Different bodies control different services",
+        "Local governments cannot make rules",
+        "Only Congress runs schools",
+        "Courts manage every bus route"
+      ],
+      "correctIndex": 0,
+      "explanation": "Cities, counties, school boards, and special districts can have different responsibilities.",
+      "relatedAction": "Use official state/local pages to find the office responsible for an issue."
+    },
+    "orderIndex": 14,
+    "isPublished": true
+  },
+  {
+    "slug": "voter-registration-rules",
+    "title": "Voter Registration Rules",
+    "hook": "Registration deadlines and methods are official, state-specific, and date-sensitive.",
+    "body": "Registration is the step that puts an eligible voter on the rolls and connects the voter with the right ballot. Rules can differ by state and can change. Related action: verify registration claims with an official election office, not a reposted deadline.",
+    "category": "Elections",
+    "difficulty": 1,
+    "sourceIds": [
+      "source-pack-voting-registration",
+      "source-pack-state-local-elections"
+    ],
+    "quizJson": {
+      "question": "Why should voter registration claims use official sources?",
+      "options": [
+        "Rules vary by state",
+        "All states use one deadline",
+        "Campaign ads set deadlines",
+        "Courts register voters automatically"
+      ],
+      "correctIndex": 0,
+      "explanation": "Registration deadlines, methods, and update rules vary by state and should be checked with official sources.",
+      "relatedAction": "Check Vote.gov or a state election office before sharing registration information."
+    },
+    "orderIndex": 15,
+    "isPublished": true
+  },
+  {
+    "slug": "primaries-general-elections",
+    "title": "Primaries and General Elections",
+    "hook": "A primary helps choose candidates; a general election usually chooses the officeholder.",
+    "body": "Election stages matter. A candidate can win a primary and lose the general election, or a state may use open, closed, top-two, or runoff systems. Related action: when reading results, identify the election stage and who was eligible to participate.",
+    "category": "Elections",
+    "difficulty": 1,
+    "sourceIds": ["source-pack-state-local-elections"],
+    "quizJson": {
+      "question": "What is a common purpose of a primary?",
+      "options": [
+        "Choose candidates for a later election",
+        "Sign bills into law",
+        "Decide court appeals",
+        "Conduct the census"
+      ],
+      "correctIndex": 0,
+      "explanation": "Primaries commonly help select which candidates advance to the general election or next stage.",
+      "relatedAction": "Analyze an election claim and label whether it concerns a primary, runoff, or general election."
+    },
+    "orderIndex": 16,
+    "isPublished": true
+  },
+  {
+    "slug": "electoral-college",
+    "title": "The Electoral College",
+    "hook": "Presidential elections turn state results into electoral votes, not one direct national tally.",
+    "body": "Each state has electoral votes based on its House seats plus two senators, and D.C. has electoral votes under the Twenty-third Amendment. Most states use statewide winner-take-all rules. Related action: separate popular vote, state result, and electoral vote claims.",
+    "category": "Elections",
+    "difficulty": 2,
+    "sourceIds": [
+      "source-pack-constitution",
+      "source-pack-state-local-elections"
+    ],
+    "quizJson": {
+      "question": "How are electoral votes generally assigned to each state?",
+      "options": [
+        "House seats plus two senators",
+        "One per county",
+        "Only by land area",
+        "Only by governor choice"
+      ],
+      "correctIndex": 0,
+      "explanation": "A state receives electoral votes equal to its U.S. House seats plus its two U.S. senators.",
+      "relatedAction": "Analyze a presidential-election claim and identify which vote total it uses."
+    },
+    "orderIndex": 17,
+    "isPublished": true
+  },
+  {
+    "slug": "apportionment-and-districts",
+    "title": "Apportionment and Districts",
+    "hook": "Apportionment assigns House seats to states; redistricting draws boundaries inside states.",
+    "body": "After the census, apportionment distributes 435 House seats among states. Redistricting then draws district lines within a state for representation. Related action: decide whether a map claim is about seat allocation, boundary drawing, or voting-rights rules.",
+    "category": "Representation",
+    "difficulty": 2,
+    "sourceIds": [
+      "source-pack-apportionment",
+      "source-pack-voting-rights",
+      "source-pack-census-geocoder"
+    ],
+    "quizJson": {
+      "question": "What does apportionment do?",
+      "options": [
+        "Distributes House seats among states",
+        "Draws every city ward",
+        "Registers voters",
+        "Counts Senate filibusters"
+      ],
+      "correctIndex": 0,
+      "explanation": "Apportionment uses census population counts to allocate House seats among the states.",
+      "relatedAction": "Use District Lookup for your district, then compare that with census apportionment."
+    },
+    "orderIndex": 18,
+    "isPublished": true
+  },
+  {
+    "slug": "gerrymandering-evidence",
+    "title": "Gerrymandering Evidence",
+    "hook": "A serious map claim needs evidence about voters, boundaries, law, and effects.",
+    "body": "Gerrymandering claims can involve party advantage, racial discrimination, vote dilution, or state-law standards. Shape alone rarely proves the legal case. Related action: ask what map, voters, data, and legal rule support the claim.",
+    "category": "Representation",
+    "difficulty": 3,
+    "sourceIds": ["source-pack-voting-rights", "source-pack-apportionment"],
+    "quizJson": {
+      "question": "What evidence is stronger than shape alone in a gerrymandering claim?",
+      "options": [
+        "Map data and legal standard",
+        "The district nickname only",
+        "A single color on a map",
+        "A campaign chant"
+      ],
+      "correctIndex": 0,
+      "explanation": "Map claims need evidence such as population, election or demographic data, affected voters, and legal standards.",
+      "relatedAction": "Analyze a map claim and list the evidence it would need."
+    },
+    "orderIndex": 19,
+    "isPublished": true
+  },
+  {
+    "slug": "public-records",
+    "title": "Public Records",
+    "hook": "Official records help verify claims, but access laws include exemptions and redactions.",
+    "body": "FOIA lets people request federal agency records, and states have their own public-records laws. Records can verify spending, contracts, rules, emails, and decisions, but privacy or security exemptions may apply. Related action: find the agency record before relying on a summary.",
+    "category": "Civic Skills",
+    "difficulty": 2,
+    "sourceIds": ["source-pack-foia"],
+    "quizJson": {
+      "question": "What is one limit on public records access?",
+      "options": [
+        "Some records can be redacted or exempt",
+        "No records can ever be requested",
+        "Only senators can request records",
+        "Contracts are never records"
+      ],
+      "correctIndex": 0,
+      "explanation": "Public records laws allow access but also include exemptions, redactions, timing, and process rules.",
+      "relatedAction": "Search an agency's FOIA page or records portal for the document behind a claim."
+    },
+    "orderIndex": 20,
+    "isPublished": true
+  },
+  {
+    "slug": "primary-sources",
+    "title": "Primary Sources",
+    "hook": "For basic facts, start with the official action: bill text, vote, court opinion, rule, or record.",
+    "body": "Primary sources are closest to what government officially did. They may still need explanation, but they help separate facts from interpretation. Related action: when a post says a bill passed, find the official action or roll call before reading opinion about it.",
+    "category": "Media Literacy",
+    "difficulty": 1,
+    "sourceIds": [
+      "source-pack-congress-bills",
+      "source-pack-house-votes",
+      "source-pack-senate-votes",
+      "source-pack-rulemaking"
+    ],
+    "quizJson": {
+      "question": "Which source best verifies whether a House bill passed?",
+      "options": [
+        "An official House vote record",
+        "A friend's caption",
+        "A campaign meme",
+        "A random comment"
+      ],
+      "correctIndex": 0,
+      "explanation": "An official vote record is direct evidence of how the House acted on a question.",
+      "relatedAction": "Open Bills or official vote records before accepting a status claim."
+    },
+    "orderIndex": 21,
+    "isPublished": true
+  },
+  {
+    "slug": "citation-grounding",
+    "title": "Citation Grounding",
+    "hook": "A useful citation supports the exact claim, not just the general topic.",
+    "body": "Citation grounding means matching a factual sentence to evidence that actually proves it. A source saying a bill was introduced does not prove it became law. Related action: check whether each claim says only what the cited source supports.",
+    "category": "Media Literacy",
+    "difficulty": 2,
+    "sourceIds": [
+      "source-pack-congress-bills",
+      "source-pack-govinfo-public-laws",
+      "source-pack-federal-courts"
+    ],
+    "quizJson": {
+      "question": "What makes a citation useful?",
+      "options": [
+        "It directly supports the specific claim",
+        "It is the longest link",
+        "It appears in blue text",
+        "It comes after every paragraph"
+      ],
+      "correctIndex": 0,
+      "explanation": "A citation is useful when a reader can verify the specific claim from that source.",
+      "relatedAction": "Analyze a claim and mark supported facts separately from missing context."
+    },
+    "orderIndex": 22,
+    "isPublished": true
+  },
+  {
+    "slug": "lobbying-and-advocacy",
+    "title": "Lobbying and Advocacy",
+    "hook": "Influencing government is common; disclosure rules help the public see paid lobbying.",
+    "body": "Advocacy includes speaking, organizing, testifying, writing officials, and publishing research. Lobbying is a regulated subset that can require public reports about clients, issues, and spending. Related action: check disclosure records before making claims about who is influencing whom.",
+    "category": "Civic Participation",
+    "difficulty": 2,
+    "sourceIds": [
+      "source-pack-lobbying-disclosure",
+      "source-pack-constitution"
+    ],
+    "quizJson": {
+      "question": "Which statement best describes lobbying?",
+      "options": [
+        "It can be legal influence activity with disclosure rules",
+        "It is always illegal",
+        "It only happens in courts",
+        "It replaces elections"
+      ],
+      "correctIndex": 0,
+      "explanation": "Lobbying is a form of advocacy aimed at government action and may trigger registration or reporting rules.",
+      "relatedAction": "Look up an issue or organization in LDA records before drawing conclusions."
+    },
+    "orderIndex": 23,
+    "isPublished": true
+  },
+  {
+    "slug": "jury-service",
+    "title": "Jury Service",
+    "hook": "Jurors use courtroom evidence and legal instructions, not outside research or popularity.",
+    "body": "Jury service lets community members share responsibility for justice in many criminal and civil cases. Jurors must listen, deliberate, and apply the judge's instructions to admitted evidence. Related action: when discussing a trial, separate admitted evidence from outside commentary.",
+    "category": "Courts",
+    "difficulty": 1,
+    "sourceIds": ["source-pack-bill-of-rights", "source-pack-federal-courts"],
+    "quizJson": {
+      "question": "What should jurors usually rely on?",
+      "options": [
+        "Admitted evidence and legal instructions",
+        "Private online searches",
+        "Popularity of the parties",
+        "Messages from friends"
+      ],
+      "correctIndex": 0,
+      "explanation": "Jurors are expected to decide from admitted evidence and the court's legal instructions.",
+      "relatedAction": "Analyze a trial claim and separate evidence from commentary."
+    },
+    "orderIndex": 24,
+    "isPublished": true
+  }
+]

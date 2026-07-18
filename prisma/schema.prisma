@@ -1,0 +1,268 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ConceptCard {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  hook        String
+  body        String
+  category    String
+  difficulty  Int
+  sourceIds   String[] @default([])
+  quizJson    Json
+  orderIndex  Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  quizAttempts QuizAttempt[]
+
+  @@index([category])
+  @@index([difficulty])
+  @@index([isPublished, orderIndex])
+}
+
+model SourceDocument {
+  id          String   @id @default(cuid())
+  sourceType  String
+  externalId  String?  @unique
+  title       String
+  url         String
+  sourceDate  DateTime?
+  issuingBody String?
+  content     String
+  contentHash String
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  chunks    SourceChunk[]
+  citations Citation[]
+
+  @@index([sourceType])
+  @@index([contentHash])
+}
+
+model SourceChunk {
+  id               String                    @id @default(cuid())
+  sourceDocumentId String
+  chunkIndex       Int
+  text             String
+  tokenCount       Int?
+  metadata         Json                      @default("{}")
+  embedding        Unsupported("vector(1536)")?
+  createdAt        DateTime                  @default(now())
+
+  sourceDocument SourceDocument @relation(fields: [sourceDocumentId], references: [id], onDelete: Cascade)
+  citations      Citation[]
+
+  @@unique([sourceDocumentId, chunkIndex])
+  @@index([sourceDocumentId])
+}
+
+model Citation {
+  id               String   @id @default(cuid())
+  sourceDocumentId String
+  sourceChunkId    String?
+  sourceType       String
+  title            String
+  url              String
+  sourceDate       DateTime?
+  excerpt          String
+  billCongress     Int?
+  billType         String?
+  billNumber       String?
+  metadata         Json     @default("{}")
+  createdAt        DateTime @default(now())
+
+  sourceDocument SourceDocument @relation(fields: [sourceDocumentId], references: [id], onDelete: Cascade)
+  sourceChunk    SourceChunk?   @relation(fields: [sourceChunkId], references: [id], onDelete: SetNull)
+
+  @@index([sourceDocumentId])
+  @@index([sourceChunkId])
+  @@index([billCongress, billType, billNumber])
+}
+
+model Bill {
+  id               String   @id @default(cuid())
+  congress         Int
+  type             String
+  number           String
+  title            String
+  shortTitle       String?
+  originChamber    String?
+  introducedDate   DateTime?
+  latestActionDate DateTime?
+  latestActionText String?
+  policyArea       String?
+  congressGovUrl   String?
+  summary          String?
+  rawJson          Json     @default("{}")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  actions   BillAction[]
+  summaries BillSummary[]
+  votes     Vote[]
+
+  @@unique([congress, type, number])
+  @@index([policyArea])
+  @@index([latestActionDate])
+}
+
+model BillAction {
+  id          String   @id @default(cuid())
+  billId      String
+  actionDate  DateTime
+  text        String
+  type        String?
+  chamber     String?
+  sourceUrl   String?
+  orderIndex  Int      @default(0)
+  rawJson     Json     @default("{}")
+  createdAt   DateTime @default(now())
+
+  bill Bill @relation(fields: [billId], references: [id], onDelete: Cascade)
+
+  @@index([billId, actionDate])
+}
+
+model BillSummary {
+  id          String   @id @default(cuid())
+  billId      String
+  actionDate  DateTime?
+  versionCode String?
+  text        String
+  sourceUrl   String?
+  rawJson     Json     @default("{}")
+  createdAt   DateTime @default(now())
+
+  bill Bill @relation(fields: [billId], references: [id], onDelete: Cascade)
+
+  @@index([billId])
+}
+
+model Member {
+  id            String   @id @default(cuid())
+  bioguideId    String   @unique
+  firstName     String
+  lastName      String
+  fullName      String
+  party         String
+  state         String
+  district      String?
+  chamber       String
+  currentMember Boolean  @default(true)
+  officialUrl   String?
+  imageUrl      String?
+  rawJson       Json     @default("{}")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([state, district])
+  @@index([chamber])
+  @@index([currentMember])
+}
+
+model DistrictCache {
+  id           String   @id @default(cuid())
+  locationHash String   @unique
+  stateCode    String
+  district     String
+  latitude     Decimal? @db.Decimal(9, 6)
+  longitude    Decimal? @db.Decimal(9, 6)
+  responseJson Json
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([stateCode, district])
+  @@index([expiresAt])
+}
+
+model Vote {
+  id             String   @id @default(cuid())
+  congress       Int
+  chamber        String
+  session        Int?
+  rollCallNumber Int
+  question       String
+  description    String?
+  result         String
+  date           DateTime
+  sourceUrl      String?
+  billId         String?
+  rawJson        Json     @default("{}")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  bill      Bill?          @relation(fields: [billId], references: [id], onDelete: SetNull)
+  positions VotePosition[]
+
+  @@unique([congress, chamber, session, rollCallNumber])
+  @@index([billId])
+  @@index([date])
+}
+
+model VotePosition {
+  id          String  @id @default(cuid())
+  voteId      String
+  bioguideId  String?
+  name        String
+  party       String?
+  state       String?
+  district    String?
+  voteCast    String
+
+  vote Vote @relation(fields: [voteId], references: [id], onDelete: Cascade)
+
+  @@index([voteId])
+  @@index([bioguideId])
+}
+
+model ClaimAnalysis {
+  id                  String   @id @default(cuid())
+  inputHash           String
+  normalizedClaimHash String?
+  evidenceStatus      String
+  resultJson          Json
+  redactedInput       String?
+  createdAt           DateTime @default(now())
+
+  @@index([inputHash])
+  @@index([createdAt])
+}
+
+model QuizAttempt {
+  id            String   @id @default(cuid())
+  conceptCardId String?
+  quizSlug      String?
+  selectedIndex Int
+  correctIndex  Int
+  isCorrect     Boolean
+  createdAt     DateTime @default(now())
+
+  conceptCard ConceptCard? @relation(fields: [conceptCardId], references: [id], onDelete: SetNull)
+
+  @@index([conceptCardId])
+  @@index([createdAt])
+}
+
+model IngestionRun {
+  id          String   @id @default(cuid())
+  source      String
+  status      String
+  startedAt   DateTime @default(now())
+  finishedAt  DateTime?
+  itemCount   Int      @default(0)
+  errorMessage String?
+  metadata    Json     @default("{}")
+
+  @@index([source, startedAt])
+}
