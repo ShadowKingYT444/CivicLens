@@ -3,6 +3,7 @@ import { analyzeClaim } from "../../../lib/ai/analyze-claim";
 import { AnalysisRequestSchema } from "../../../lib/ai/schemas";
 import {
   projectAnalysisResultForStorage,
+  projectCitationsForStorage,
   redactSensitiveText,
   sha256Hex,
 } from "../../../lib/ai/validators";
@@ -76,7 +77,7 @@ async function storeAnalysisIfEnabled(
       claimHash,
       redactedClaim,
       JSON.stringify(resultForStorage),
-      JSON.stringify(citations),
+      JSON.stringify(projectCitationsForStorage(citations, storeRawInputs)),
     );
     return { stored: true };
   } catch {
