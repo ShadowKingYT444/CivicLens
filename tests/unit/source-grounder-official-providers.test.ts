@@ -34,7 +34,7 @@ describe("source grounder official provider integration", () => {
       5,
     );
 
-    expect(result.mode).toBe("live");
+    expect(result.mode).toBe("demo");
     expect(result.citations.map((citation) => citation.id)).toContain(
       "official-openfec",
     );

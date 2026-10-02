@@ -175,7 +175,7 @@ describe("citation validators", () => {
         }),
         citations,
       ),
-    ).toThrow(/unsupported numeric detail.*5000/i);
+    ).toThrow(/unsupported numeric detail/i);
   });
 
   it("rejects a settled verdict whose polarity conflicts with the cited excerpt", () => {

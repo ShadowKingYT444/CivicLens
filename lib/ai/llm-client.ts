@@ -19,6 +19,7 @@ import type {
 } from "./schemas";
 import {
   isPersuasionOrVotingAdvice,
+  AnalysisValidationError,
   looksLikeAddress,
   parseJsonObject,
   redactSensitiveText,
@@ -48,7 +49,9 @@ export async function generateAnalysis(input: GenerateAnalysisInput): Promise<{
   mode: "live" | "demo";
   warnings: string[];
 }> {
-  const validationErrors = input.validationErrors || [];
+  const validationErrors = input.validationErrors?.length
+    ? ["Retrieved citations failed validation"]
+    : [];
   const citations = validationErrors.length > 0 ? [] : input.citations;
   const refusal = getRefusalReason(input.claim);
   if (refusal) {
@@ -312,9 +315,9 @@ async function tryProviderAnalysis(
     return repairedValidation.result
       ? stripCitationIdsFromUserFields(repairedValidation.result, citations)
       : null;
-  } catch (error) {
+  } catch {
     warnings.push(
-      `${provider.name} provider failed: ${error instanceof Error ? error.message : "unknown error"}`,
+      `${provider.name} provider failed: ${providerAnalysisBudgetExhausted(budget) ? "Provider analysis deadline or call budget exhausted" : "request unavailable"}`,
     );
     return null;
   }
@@ -407,7 +410,7 @@ function parseAndValidate(
     return {
       result: null,
       errors: [
-        error instanceof Error ? error.message : "invalid analysis JSON",
+        error instanceof AnalysisValidationError ? error.message : "Response does not match valid analysis JSON",
       ],
     };
   }

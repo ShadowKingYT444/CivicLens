@@ -169,11 +169,11 @@ export const DistrictLookupResultSchema = z.object({
   status: z.enum(["matched", "demo", "unavailable", "not_found"]),
   matchedAddress: z.string().max(300).optional(),
   stateCode: z.string().length(2).optional(),
-  district: z.string().max(4).optional(),
+  district: z.string().regex(/^(?:[1-9]\d?|At-Large)$/).optional(),
   coordinates: z
     .object({
-      latitude: z.number(),
-      longitude: z.number(),
+      latitude: z.number().min(-90).max(90),
+      longitude: z.number().min(-180).max(180),
     })
     .optional(),
   houseMembers: z
@@ -183,6 +183,8 @@ export const DistrictLookupResultSchema = z.object({
     .array(z.union([z.string().min(1).max(160), RepresentativeSummarySchema]))
     .default([]),
   privacyNote: z.string().min(1).max(300),
+  representativesMode: z.enum(["live", "unavailable", "fixture"]).optional(),
+  warnings: z.array(z.string().max(300)).optional(),
 });
 
 export const QuizAttemptRequestSchema = z.object({

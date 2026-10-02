@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SearchQuerySchema } from "../../../lib/ai/schemas";
+import { redactSensitiveText } from "../../../lib/privacy/redaction";
 import {
   DEMO_BILL,
   fetchCongressBill,
@@ -17,7 +18,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid search query" }, { status: 400 });
   }
 
-  const query = parsed.data.q;
+  return search(parsed.data.q);
+}
+
+export async function POST(request: NextRequest) {
+  const parsed = SearchQuerySchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid search query" }, { status: 400 });
+  }
+  return search(parsed.data.q);
+}
+
+async function search(rawQuery: string) {
+  const query = redactSensitiveText(rawQuery);
   const results: Array<Record<string, unknown>> = [];
   const billRef = parseBillReference(query);
 
