@@ -1,0 +1,124 @@
+
+TYPECHECK
+$ tsc --noEmit
+
+LINT
+$ eslint .
+
+/workspace/CivicLens/lib/ai/summarize-bill.ts
+  147:13  warning  '_date' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  148:19  warning  '_actionDate' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  149:13  warning  '_text' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  150:20  warning  '_description' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/workspace/CivicLens/postcss.config.js
+  1:1  warning  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+✖ 5 problems (0 errors, 5 warnings)
+
+
+BUILD
+$ prisma generate && next build
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.19.3) to ./node_modules/.pnpm/@prisma+client@6.19.3_prisma@6.19.3_typescript@6.0.3__typescript@6.0.3/node_modules/@prisma/client in 83ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+▲ Next.js 16.2.10 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.1s
+  Running TypeScript ...
+  Finished TypeScript in 4.7s ...
+  Collecting page data using 4 workers ...
+  Generating static pages using 4 workers (0/19) ...
+  Generating static pages using 4 workers (4/19) 
+  Generating static pages using 4 workers (9/19) 
+  Generating static pages using 4 workers (14/19) 
+✓ Generating static pages using 4 workers (19/19) in 217ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin
+├ ○ /analyze
+├ ƒ /api/admin/ingest/congress
+├ ƒ /api/admin/ingest/members
+├ ƒ /api/analyze
+├ ƒ /api/bills/[congress]/[type]/[number]
+├ ƒ /api/bills/recent
+├ ƒ /api/district/lookup
+├ ƒ /api/feed
+├ ƒ /api/health
+├ ƒ /api/quiz/attempt
+├ ƒ /api/search
+├ ○ /bills
+├ ƒ /bills/[congress]/[type]/[number]
+├ ○ /district
+├ ○ /feed
+├ ○ /methodology
+└ ○ /preview
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+UNIT
+$ vitest run
+The plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the resolve.tsconfigPaths option. You can remove the plugin and set resolve.tsconfigPaths: true in your Vite config instead.
+
+ RUN  v4.1.10 /workspace/CivicLens
+
+
+ Test Files  26 passed (26)
+      Tests  213 passed (213)
+   Start at  19:32:53
+   Duration  8.13s (transform 954ms, setup 1.26s, import 2.42s, tests 1.51s, environment 14.38s)
+
+
+BROWSER
+
+Running 29 tests using 1 worker
+
+(node:23777) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › tests/e2e/api-contracts.spec.ts:47:3 › CivicLens API contracts › GET /api/health exposes safe runtime status without secrets (44ms)
+  ✓   2 [chromium] › tests/e2e/api-contracts.spec.ts:70:3 › CivicLens API contracts › GET /api/feed returns published learning cards from DB or fixtures (27ms)
+  ✓   3 [chromium] › tests/e2e/api-contracts.spec.ts:91:3 › CivicLens API contracts › GET /api/search validates input, prioritizes bill references, and caps results (39ms)
+  ✓   4 [chromium] › tests/e2e/api-contracts.spec.ts:114:3 › CivicLens API contracts › GET /api/bills/recent returns a safe recent-bill envelope in live or fixture mode (163ms)
+  ✓   5 [chromium] › tests/e2e/api-contracts.spec.ts:161:3 › CivicLens API contracts › GET /api/bills/[congress]/[type]/[number] returns grounded bill detail and rejects bad params (64ms)
+  ✓   6 [chromium] › tests/e2e/api-contracts.spec.ts:188:3 › CivicLens API contracts › POST /api/district/lookup validates input and returns representatives with address privacy notice (22ms)
+  ✓   7 [chromium] › tests/e2e/api-contracts.spec.ts:218:3 › CivicLens API contracts › POST /api/analyze validates length, grounds bill claims, redacts address-like claims, and refuses persuasion (76ms)
+  ✓   8 [chromium] › tests/e2e/api-contracts.spec.ts:288:3 › CivicLens API contracts › POST /api/quiz/attempt validates attempts and falls back safely without a database (30ms)
+  ✓   9 [chromium] › tests/e2e/api-contracts.spec.ts:313:3 › CivicLens API contracts › admin ingest routes reject missing or invalid authorization (20ms)
+  ✓  10 [chromium] › tests/e2e/civic-flows.spec.ts:4:3 › CivicLens student flows › feed flow shows published civic concept cards with quiz affordances (1.0s)
+  ✓  11 [chromium] › tests/e2e/civic-flows.spec.ts:16:3 › CivicLens student flows › analyze flow grounds civic claims and refuses persuasion requests (1.6s)
+  ✓  12 [chromium] › tests/e2e/civic-flows.spec.ts:45:3 › CivicLens student flows › district flow returns representatives without exposing raw address text (938ms)
+  ✓  13 [chromium] › tests/e2e/civic-flows.spec.ts:75:3 › CivicLens student flows › bill flow renders bill detail with citations and official-source context (852ms)
+(node:24219) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  14 [mobile-390] › tests/mobile-ui.spec.ts:29:1 › mobile navigation reaches all main screens without overflow (1.3s)
+  ✓  15 [mobile-390] › tests/mobile-ui.spec.ts:47:1 › fresh learning path starts at zero and keeps later lessons locked (925ms)
+  ✓  16 [mobile-390] › tests/mobile-ui.spec.ts:57:1 › lesson keyboard continuity, correct completion and progress persistence (5.2s)
+  ✓  17 [mobile-390] › tests/mobile-ui.spec.ts:95:1 › one pointer swipe advances one flashcard (1.1s)
+  ✓  18 [mobile-390] › tests/mobile-ui.spec.ts:113:1 › bill search keeps text out of request URLs and sources trap focus (1.5s)
+  ✓  19 [mobile-390] › tests/mobile-ui.spec.ts:146:1 › demo district is labeled beside its result and clears the address (779ms)
+  ✓  20 [mobile-390] › tests/mobile-ui.spec.ts:162:1 › clear cancels an interrupted analysis without a stale result (669ms)
+  ✓  21 [mobile-390] › tests/mobile-ui.spec.ts:184:1 › screenshot: main product screens remain usable with reduced motion (2.0s)
+(node:24650) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  22 [mobile-430] › tests/mobile-ui.spec.ts:29:1 › mobile navigation reaches all main screens without overflow (1.3s)
+  ✓  23 [mobile-430] › tests/mobile-ui.spec.ts:47:1 › fresh learning path starts at zero and keeps later lessons locked (905ms)
+  ✓  24 [mobile-430] › tests/mobile-ui.spec.ts:57:1 › lesson keyboard continuity, correct completion and progress persistence (4.2s)
+  ✓  25 [mobile-430] › tests/mobile-ui.spec.ts:95:1 › one pointer swipe advances one flashcard (1.1s)
+  ✓  26 [mobile-430] › tests/mobile-ui.spec.ts:113:1 › bill search keeps text out of request URLs and sources trap focus (1.5s)
+  ✓  27 [mobile-430] › tests/mobile-ui.spec.ts:146:1 › demo district is labeled beside its result and clears the address (852ms)
+  ✓  28 [mobile-430] › tests/mobile-ui.spec.ts:162:1 › clear cancels an interrupted analysis without a stale result (634ms)
+  ✓  29 [mobile-430] › tests/mobile-ui.spec.ts:184:1 › screenshot: main product screens remain usable with reduced motion (1.9s)
+
+  29 passed (34.1s)

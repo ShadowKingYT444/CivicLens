@@ -19,7 +19,7 @@ Separable fixes remain: privacy redaction and safe provider errors, private POST
 - Additional actual 320/390px captures covered Home, Learn, Bills, Analyze, District, sample District results and Sources. No page errors or document overflow; original mobile canvas matches each viewport; no editorial sidebar is present. Sources keyboard focus remained inside the modal.
 - Correct answers unlock lessons; fresh XP starts at zero; completion grants 25 XP once; reload and review preserve progress without duplicate rewards. Clear cancels an interrupted analysis. Bill search sends POST without query text in the URL.
 
-[Actual test output](validation.log) · [Capture observations](capture.json).
+[Actual test output](validation.txt) · [Capture observations](capture.json).
 
 ## Actual screenshots
 
