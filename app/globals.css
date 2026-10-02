@@ -5180,3 +5180,36 @@ nextjs-portal {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Native modal behavior with the original mobile Sources bottom sheet. */
+dialog.drawer-backdrop {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: none;
+}
+dialog.drawer-backdrop[open] {
+  display: grid;
+}
+dialog.drawer-backdrop::backdrop {
+  background: rgba(7, 26, 51, 0.38);
+}
+dialog.drawer-backdrop .drawer {
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+dialog.drawer-backdrop[data-state="closing"] .drawer {
+  opacity: 0;
+  transform: translateY(12px);
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.drawer-backdrop .drawer {
+    transition: none;
+  }
+}

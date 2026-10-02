@@ -1,19 +1,26 @@
 "use client";
 
-import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { ArrowUpRight, LocateFixed, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  LocateFixed,
+  Lock,
+  MapPin,
+  ShieldCheck,
+} from "lucide-react";
 import { getJson } from "./api";
+import { assets } from "../lib/asset-manifest";
+import { ActionTile } from "./mobile/ActionTile";
 import { DistrictHeroCard } from "./mobile/DistrictHeroCard";
 import { RepresentativeMiniCard } from "./mobile/RepresentativeMiniCard";
+import { TopIdentity } from "./mobile/TopIdentity";
 import type { DistrictLookupResult } from "./types";
 
 type MemberSummary = NonNullable<DistrictLookupResult["houseMembers"]>[number];
 
 function memberName(member: MemberSummary) {
-  return typeof member === "string"
-    ? member
-    : (member.fullName ?? member.name ?? "Representative");
+  if (typeof member === "string") return member;
+  return member.fullName ?? member.name ?? "Representative";
 }
 
 function memberRole(member: MemberSummary, fallback: string) {
@@ -24,7 +31,11 @@ function memberRole(member: MemberSummary, fallback: string) {
       : member.party === "R"
         ? "Republican"
         : member.party;
-  return [fallback, party, member.state].filter(Boolean).join(" · ");
+  return [fallback, party, member.state].filter(Boolean).join(" - ");
+}
+
+function memberPhoto(member: MemberSummary) {
+  return typeof member === "string" ? undefined : member.photoUrl;
 }
 
 export function DistrictLookup() {
@@ -114,55 +125,24 @@ export function DistrictLookup() {
   }
 
   const isDemo = result?.status === "demo";
-  const notFound = result?.status === "not_found";
   const districtCode =
     result?.stateCode && result?.district != null
       ? `${result.stateCode} District ${result.district}`
-      : "District unavailable";
-
-  function renderMember(member: MemberSummary, index: number, chamber: string) {
-    return (
-      <RepresentativeMiniCard
-        key={`${chamber}-${memberName(member)}-${index}`}
-        name={memberName(member)}
-        role={memberRole(member, chamber)}
-        label={
-          chamber === "U.S. House" && result?.district != null
-            ? `${result.stateCode}-${result.district}`
-            : result?.stateCode
-        }
-        photoUrl={typeof member === "string" ? undefined : member.photoUrl}
-        officialUrl={
-          typeof member === "string" ? undefined : member.officialUrl
-        }
-      />
-    );
-  }
+      : "Your District";
 
   return (
-    <section
-      className="editorial-page editorial-district"
-      aria-label="District lookup"
-    >
-      <header className="editorial-page-heading">
-        <p className="editorial-kicker">Representation starts here</p>
-        <h1>Find your district.</h1>
-        <p className="editorial-lead">
-          Look up your House district and federal representatives with a street
-          address.
-        </p>
-      </header>
+    <section className="page-shell" aria-label="District lookup">
+      <TopIdentity
+        title="District"
+        subtitle="Find representatives without storing your address."
+      />
 
-      <form
-        className="editorial-district-form"
-        onSubmit={handleSubmit}
-        aria-busy={loading}
-      >
-        <label htmlFor="address">Street address</label>
-        <p id="address-hint" className="subtle">
-          Include city, state, and ZIP code for the closest match.
-        </p>
-        <div className="editorial-address-controls">
+      <form className="form-grid" onSubmit={handleSubmit}>
+        <label className="sr-only" htmlFor="address">
+          Street address
+        </label>
+        <div className="claim-input-link">
+          <MapPin aria-hidden="true" size={24} />
           <input
             id="address"
             className="input"
@@ -170,121 +150,157 @@ export function DistrictLookup() {
             onChange={(event) => setAddress(event.target.value)}
             autoComplete="street-address"
             placeholder="1600 Pennsylvania Ave NW, Washington, DC"
-            aria-describedby="address-hint district-privacy"
             required
-            disabled={loading}
           />
           <button
-            className="button"
+            className="button secondary"
             type="submit"
-            disabled={loading || !address.trim()}
+            disabled={loading}
             aria-label="Look up district"
           >
-            {loading ? "Looking up…" : "Find district"}
+            <ArrowRight aria-hidden="true" size={22} />
           </button>
         </div>
-        <div className="editorial-location-row">
-          <button
-            className="button secondary"
-            type="button"
-            onClick={handleUseLocation}
-            disabled={loading}
-          >
-            <LocateFixed aria-hidden="true" size={18} /> Use my location
-          </button>
-          <span className="subtle">Requires browser permission</span>
-        </div>
-        <p className="editorial-privacy-note" id="district-privacy">
-          <ShieldCheck aria-hidden="true" size={18} /> Your address is used for
-          this lookup, then cleared. It is not stored or sent to AI providers.
-        </p>
+        <button
+          className="button secondary location-button"
+          type="button"
+          onClick={handleUseLocation}
+          disabled={loading}
+        >
+          <LocateFixed aria-hidden="true" size={20} /> Use my location
+        </button>
         {error ? (
-          <p className="editorial-notice" role="alert">
+          <p className="empty-state" role="alert">
             {error}
           </p>
         ) : null}
       </form>
 
       {loading ? (
-        <p className="editorial-empty" role="status">
-          Finding district and representative records…
-        </p>
+        <p className="empty-state">Looking up your district...</p>
       ) : null}
-      {notFound ? (
-        <div
-          className="editorial-empty"
-          role="status"
-          ref={resultRef}
-          tabIndex={-1}
-        >
-          <h2>No district match</h2>
-          <p>Try a full street address with city, state, and ZIP code.</p>
-        </div>
-      ) : result ? (
-        <div
-          className="editorial-district-result"
-          aria-live="polite"
-          ref={resultRef}
-          tabIndex={-1}
-          role="region"
-          aria-label={isDemo ? "Sample district result" : "District result"}
-        >
+
+      {result ? (
+        <div ref={resultRef} tabIndex={-1} aria-label="District result">
           {isDemo ? (
-            <p className="editorial-notice">
-              <strong>Sample result — not your district.</strong> Live lookup
-              was unavailable. The district and representatives below are a
-              curated example and do not match your entered address.
+            <p className="status-pill warning" role="status">
+              Sample result — not your district.
             </p>
           ) : null}
           <DistrictHeroCard
             districtCode={districtCode}
-            location={result.stateCode}
-            demo={isDemo}
+            location={result.stateCode ? `${result.stateCode}` : undefined}
+            sample={isDemo}
           />
-          <section
-            className="editorial-section"
-            aria-labelledby="representatives-heading"
-          >
-            <h2 id="representatives-heading">
-              {isDemo ? "Sample representatives" : "Your representatives"}
-            </h2>
-            <div className="editorial-representatives">
+
+          <section className="page-shell">
+            <div className="section-row">
+              <h2>
+                {isDemo ? "Sample Representatives" : "Your Representatives"}
+              </h2>
+              <span className="status-pill good">Why these?</span>
+            </div>
+            <div className="representatives-row">
               {result.houseMembers?.length ? (
-                result.houseMembers.map((member, index) =>
-                  renderMember(member, index, "U.S. House"),
-                )
+                result.houseMembers.map((member, index) => (
+                  <RepresentativeMiniCard
+                    key={`${memberName(member)}-${index}`}
+                    name={memberName(member)}
+                    role={memberRole(member, "U.S. House")}
+                    label={String(
+                      result.district
+                        ? `${result.stateCode}-${result.district}`
+                        : "House",
+                    )}
+                    photoUrl={memberPhoto(member)}
+                    officialUrl={
+                      typeof member === "string"
+                        ? undefined
+                        : member.officialUrl
+                    }
+                    tone="blue"
+                  />
+                ))
               ) : (
-                <p className="subtle">No House member data returned.</p>
+                <p className="empty-state">No House member data returned.</p>
               )}
               {result.senators?.length ? (
-                result.senators.map((member, index) =>
-                  renderMember(member, index, "U.S. Senate"),
-                )
+                result.senators.map((member, index) => (
+                  <RepresentativeMiniCard
+                    key={`${memberName(member)}-${index}`}
+                    name={memberName(member)}
+                    role={memberRole(member, "U.S. Senate")}
+                    label={result.stateCode}
+                    photoUrl={memberPhoto(member)}
+                    officialUrl={
+                      typeof member === "string"
+                        ? undefined
+                        : member.officialUrl
+                    }
+                    tone={index % 2 ? "purple" : "teal"}
+                  />
+                ))
               ) : (
-                <p className="subtle">No senator data returned.</p>
+                <p className="empty-state">No senator data returned.</p>
               )}
             </div>
           </section>
-          {result.privacyNote ? (
-            <p className="editorial-privacy-note">
-              <ShieldCheck aria-hidden="true" size={18} /> {result.privacyNote}
-            </p>
-          ) : null}
-          <nav
-            className="editorial-related-links"
-            aria-label="Continue exploring"
-          >
-            <Link href="/bills">
-              Read bills <ArrowUpRight size={16} aria-hidden="true" />
-            </Link>
-            <Link href="/feed">
-              Learn civic basics <ArrowUpRight size={16} aria-hidden="true" />
-            </Link>
-            <Link href="/methodology">
-              Lookup methodology <ArrowUpRight size={16} aria-hidden="true" />
-            </Link>
-          </nav>
+
+          <section className="privacy-card">
+            <ShieldCheck aria-hidden="true" size={50} color="#00A98F" />
+            <div>
+              <h3>Your privacy matters</h3>
+              <p>
+                {result.privacyNote ??
+                  "We don't store your address. It's used only to find your district."}
+              </p>
+            </div>
+            <Lock aria-hidden="true" size={28} color="#007C6B" />
+          </section>
+
+          <div className="explore-grid">
+            <ActionTile
+              href="/bills"
+              title="Bills"
+              body="Search related bills"
+              asset={assets.billTypes.schoolMeals}
+              tone="teal"
+            />
+            <ActionTile
+              href="/methodology"
+              title="Sources"
+              body="How we verify"
+              asset={assets.ui.source}
+              tone="purple"
+            />
+            <ActionTile
+              href="/feed"
+              title="Learn"
+              body="Civic basics"
+              asset={assets.ui.quiz}
+              tone="yellow"
+            />
+            <ActionTile
+              href="/analyze"
+              title="Analyze"
+              body="Check a claim"
+              asset={assets.truthScale.mixed}
+              tone="blue"
+            />
+          </div>
         </div>
+      ) : !loading ? (
+        <section className="district-hero-card">
+          <div>
+            <span className="district-kicker">Your district</span>
+            <h2>Find it</h2>
+            <p>Use an address once to find your district.</p>
+            <span className="privacy-note">
+              <ShieldCheck aria-hidden="true" size={24} /> We use this only for
+              lookup.
+            </span>
+          </div>
+        </section>
       ) : null}
     </section>
   );

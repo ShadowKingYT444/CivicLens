@@ -1,5 +1,8 @@
 "use client";
 
+import Image from "next/image";
+import { learningPathAssets } from "../lib/learning-path-assets";
+
 import {
   useEffect,
   useMemo,
@@ -7,12 +10,24 @@ import {
   useState,
   type KeyboardEvent,
   type MouseEvent,
+  type RefObject,
   type PointerEvent,
 } from "react";
-import { ArrowLeft, ArrowRight, Check, Lock, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Flame,
+  Gem,
+  ListChecks,
+  Lock,
+  Sparkles,
+  X,
+} from "lucide-react";
 import { demoFeedCards, getJson, normalizeFeedResponse } from "./api";
 import {
   buildLessonFlashcards,
+  getLessonUnit,
   normalizeLessonQuiz,
 } from "../lib/learn-curriculum";
 import {
@@ -25,6 +40,7 @@ import {
 } from "../lib/client-learning-progress";
 import type { FeedCard } from "./types";
 
+type AssetKey = keyof typeof learningPathAssets;
 type AnswerState = "idle" | "correct" | "wrong";
 type Completion = { awarded: boolean; persisted: boolean };
 
@@ -254,54 +270,55 @@ export function FeedBrowser() {
     nextSlide();
   }
 
+  const lessonCards = cards;
+  const activeUnit = getLessonUnit(lessonCards, activeIndex);
+  const canContinue = !showingQuiz || canComplete;
+  function chooseAnswer(index: number) {
+    if (!quiz) return;
+    setSelectedAnswer(index);
+    setAnswerState(index === quiz.correctIndex ? "correct" : "wrong");
+  }
+
+  if (!activeCard) {
+    return (
+      <section className="learn-shell" aria-label="Civic lessons">
+        <LearningHeader
+          message={message}
+          xp={progress.xp}
+          completedCount={completedCount}
+        />
+        <p className="empty-state">Lessons are loading.</p>
+      </section>
+    );
+  }
+
   return (
     <section
-      className={`editorial-learn learn-shell${mode === "lesson" ? " is-lesson-open" : ""}`}
+      className={`learn-shell ${mode === "lesson" ? "is-lesson-open" : ""}`}
       aria-label="Civic lessons"
     >
       {mode === "path" ? (
         <>
-          <header className="editorial-learn-header">
-            <div>
-              <p className="eyebrow">The learning path</p>
-              <h1>Understand how government works.</h1>
-              <p>
-                Short lessons. Official sources. A check before you move on.
-              </p>
-            </div>
-            <div className="editorial-learning-stats">
-              <span>
-                <strong>{completedCount}</strong> / {cards.length || "—"}{" "}
-                lessons complete
-              </span>
-              <span aria-label="XP">
-                <strong>{progress.xp}</strong> XP earned
-              </span>
-            </div>
-          </header>
-          <div
-            className="editorial-learning-progress"
-            role="progressbar"
-            aria-label="Learning path progress"
-            aria-valuemin={0}
-            aria-valuemax={cards.length || 24}
-            aria-valuenow={completedCount}
-          >
-            <span
-              style={{
-                width: `${cards.length ? (completedCount / cards.length) * 100 : 0}%`,
-              }}
-            />
-          </div>
-          <p className="editorial-progress-note">
-            {completion?.persisted === false
-              ? "Progress cannot be saved in this browser."
-              : "Progress is saved on this device. No account needed."}
-          </p>
+          <LearningHeader
+            message={message}
+            xp={progress.xp}
+            completedCount={completedCount}
+          />
+          <h1 className="learn-route-title">Learn</h1>
+          {isDemo ? <p className="status-pill">Demo curriculum</p> : null}
           {completion ? (
-            <div className="editorial-completion" role="status">
-              <Check aria-hidden="true" size={20} />
-              <div>
+            <div
+              className="lesson-complete-burst"
+              role="status"
+              aria-live="polite"
+            >
+              <div className="lesson-complete-card">
+                <Image
+                  src={learningPathAssets.starCoin}
+                  alt=""
+                  width={116}
+                  height={116}
+                />
                 <strong>Level complete</strong>
                 <span>
                   {completion.awarded
@@ -314,263 +331,443 @@ export function FeedBrowser() {
                     retain your progress.
                   </p>
                 ) : null}
+                <button
+                  className="button yellow"
+                  type="button"
+                  onClick={() => {
+                    setCompletion(null);
+                    pathRef.current?.focus();
+                  }}
+                >
+                  Continue learning
+                </button>
               </div>
             </div>
           ) : null}
-          <p
-            className={
-              message.startsWith("Showing") ? "editorial-feedback" : "sr-only"
-            }
-            aria-live="polite"
+          <article className="duo-unit-banner" aria-labelledby="duo-unit-title">
+            <div>
+              <p>
+                Section {activeUnit.section}, Unit {activeUnit.unit}
+              </p>
+              <h1 id="duo-unit-title">{activeUnit.unitTitle}</h1>
+              <p className="duo-unit-subtitle">
+                Source-backed lessons with quick checks.
+              </p>
+            </div>
+            <ListChecks aria-hidden="true" size={36} />
+          </article>
+
+          <div
+            ref={pathRef}
+            className="duo-path"
+            role="listbox"
+            aria-label="CivicLens lesson path"
+            aria-activedescendant={`learn-node-${activeCard.slug}`}
+            tabIndex={0}
+            onKeyDown={handlePathKeyDown}
           >
-            {message}
-          </p>
-          {!cards.length ? (
-            <p className="empty-state" role="status">
-              Loading your lessons…
-            </p>
-          ) : (
-            <div
-              ref={pathRef}
-              className="editorial-path"
-              role="listbox"
-              aria-label="CivicLens lesson path"
-              aria-activedescendant={`learn-node-${activeCard?.slug}`}
-              tabIndex={0}
-              onKeyDown={handlePathKeyDown}
-            >
-              {cards.map((card, index) => {
-                const isDone = completed.has(card.slug);
-                const isActive = index === activeIndex;
-                const isLocked = index > maxUnlockedIndex;
-                return (
+            {lessonCards.map((card, index) => {
+              const isDone = completed.has(card.slug);
+              const isActive = index === activeIndex;
+              const isLocked = index > maxUnlockedIndex;
+              const nodeAsset = getNodeAsset(index, isDone, isActive);
+
+              return (
+                <div
+                  className={`duo-node-row duo-node-row-${index % 4}`}
+                  key={card.slug}
+                  role="presentation"
+                >
+                  {isActive ? (
+                    <span className="duo-start-bubble" aria-hidden="true">
+                      Start
+                    </span>
+                  ) : null}
                   <button
                     id={`learn-node-${card.slug}`}
-                    key={card.slug}
                     type="button"
                     role="option"
-                    aria-label={`Level ${index + 1}: ${card.title}`}
+                    tabIndex={-1}
                     aria-selected={isActive}
                     disabled={isLocked}
-                    tabIndex={-1}
-                    className={`editorial-lesson-row${isDone ? " complete" : ""}${isActive ? " active" : ""}${isLocked ? " locked" : ""}`}
+                    className={`duo-node${isDone ? " complete" : ""}${isActive ? " active" : ""}${isLocked ? " locked" : ""}`}
                     onClick={() => openLesson(index)}
                   >
-                    <span
-                      className="editorial-lesson-number"
-                      aria-hidden="true"
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="editorial-lesson-copy">
-                      <span>{card.category || "Civics"}</span>
-                      <strong>{card.title}</strong>
-                      <span>
-                        {card.hook ||
-                          "Read the idea, then check your understanding."}
-                      </span>
-                    </span>
-                    <span className="editorial-lesson-state">
-                      {isDone ? (
-                        <>
-                          <Check aria-hidden="true" size={18} />
-                          <span>Completed</span>
-                        </>
-                      ) : isLocked ? (
-                        <>
-                          <Lock aria-hidden="true" size={16} />
-                          <span>Locked</span>
-                        </>
+                    <span className="duo-node-ring">
+                      {isLocked ? (
+                        <Lock aria-hidden="true" size={30} />
                       ) : (
-                        <>
-                          <span>Start lesson</span>
-                          <ArrowRight aria-hidden="true" size={18} />
-                        </>
+                        <Image src={nodeAsset} alt="" width={78} height={78} />
                       )}
                     </span>
+                    <span className="sr-only">
+                      Level {index + 1}: {card.title}
+                    </span>
                   </button>
-                );
-              })}
-            </div>
-          )}
-        </>
-      ) : activeCard ? (
-        <article
-          className="editorial-reader lesson-player"
-          aria-label={`${activeCard.title} lesson`}
-        >
-          <header className="editorial-reader-header">
-            <button
-              className="editorial-back-button"
-              type="button"
-              onClick={closeLesson}
-              aria-label="Back to learning path"
-            >
-              <ArrowLeft aria-hidden="true" size={18} />
-              <span>Learning path</span>
-            </button>
-            <span>
-              Lesson {activeIndex + 1} of {cards.length}
-              {isDemo ? " · Demo curriculum" : ""}
-            </span>
-          </header>
-          <div
-            className="editorial-reader-progress lesson-progress-bar"
-            role="progressbar"
-            aria-label={`Lesson step ${progressStep} of ${progressTotal}`}
-            aria-valuemin={0}
-            aria-valuemax={progressTotal}
-            aria-valuenow={progressStep}
-          >
-            {Array.from({ length: progressTotal }, (_, index) => (
-              <span
-                key={index}
-                className={index < progressStep ? "filled" : ""}
-              />
-            ))}
-          </div>
-          <div className="editorial-reader-heading">
-            <p className="eyebrow">{activeCard.category || "Civics"}</p>
-            <h1 ref={readerHeadingRef} tabIndex={-1}>
-              {activeCard.title}
-            </h1>
-          </div>
-          {!showingQuiz && flashcards[slideIndex] ? (
-            <section
-              className="editorial-lesson-content lesson-card-stage"
-              aria-labelledby="lesson-flashcard-heading"
-            >
-              <div className="editorial-step-label">
-                <h2 id="lesson-flashcard-heading">Learn the idea</h2>
-                <span>
-                  Card {slideIndex + 1} of {flashcards.length}
-                </span>
-              </div>
-              <button
-                className="editorial-flashcard lesson-flashcard"
-                type="button"
-                aria-label="Advance flashcard"
-                onClick={handleCardClick}
-                onPointerDown={handlePointerDown}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={() => {
-                  pointerStart.current = null;
-                }}
-              >
-                <div
-                  key={flashcards[slideIndex].id}
-                  className="editorial-flashcard-content"
-                >
-                  <span className="eyebrow">
-                    {flashcards[slideIndex].eyebrow || "Key idea"}
-                  </span>
-                  <h3>{flashcards[slideIndex].title}</h3>
-                  <p>{flashcards[slideIndex].body}</p>
-                  {flashcards[slideIndex].bullets?.length ? (
-                    <ul>
-                      {flashcards[slideIndex].bullets!.map((bullet) => (
-                        <li key={bullet}>{bullet}</li>
-                      ))}
-                    </ul>
+                  {index % 6 === 3 ? (
+                    <Image
+                      className="duo-path-side-art"
+                      src={learningPathAssets.capitolPath}
+                      alt=""
+                      width={118}
+                      height={118}
+                    />
+                  ) : null}
+                  {index % 9 === 6 ? (
+                    <button
+                      className={`duo-chest${isLocked ? " locked" : ""}`}
+                      type="button"
+                      disabled={isLocked}
+                      onClick={() => openLesson(index)}
+                    >
+                      <Image
+                        src={learningPathAssets.treasureChest}
+                        alt=""
+                        width={104}
+                        height={104}
+                      />
+                      <span>Bonus</span>
+                    </button>
                   ) : null}
                 </div>
-                <span className="editorial-flashcard-hint">
-                  Next idea <ArrowRight aria-hidden="true" size={16} />
-                </span>
-              </button>
-              <p className="editorial-reader-hint">
-                Tap the card, swipe left, or use Continue lesson.
-              </p>
-            </section>
-          ) : (
-            <section
-              className={`editorial-quiz lesson-quiz-panel ${answerState}`}
-              aria-labelledby="lesson-quiz-heading"
-            >
-              <div className="editorial-step-label">
-                <h2 id="lesson-quiz-heading" ref={quizHeadingRef} tabIndex={-1}>
-                  Quick check
-                </h2>
-                <span>Put the idea to work</span>
-              </div>
-              {quiz ? (
-                <>
-                  <h3>{quiz.question}</h3>
-                  <div className="editorial-answer-list lesson-answer-grid">
-                    {quiz.options.map((option, index) => {
-                      const selected = selectedAnswer === index;
-                      const correct = selected && answerState === "correct";
-                      const wrong = selected && answerState === "wrong";
-                      return (
-                        <button
-                          key={`${index}-${option}`}
-                          type="button"
-                          aria-pressed={selected}
-                          className={`editorial-answer lesson-answer${selected ? " selected" : ""}${correct ? " correct" : ""}${wrong ? " wrong" : ""}`}
-                          onClick={() => {
-                            setSelectedAnswer(index);
-                            setAnswerState(
-                              index === quiz.correctIndex ? "correct" : "wrong",
-                            );
-                          }}
-                        >
-                          <span
-                            className="editorial-answer-letter"
-                            aria-hidden="true"
-                          >
-                            {correct ? (
-                              <Check size={18} />
-                            ) : wrong ? (
-                              <X size={18} />
-                            ) : (
-                              String.fromCharCode(65 + index)
-                            )}
-                          </span>
-                          <span>{option}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p
-                    className={`editorial-feedback lesson-feedback ${answerState}`}
-                    aria-live="polite"
-                  >
-                    {answerState === "idle"
-                      ? "Choose the best answer to complete this lesson."
-                      : answerState === "correct"
-                        ? `Correct! ${quiz.feedback.correct || quiz.explanation || "The source supports this answer."}`
-                        : `Not quite. ${quiz.feedback.incorrect || "Review the idea and try again."}`}
-                  </p>
-                </>
-              ) : (
-                <p className="editorial-feedback">
-                  This lesson has no knowledge check yet. You can read it, but
-                  completion and XP are unavailable.
-                </p>
-              )}
-            </section>
-          )}
-          <footer className="editorial-reader-footer lesson-player-actions">
-            <button
-              className="button secondary"
-              type="button"
-              onClick={previousSlide}
-              disabled={slideIndex === 0}
-            >
-              Back
-            </button>
-            <button
-              className="button lesson-continue"
-              type="button"
-              onClick={nextSlide}
-              disabled={showingQuiz && !canComplete}
-            >
-              {showingQuiz ? "Complete lesson" : "Continue lesson"}
-              <ArrowRight aria-hidden="true" size={18} />
-            </button>
-          </footer>
-        </article>
-      ) : null}
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        <LessonPlayer
+          card={activeCard}
+          cardIndex={activeIndex}
+          totalCards={lessonCards.length}
+          flashcards={flashcards}
+          quiz={quiz}
+          slideIndex={slideIndex}
+          selectedAnswer={selectedAnswer}
+          answerState={answerState}
+          canContinue={canContinue}
+          progressStep={progressStep}
+          progressTotal={progressTotal}
+          celebrating={false}
+          headingRef={readerHeadingRef}
+          quizRef={quizHeadingRef}
+          onCardClick={handleCardClick}
+          onBack={closeLesson}
+          onNext={nextSlide}
+          onPrevious={previousSlide}
+          onAnswer={chooseAnswer}
+          onCardPointerDown={handlePointerDown}
+          onCardPointerUp={handlePointerUp}
+        />
+      )}
     </section>
   );
+}
+
+function LearningHeader({
+  message,
+  xp,
+  completedCount,
+}: {
+  message: string;
+  xp: number;
+  completedCount: number;
+}) {
+  return (
+    <header className="duo-learn-topbar">
+      <Image
+        className="learn-logo"
+        src={learningPathAssets.logo}
+        alt="CivicLens"
+        width={160}
+        height={42}
+        priority
+      />
+      <div className="duo-stat" aria-label="Lessons completed">
+        <Flame aria-hidden="true" size={24} />
+        <strong>{completedCount}</strong>
+      </div>
+      <div className="duo-stat duo-stat-xp" aria-label="XP">
+        <Gem aria-hidden="true" size={24} />
+        <strong>{xp.toLocaleString()} XP</strong>
+      </div>
+      <p className="sr-only" aria-live="polite">
+        {message}
+      </p>
+    </header>
+  );
+}
+
+function LessonPlayer({
+  card,
+  cardIndex,
+  totalCards,
+  flashcards,
+  quiz,
+  slideIndex,
+  selectedAnswer,
+  answerState,
+  canContinue,
+  progressStep,
+  progressTotal,
+  celebrating,
+  headingRef,
+  quizRef,
+  onCardClick,
+  onBack,
+  onNext,
+  onPrevious,
+  onAnswer,
+  onCardPointerDown,
+  onCardPointerUp,
+}: {
+  card: FeedCard;
+  cardIndex: number;
+  totalCards: number;
+  flashcards: ReturnType<typeof buildLessonFlashcards>;
+  quiz: ReturnType<typeof normalizeLessonQuiz>;
+  slideIndex: number;
+  selectedAnswer: number | null;
+  answerState: AnswerState;
+  canContinue: boolean;
+  progressStep: number;
+  progressTotal: number;
+  celebrating: boolean;
+  headingRef: RefObject<HTMLHeadingElement | null>;
+  quizRef: RefObject<HTMLHeadingElement | null>;
+  onCardClick: (event: MouseEvent<HTMLButtonElement>) => void;
+  onBack: () => void;
+  onNext: () => void;
+  onPrevious: () => void;
+  onAnswer: (index: number) => void;
+  onCardPointerDown: (event: PointerEvent<HTMLButtonElement>) => void;
+  onCardPointerUp: (event: PointerEvent<HTMLButtonElement>) => void;
+}) {
+  const showingQuiz = slideIndex >= flashcards.length;
+  const slide = flashcards[Math.min(slideIndex, flashcards.length - 1)];
+  const currentAsset = assetForSlide(slide?.imageKey);
+
+  return (
+    <article className="lesson-player" aria-label={`${card.title} lesson`}>
+      <header className="lesson-player-top">
+        <button
+          className="lesson-back-button"
+          type="button"
+          onClick={onBack}
+          aria-label="Back to learning path"
+        >
+          <ArrowLeft aria-hidden="true" size={28} />
+        </button>
+        <Image
+          className="learn-logo lesson-logo"
+          src={learningPathAssets.logo}
+          alt="CivicLens"
+          width={150}
+          height={40}
+        />
+        <div className="lesson-progress-copy">
+          <strong>
+            Lesson {cardIndex + 1} of {totalCards}
+          </strong>
+          <span>{card.category}</span>
+        </div>
+      </header>
+
+      <div
+        className="lesson-progress-bar"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={progressTotal}
+        aria-valuenow={progressStep}
+        aria-label={`Lesson step ${progressStep} of ${progressTotal}`}
+      >
+        {Array.from({ length: Math.max(progressTotal, 1) }).map((_, index) => (
+          <span key={index} className={index < progressStep ? "filled" : ""} />
+        ))}
+      </div>
+
+      <section className="lesson-hero-panel">
+        <div>
+          <p>{card.category}</p>
+          <h1 ref={headingRef} tabIndex={-1}>
+            {card.title}
+          </h1>
+        </div>
+        <Image
+          src={learningPathAssets.capitolPlatform}
+          alt=""
+          width={176}
+          height={144}
+          priority
+        />
+      </section>
+
+      {!showingQuiz && slide ? (
+        <section
+          className="lesson-card-stage"
+          aria-labelledby="lesson-flashcard-heading"
+        >
+          <div className="lesson-stage-title">
+            <Sparkles aria-hidden="true" size={22} />
+            <div>
+              <h2 id="lesson-flashcard-heading">Learn the idea</h2>
+              <p>Tap or swipe to explore</p>
+            </div>
+          </div>
+          <button
+            className="lesson-flashcard tap-card"
+            type="button"
+            onClick={onCardClick}
+            onPointerDown={onCardPointerDown}
+            onPointerUp={onCardPointerUp}
+            aria-label="Advance flashcard"
+          >
+            <span className="flashcard-quote" aria-hidden="true">
+              &ldquo;
+            </span>
+            <Image src={currentAsset} alt="" width={112} height={112} />
+            <p className="eyebrow">
+              {slide.eyebrow ?? `Card ${slideIndex + 1}`}
+            </p>
+            <h3>{slide.title}</h3>
+            <p>{slide.body}</p>
+            {slide.bullets?.length ? (
+              <ul>
+                {slide.bullets.map((bullet) => (
+                  <li key={bullet}>{bullet}</li>
+                ))}
+              </ul>
+            ) : null}
+          </button>
+          <Dots current={slideIndex} total={flashcards.length} />
+        </section>
+      ) : (
+        <section
+          className={`lesson-quiz-panel ${answerState}`}
+          aria-labelledby="lesson-quiz-heading"
+        >
+          <div className="lesson-stage-title">
+            <Image
+              src={learningPathAssets.checkCoin}
+              alt=""
+              width={54}
+              height={54}
+            />
+            <div>
+              <h2 id="lesson-quiz-heading" ref={quizRef} tabIndex={-1}>
+                Quick check
+              </h2>
+              <p>Test your understanding</p>
+            </div>
+          </div>
+          {quiz ? (
+            <>
+              <h3>{quiz.question}</h3>
+              <div className="lesson-answer-grid">
+                {quiz.options.map((option, index) => {
+                  const isSelected = selectedAnswer === index;
+                  const isCorrect = quiz.correctIndex === index;
+                  const reveal = selectedAnswer !== null;
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      className={`lesson-answer${isSelected ? " selected" : ""}${reveal && isCorrect ? " correct" : ""}${reveal && isSelected && !isCorrect ? " wrong" : ""}`}
+                      onClick={() => onAnswer(index)}
+                      aria-pressed={isSelected}
+                    >
+                      <span>
+                        {reveal && isCorrect ? (
+                          <Check aria-hidden="true" size={24} />
+                        ) : null}
+                        {reveal && isSelected && !isCorrect ? (
+                          <X aria-hidden="true" size={24} />
+                        ) : null}
+                      </span>
+                      {option}
+                    </button>
+                  );
+                })}
+              </div>
+              <p
+                className={`lesson-feedback ${answerState}`}
+                aria-live="polite"
+              >
+                {selectedAnswer === null
+                  ? "Pick the best source-backed answer."
+                  : answerState === "correct"
+                    ? `Correct! ${quiz.explanation ?? "Nice source check."}`
+                    : `Not quite. ${quiz.explanation ?? "Try the source-backed choice."}`}
+              </p>
+            </>
+          ) : (
+            <p className="lesson-feedback correct">
+              No quiz is attached to this concept yet. Continue to complete it.
+            </p>
+          )}
+        </section>
+      )}
+
+      <div className="lesson-player-actions">
+        <button
+          className="button secondary"
+          type="button"
+          onClick={onPrevious}
+          disabled={slideIndex === 0}
+        >
+          Back
+        </button>
+        <button
+          className="button yellow lesson-continue"
+          type="button"
+          onClick={onNext}
+          disabled={!canContinue}
+        >
+          {showingQuiz ? "Complete lesson" : "Continue lesson"}{" "}
+          <ArrowRight aria-hidden="true" size={22} />
+        </button>
+      </div>
+
+      {celebrating ? (
+        <div className="lesson-complete-burst" role="status" aria-live="polite">
+          <div className="lesson-complete-card">
+            <Image
+              src={learningPathAssets.starCoin}
+              alt=""
+              width={116}
+              height={116}
+            />
+            <strong>Level complete</strong>
+            <span>+25 XP</span>
+          </div>
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
+function Dots({ current, total }: { current: number; total: number }) {
+  return (
+    <div
+      className="lesson-dots"
+      aria-label={`Flashcard ${current + 1} of ${total}`}
+    >
+      {Array.from({ length: total }).map((_, index) => (
+        <span key={index} className={index === current ? "active" : ""} />
+      ))}
+    </div>
+  );
+}
+
+function getNodeAsset(index: number, isDone: boolean, isActive: boolean) {
+  if (index % 9 === 6) return learningPathAssets.treasureChest;
+  if (isDone) return learningPathAssets.checkCoin;
+  if (isActive) return learningPathAssets.starCoin;
+  return learningPathAssets.capitolPath;
+}
+
+function assetForSlide(key: string | undefined) {
+  if (key && key in learningPathAssets) {
+    return learningPathAssets[key as AssetKey];
+  }
+  return learningPathAssets.capitolPlatform;
 }

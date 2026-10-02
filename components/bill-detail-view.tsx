@@ -1,13 +1,24 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowRight, CalendarDays, FileText, Users, Vote } from "lucide-react";
 import { CitationDrawer } from "./citation-drawer";
 import { getJson, normalizeBillResponse } from "./api";
+import { AssetIcon } from "./AssetIcon";
+import { getBillCategoryAsset } from "../lib/bill-category-assets";
+import { BillProgressPath } from "./mobile/BillProgressPath";
+import { Pill } from "./mobile/Pill";
+import { SourcesCarousel } from "./mobile/SourcesCarousel";
 import type { BillDetail } from "./types";
 
-type BillRecord = BillDetail & { mode?: string };
+const stageIndex: Record<string, number> = {
+  introduced: 0,
+  committee: 1,
+  house: 2,
+  senate: 3,
+  president: 3,
+  law: 4,
+};
 
 export function BillDetailView({
   congress,
@@ -18,7 +29,9 @@ export function BillDetailView({
   type: string;
   number: string;
 }) {
-  const [bill, setBill] = useState<BillRecord | null>(null);
+  const [bill, setBill] = useState<(BillDetail & { mode?: string }) | null>(
+    null,
+  );
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -27,9 +40,10 @@ export function BillDetailView({
     setLoading(true);
     setError("");
     setBill(null);
+
     getJson<unknown>(`/api/bills/${congress}/${type}/${number}`)
       .then((payload) => {
-        if (active) setBill(normalizeBillResponse(payload) as BillRecord);
+        if (active) setBill(normalizeBillResponse(payload));
       })
       .catch((reason) => {
         if (active)
@@ -42,160 +56,232 @@ export function BillDetailView({
       .finally(() => {
         if (active) setLoading(false);
       });
+
     return () => {
       active = false;
     };
   }, [congress, number, type]);
 
-  const actions = useMemo(
-    () =>
-      [...(bill?.actions ?? [])].sort((a, b) =>
-        String(b.date ?? b.actionDate ?? "").localeCompare(
-          String(a.date ?? a.actionDate ?? ""),
-        ),
+  const actions = useMemo(() => {
+    return [...(bill?.actions ?? [])].sort((a, b) =>
+      String(b.date ?? b.actionDate ?? "").localeCompare(
+        String(a.date ?? a.actionDate ?? ""),
       ),
-    [bill?.actions],
-  );
+    );
+  }, [bill?.actions]);
+
+  const label = `${bill?.congress ?? congress}th Congress - ${String(bill?.type ?? type).toUpperCase()} ${
+    bill?.number ?? number
+  }`;
   const title =
     bill?.simpleTitle ?? bill?.shortTitle ?? bill?.title ?? "Bill detail";
-  const summary =
+  const officialTitle = bill?.title ?? bill?.shortTitle ?? title;
+  const oneLineSummary =
     bill?.oneLineSummary ??
     bill?.summary ??
-    "A summary is not available from the returned records.";
+    "Summary unavailable from current sources.";
+  const currentStep = stageIndex[String(bill?.stage ?? "").toLowerCase()] ?? 1;
+  const categoryAsset = getBillCategoryAsset([
+    title,
+    ...(bill?.subjects ?? []),
+  ]);
+
+  if (loading) {
+    return <p className="empty-state">Loading bill details...</p>;
+  }
+
+  if (error) {
+    return (
+      <p className="empty-state" role="alert">
+        {error}
+      </p>
+    );
+  }
 
   return (
-    <section
-      className="editorial-page editorial-bill-detail"
-      aria-label="Bill detail"
-      aria-busy={loading}
-    >
-      <Link href="/bills" className="editorial-row-link">
-        <ArrowLeft size={16} aria-hidden="true" /> All bills
-      </Link>
-      {loading ? (
-        <p className="editorial-empty" role="status">
-          Loading bill details…
+    <section className="page-shell" aria-label="Bill detail">
+      {bill?.mode === "demo" ? (
+        <p className="status-pill warning">
+          Sample record — not a live update.
         </p>
-      ) : error ? (
-        <p className="editorial-notice" role="alert">
-          {error}
-        </p>
-      ) : (
-        <>
-          <header className="editorial-detail-header">
-            <p className="editorial-kicker">
-              {String(bill?.type ?? type).toUpperCase()}{" "}
-              {bill?.number ?? number} · {bill?.congress ?? congress}th Congress
-            </p>
-            <h1>{title}</h1>
-            <p className="editorial-lead">{summary}</p>
-            <div className="editorial-bill-meta">
-              <span>{bill?.currentStatus ?? "Status unavailable"}</span>
-              {bill?.subjects?.slice(0, 3).map((subject) => (
-                <span key={subject}>{subject}</span>
-              ))}
-            </div>
-            <div className="action-row">
-              <CitationDrawer citations={bill?.citations} />
-            </div>
-          </header>
-          {bill?.mode === "demo" ? (
-            <p className="editorial-notice">
-              Sample record · This curated example is not a live update. Check
-              the dated source records before relying on its status.
-            </p>
-          ) : null}
+      ) : null}
+      <article className="bill-hero-card">
+        <div className="bill-hero-copy">
+          <Pill tone="teal">Current step</Pill>
+          <p className="eyebrow">{label}</p>
+          <h1>{title}</h1>
+          <p>{oneLineSummary}</p>
+        </div>
+        <AssetIcon
+          asset={categoryAsset}
+          alt=""
+          decorative
+          size={172}
+          priority
+        />
+        <BillProgressPath currentStep={currentStep} />
+        <div className="action-row">
+          <CitationDrawer citations={bill?.citations} />
+          <span className="status-pill good">
+            {bill?.currentStatus ?? "Status unavailable"}
+          </span>
+          {bill?.subjects?.slice(0, 3).map((subject) => (
+            <span className="tag" key={subject}>
+              {subject}
+            </span>
+          ))}
+        </div>
+      </article>
 
-          <div className="editorial-detail-grid">
+      <section
+        className="info-row-list bill-action-deck"
+        aria-label="Bill details in simple words"
+      >
+        <details className="info-row bill-action-card" open>
+          <summary className="bill-action-summary">
+            <span className="info-icon" aria-hidden="true">
+              <FileText />
+            </span>
             <div>
-              <section className="editorial-section">
-                <p className="editorial-kicker">01 / Context</p>
-                <h2>Why it matters</h2>
-                <p>{bill?.inSimpleWords ?? summary}</p>
-              </section>
-              <section className="editorial-section">
-                <p className="editorial-kicker">02 / Scope</p>
-                <h2>Who is affected</h2>
-                <p>
-                  {bill?.whoIsAffected ??
-                    "The returned official record does not identify specific affected groups."}
-                </p>
-              </section>
-              <section className="editorial-section">
-                <p className="editorial-kicker">03 / Change</p>
-                <h2>What changes</h2>
-                <p>{bill?.whatChanges ?? summary}</p>
-              </section>
-              <details className="editorial-section editorial-disclosure">
-                <summary>Official summary</summary>
-                <p>{bill?.summary ?? "No official summary was returned."}</p>
-                {bill?.title && bill.title !== title ? (
-                  <p className="subtle">Official title: {bill.title}</p>
-                ) : null}
-              </details>
+              <h2 className="section-title">Why it matters</h2>
+              <p>{bill?.inSimpleWords ?? oneLineSummary}</p>
             </div>
-            <aside className="editorial-section" aria-label="Official actions">
-              <p className="editorial-kicker">The timeline</p>
-              <h2>Official actions</h2>
-              {actions.length ? (
-                <ol className="editorial-timeline">
-                  {actions.map((action, index) => (
-                    <li key={`${action.date ?? action.actionDate}-${index}`}>
-                      <time>
-                        {action.date ?? action.actionDate ?? "Date unavailable"}
-                      </time>
-                      <p>
-                        {action.text ??
-                          action.description ??
-                          "Action text unavailable"}
-                      </p>
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <p className="subtle">No action timeline was returned.</p>
-              )}
-            </aside>
+            <ArrowRight
+              className="bill-action-chevron"
+              aria-hidden="true"
+              size={22}
+            />
+          </summary>
+          <div className="bill-action-panel">
+            <p>
+              This section stays with what official sources can support. It does
+              not tell students what position to take.
+            </p>
+            <div className="bill-quest-strip" aria-label="Reading checkpoints">
+              <span>Plain words</span>
+              <span>Source backed</span>
+              <span>Neutral</span>
+            </div>
           </div>
-          <section
-            className="editorial-section"
-            aria-labelledby="bill-sources-heading"
-          >
-            <p className="editorial-kicker">Read the record</p>
-            <h2 id="bill-sources-heading">Sources</h2>
-            {bill?.citations?.length ? (
-              <ol className="editorial-sources">
-                {bill.citations.map((citation, index) => (
-                  <li key={citation.id ?? citation.url ?? index}>
-                    <div>
-                      {citation.url ? (
-                        <a href={citation.url} target="_blank" rel="noreferrer">
-                          {citation.title ?? `Source ${index + 1}`}{" "}
-                          <ArrowUpRight aria-hidden="true" size={16} />
-                        </a>
-                      ) : (
-                        <strong>
-                          {citation.title ?? `Source ${index + 1}`}
-                        </strong>
-                      )}
-                      <p className="subtle">
-                        {[citation.sourceType, citation.sourceDate]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </p>
-                      {citation.excerpt ? <p>{citation.excerpt}</p> : null}
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <p className="subtle">
-                No citations were returned for this record.
+        </details>
+
+        <details className="info-row bill-action-card">
+          <summary className="bill-action-summary">
+            <span className="info-icon" aria-hidden="true">
+              <Users />
+            </span>
+            <div>
+              <h2 className="section-title">Who is affected</h2>
+              <p>
+                {bill?.whoIsAffected ??
+                  "The returned official summary does not identify a specific affected group."}
               </p>
-            )}
-          </section>
-        </>
-      )}
+            </div>
+            <ArrowRight
+              className="bill-action-chevron"
+              aria-hidden="true"
+              size={22}
+            />
+          </summary>
+          <div className="bill-action-panel">
+            <p>
+              Treat this as a scope clue, not a prediction. If the official
+              record does not name a group, CivicLens says so.
+            </p>
+          </div>
+        </details>
+
+        <details className="info-row bill-action-card">
+          <summary className="bill-action-summary">
+            <span className="info-icon" aria-hidden="true">
+              <Vote />
+            </span>
+            <div>
+              <h2 className="section-title">What changes</h2>
+              <p>{bill?.whatChanges ?? oneLineSummary}</p>
+            </div>
+            <ArrowRight
+              className="bill-action-chevron"
+              aria-hidden="true"
+              size={22}
+            />
+          </summary>
+          <div className="bill-action-panel">
+            <p>
+              Check this against cited records and public-law text when
+              available.
+            </p>
+            <div className="bill-quest-strip" aria-label="Evidence checkpoints">
+              <span>Record</span>
+              <span>Text</span>
+              <span>Decision</span>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <details className="official-summary panel">
+        <summary>Official summary</summary>
+        <p>{bill?.summary ?? "No official summary was returned."}</p>
+        {officialTitle !== title ? (
+          <p className="subtle">{officialTitle}</p>
+        ) : null}
+      </details>
+
+      <details className="panel form-grid bill-sources-details" open>
+        <summary className="bill-section-summary">
+          <div className="section-row">
+            <h2 className="section-title">Sources</h2>
+            <Pill tone="blue">{bill?.citations?.length ?? 0}</Pill>
+          </div>
+          <ArrowRight
+            className="bill-action-chevron"
+            aria-hidden="true"
+            size={22}
+          />
+        </summary>
+        <SourcesCarousel citations={bill?.citations} />
+        <CitationDrawer
+          citations={bill?.citations}
+          label="Open source drawer"
+        />
+      </details>
+
+      <section className="panel form-grid">
+        <div className="section-row">
+          <div>
+            <p className="eyebrow">Timeline</p>
+            <h2 className="section-title">Official actions</h2>
+          </div>
+          <span className="status-pill">{actions.length} actions</span>
+        </div>
+
+        {actions.length ? (
+          <ol className="timeline">
+            {actions.slice(0, 6).map((action, index) => (
+              <li
+                className="timeline-item"
+                key={`${action.date ?? action.actionDate}-${index}`}
+              >
+                <span className="timeline-marker" aria-hidden="true" />
+                <div className="timeline-content">
+                  <time>
+                    <CalendarDays aria-hidden="true" size={14} />{" "}
+                    {action.date ?? action.actionDate ?? "Date unavailable"}
+                  </time>
+                  <p>
+                    {action.text ??
+                      action.description ??
+                      "Action text unavailable"}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="empty-state">No action timeline returned.</p>
+        )}
+      </section>
     </section>
   );
 }

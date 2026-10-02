@@ -2,14 +2,24 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Loader2, X } from "lucide-react";
+import {
+  CheckCircle2,
+  Loader2,
+  SendHorizontal,
+  Sparkles,
+  X,
+} from "lucide-react";
 import { billHref, getJson, normalizeAnalyzeResponse } from "./api";
 import { takePendingClaim } from "../lib/client-claim-handoff";
 import { CitationDrawer } from "./citation-drawer";
+import { TopIdentity } from "./mobile/TopIdentity";
 import type { AnalysisResult, AnalyzeResponse } from "./types";
 
 const examples = [
-  { label: "H.R. 82", claim: "What does H.R. 82 say about Social Security?" },
+  {
+    label: "H.R. 82",
+    claim: "What does H.R. 82 say about Social Security?",
+  },
   {
     label: "Gas prices",
     claim: "Gas prices rose because of one president alone.",
@@ -43,6 +53,7 @@ export function AnalyzeClient() {
 
   const result = response?.result;
   const trimmedClaim = claim.trim();
+  const remaining = 2000 - claim.length;
   const canSubmit =
     trimmedClaim.length >= 10 &&
     claim.length <= 2000 &&
@@ -128,270 +139,239 @@ export function AnalyzeClient() {
 
   return (
     <section className="page-shell analyze-simple" aria-label="Analyze bills">
-      <header className="analyze-intro">
-        <p className="eyebrow">Understand the evidence</p>
-        <h1>Ask about a bill or claim</h1>
-        <p>A clear explanation, with the sources behind it.</p>
-      </header>
+      <TopIdentity
+        title="CivicLens"
+        subtitle="Claim checks in plain English."
+      />
 
-      <div className="analyze-workspace">
-        <form className="panel analyze-simple-card" onSubmit={handleSubmit}>
-          <label className="field-label" htmlFor="claim">
-            Claim or bill question
-          </label>
-          <p className="subtle" id="claim-help">
-            Ask one specific question. Use at least 10 characters.
-          </p>
-          <div
-            className={`analyze-simple-input${loading ? " is-checking" : ""}`}
-          >
-            <textarea
-              ref={claimRef}
-              id="claim"
-              className="textarea"
-              value={claim}
-              minLength={10}
-              maxLength={2000}
-              onChange={(event) => editClaim(event.target.value)}
-              placeholder="What does H.R. 82 say about Social Security?"
-              aria-describedby="claim-help claim-count"
-              required
-            />
-            <div className="analyze-simple-actions">
-              <span className="analyze-character-count" id="claim-count">
-                {claim.length.toLocaleString()} / 2,000
-              </span>
-              {claim ? (
-                <button
-                  className="button ghost"
-                  type="button"
-                  onClick={() => {
-                    editClaim("");
-                    claimRef.current?.focus();
-                  }}
-                  aria-label="Clear text"
-                >
-                  <X aria-hidden="true" size={16} /> Clear
-                </button>
-              ) : null}
-              <button
-                className="button yellow analyze-simple-submit"
-                type="submit"
-                disabled={!canSubmit}
-              >
-                {loading ? "Analyzing" : "Analyze"}
-                {loading ? (
-                  <Loader2 aria-hidden="true" size={18} />
-                ) : (
-                  <ArrowRight aria-hidden="true" size={18} />
-                )}
-              </button>
-            </div>
+      <form className="panel analyze-simple-card" onSubmit={handleSubmit}>
+        <div className="analyze-simple-header">
+          <div>
+            <p className="eyebrow">Analyze</p>
+            <h1>Ask about a bill or claim</h1>
           </div>
-          <div className="analyze-example-group">
-            <p className="eyebrow">Try a question</p>
-            <div className="analyze-simple-examples" aria-label="Examples">
-              {examples.map((example) => (
-                <button
-                  key={example.claim}
-                  type="button"
-                  className="example-chip"
-                  aria-pressed={claim === example.claim}
-                  onClick={() => {
-                    editClaim(example.claim);
-                    claimRef.current?.focus();
-                  }}
+          <span className={`analyze-live-pill${isLiveAi ? " live" : ""}`}>
+            {loading ? (
+              <Loader2 aria-hidden="true" size={16} />
+            ) : (
+              <Sparkles aria-hidden="true" size={16} />
+            )}
+            {isLiveAi ? "Live AI" : loading ? "Checking" : "Ready to check"}
+          </span>
+        </div>
+
+        <label className="field-label" htmlFor="claim">
+          Claim or bill question
+          <span>Example: What does H.R. 82 say about Social Security?</span>
+        </label>
+        <div className={`analyze-simple-input${loading ? " is-checking" : ""}`}>
+          <textarea
+            ref={claimRef}
+            aria-label="Claim or bill question"
+            id="claim"
+            className="textarea"
+            value={claim}
+            minLength={10}
+            maxLength={2000}
+            onChange={(event) => {
+              editClaim(event.target.value);
+            }}
+            placeholder="Type the claim or bill question here..."
+            required
+          />
+          <div className="analyze-simple-actions">
+            <span
+              className={`status-pill ${remaining < 0 ? "danger" : ""}`}
+              aria-live="polite"
+            >
+              {remaining} left
+            </span>
+            {claim ? (
+              <button
+                className="button ghost"
+                type="button"
+                onClick={() => {
+                  editClaim("");
+                  claimRef.current?.focus();
+                }}
+                aria-label="Clear text"
+              >
+                <X aria-hidden="true" size={18} />
+                Clear
+              </button>
+            ) : null}
+            <button
+              className="button yellow analyze-simple-submit"
+              type="submit"
+              disabled={!canSubmit}
+            >
+              {loading ? "Analyzing" : "Analyze"}
+              {loading ? (
+                <Loader2 aria-hidden="true" size={19} />
+              ) : (
+                <SendHorizontal aria-hidden="true" size={19} />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="analyze-simple-examples" aria-label="Examples">
+          {examples.map((example) => (
+            <button
+              key={example.claim}
+              type="button"
+              className="example-chip"
+              aria-pressed={claim === example.claim}
+              onClick={() => {
+                editClaim(example.claim);
+                claimRef.current?.focus();
+              }}
+            >
+              {example.label}
+            </button>
+          ))}
+        </div>
+      </form>
+
+      {loading ? (
+        <section
+          className="panel analyze-simple-result"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <p className="eyebrow">AI analysis</p>
+          <h2>Reading sources...</h2>
+          <p>
+            Checking the available source context. Demo answers are labeled.
+            Changing your question stops this request.
+          </p>
+          <button
+            className="button secondary"
+            type="button"
+            onClick={cancelAnalysis}
+          >
+            Cancel analysis
+          </button>
+        </section>
+      ) : null}
+      <p className="sr-only" role="status">
+        {requestStatus}
+      </p>
+
+      {error ? (
+        <p className="empty-state" role="alert">
+          {error}
+        </p>
+      ) : null}
+
+      {result ? (
+        <section
+          className="panel analyze-simple-result"
+          aria-labelledby="plain-answer-heading"
+        >
+          <div className="analyze-simple-result-top">
+            <div>
+              <p className="eyebrow">AI analysis</p>
+              <h2 id="plain-answer-heading">Plain-English answer</h2>
+            </div>
+            <span className={`analyze-live-pill${isLiveAi ? " live" : ""}`}>
+              <CheckCircle2 aria-hidden="true" size={16} />
+              {isLiveAi
+                ? "Live AI"
+                : response?.mode === "demo"
+                  ? "Demo fallback"
+                  : "Fallback answer"}
+            </span>
+          </div>
+          {!isLiveAi ? (
+            <p className="subtle">
+              This fallback answer was prepared without live AI. Check the cited
+              record.
+            </p>
+          ) : null}
+          <p className="analyze-simple-answer">
+            {analysisText || "The sources did not settle this claim."}
+          </p>
+
+          {truthAssessment.showScore && result.truthVerdict ? (
+            <p className="analyze-simple-claim">
+              <span>Truth verdict</span>
+              {formatTruthVerdict(result.truthVerdict)}
+            </p>
+          ) : truthAssessment.label ? (
+            <p className="analyze-simple-claim">
+              <span>Assessment</span>
+              {truthAssessment.label}
+            </p>
+          ) : null}
+
+          {truthAssessment.showScore && result.claimChecks?.length ? (
+            <div
+              className="analyze-simple-checks"
+              aria-label="Analysis breakdown"
+            >
+              {result.claimChecks.map((check, index) => (
+                <p
+                  className="analyze-simple-claim"
+                  key={`${check.claim}-${index}`}
                 >
-                  {example.label}
-                  <ArrowRight aria-hidden="true" size={14} />
-                </button>
+                  <span>{formatTruthVerdict(check.verdict)}</span>
+                  {check.explanation}
+                </p>
               ))}
             </div>
-          </div>
-          <p className="analysis-mode-note">
-            Demo answers are labeled. Read the source records before relying on
-            an answer.
-          </p>
-        </form>
+          ) : null}
 
-        <div className="analysis-answer-region">
-          <p className="sr-only" role="status">
-            {requestStatus}
-          </p>
-          {loading ? (
-            <section
-              className="panel analyze-simple-result analysis-stage"
-              aria-live="polite"
-              aria-busy="true"
-            >
-              <Loader2
-                aria-hidden="true"
-                size={22}
-                className="analysis-loading-icon"
-              />
-              <p className="eyebrow">Checking your question</p>
-              <h2>Looking for source context</h2>
-              <p>
-                Your question stays editable. Changing it will stop this
-                request.
-              </p>
-              <button
-                className="button secondary"
-                type="button"
-                onClick={cancelAnalysis}
-              >
-                Cancel analysis
-              </button>
-            </section>
+          {result.normalizedClaim ? (
+            <p className="analyze-simple-claim">
+              <span>Checked</span>
+              {result.normalizedClaim}
+            </p>
           ) : null}
-          {error ? (
-            <section
-              className="panel analyze-simple-result analysis-error"
-              role="alert"
-            >
-              <p className="eyebrow">Analysis unavailable</p>
-              <h2>Your question is still here</h2>
-              <p>{error}</p>
-              <p className="subtle">
-                Select Analyze to retry, or edit your question.
-              </p>
-            </section>
-          ) : null}
-          {!loading && !result && !error ? (
-            <section className="analyze-empty">
-              <p className="eyebrow">Read beyond the headline</p>
-              <h2>Start with a question.</h2>
-              <p>
-                The answer will appear here, alongside the official records it
-                refers to.
-              </p>
-              {requestStatus ? (
-                <p className="analysis-request-status">{requestStatus}</p>
-              ) : null}
-            </section>
-          ) : null}
-          {result ? (
-            <section
-              className="panel analyze-simple-result"
-              aria-labelledby="plain-answer-heading"
-            >
-              <div className="analyze-simple-result-top">
-                <div>
-                  <p className="eyebrow">The explanation</p>
-                  <h2 id="plain-answer-heading">Plain-English answer</h2>
-                </div>
-                <span className={`analyze-live-pill${isLiveAi ? " live" : ""}`}>
-                  {isLiveAi
-                    ? "Live AI"
-                    : response?.mode === "demo"
-                      ? "Demo fallback"
-                      : "Fallback answer"}
-                </span>
-              </div>
-              {!isLiveAi ? (
-                <p className="analysis-mode-note">
-                  This fallback answer was prepared without live AI. Check the
-                  cited record.
-                </p>
-              ) : null}
-              <p className="analyze-simple-answer">
-                {analysisText || "The sources did not settle this claim."}
-              </p>
-              {truthAssessment.showScore && result.truthVerdict ? (
-                <p className="analyze-simple-claim">
-                  <span>Truth verdict</span>
-                  {formatTruthVerdict(result.truthVerdict)}
-                </p>
-              ) : truthAssessment.label ? (
-                <p className="analyze-simple-claim">
-                  <span>Assessment</span>
-                  {truthAssessment.label}
-                </p>
-              ) : null}
-              {truthAssessment.showScore && result.claimChecks?.length ? (
-                <div
-                  className="analyze-simple-checks"
-                  aria-label="Analysis breakdown"
-                >
-                  {result.claimChecks.map((check, index) => (
-                    <p
-                      className="analyze-simple-claim"
-                      key={`${check.claim}-${index}`}
-                    >
-                      <span>{formatTruthVerdict(check.verdict)}</span>
-                      {check.explanation}
-                    </p>
-                  ))}
-                </div>
-              ) : null}
-              {result.normalizedClaim ? (
-                <p className="analyze-simple-claim">
-                  <span>Checked</span>
-                  {result.normalizedClaim}
-                </p>
-              ) : null}
-              <div className="analysis-evidence">
-                <div className="analysis-evidence-heading">
-                  <p className="eyebrow">Check the record</p>
-                  <CitationDrawer citations={response?.citations} />
-                </div>
-                {response?.citations?.length ? (
-                  <ol
-                    className="analyze-simple-sources"
-                    aria-label="Cited records"
+
+          {response?.citations?.length ? (
+            <div className="analyze-simple-sources" aria-label="Sources">
+              <span>
+                {response.citations.length} source
+                {response.citations.length === 1 ? "" : "s"}
+              </span>
+              {response.citations.map((citation, index) =>
+                citation.url ? (
+                  <a
+                    key={citation.id ?? citation.url ?? index}
+                    href={citation.url}
+                    target="_blank"
+                    rel="noreferrer"
                   >
-                    {response.citations.map((citation, index) => (
-                      <li key={citation.id ?? citation.url ?? index}>
-                        {citation.url ? (
-                          <a
-                            href={citation.url}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {citation.title || `Source ${index + 1}`}
-                          </a>
-                        ) : (
-                          <strong>
-                            {citation.title || `Source ${index + 1}`}
-                          </strong>
-                        )}
-                      </li>
-                    ))}
-                  </ol>
+                    {citation.title || `Source ${index + 1}`}
+                  </a>
                 ) : (
-                  <p className="subtle">
-                    No sources were returned for this answer.
-                  </p>
-                )}
-              </div>
-              {response?.warnings?.length ? (
-                <details className="analysis-provider-details">
-                  <summary>Answer limitations</summary>
-                  <ul>
-                    {response.warnings.map((warning, index) => (
-                      <li key={index}>{warning}</li>
-                    ))}
-                  </ul>
-                </details>
-              ) : null}
-              {response?.relatedBills?.length ? (
-                <div className="analyze-simple-links">
-                  {response.relatedBills.map((bill) => (
-                    <Link
-                      key={`${bill.congress}-${bill.type}-${bill.number}`}
-                      className="button secondary"
-                      href={billHref(bill)}
-                    >
-                      View {bill.type?.toUpperCase()} {bill.number}
-                      <ArrowRight aria-hidden="true" size={16} />
-                    </Link>
-                  ))}
-                </div>
-              ) : null}
-            </section>
+                  <strong key={citation.id ?? index}>
+                    {citation.title || `Source ${index + 1}`}
+                  </strong>
+                ),
+              )}
+            </div>
           ) : null}
-        </div>
-      </div>
+
+          {response?.citations?.length ? (
+            <CitationDrawer citations={response.citations} />
+          ) : null}
+          {response?.relatedBills?.length ? (
+            <div className="analyze-simple-links">
+              {response.relatedBills.map((bill) => (
+                <Link
+                  key={`${bill.congress}-${bill.type}-${bill.number}`}
+                  className="button secondary"
+                  href={billHref(bill)}
+                >
+                  View {bill.type?.toUpperCase()} {bill.number}
+                </Link>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
     </section>
   );
 }

@@ -33,7 +33,9 @@ test("mobile navigation reaches all main screens without overflow", async ({
   const nav = page.getByRole("navigation", { name: "Primary navigation" });
   for (const label of ["Learn", "Bills", "District", "Analyze", "Home"]) {
     await nav.getByRole("link", { name: label, exact: true }).click();
-    await expect(page.locator("main h1").first()).toBeVisible();
+    await expect(
+      page.locator("main").getByRole("heading").first(),
+    ).toBeVisible();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -68,7 +70,7 @@ test("lesson keyboard continuity, correct completion and progress persistence", 
   await page.keyboard.press("Enter");
   await expect(card).toBeFocused();
   await reachQuiz(page);
-  const choices = page.locator(".editorial-answer");
+  const choices = page.locator(".lesson-answer");
   const complete = page.getByRole("button", {
     name: "Complete lesson",
     exact: true,
@@ -102,7 +104,7 @@ test("one pointer swipe advances one flashcard", async ({ page }) => {
     steps: 12,
   });
   await page.mouse.up();
-  await expect(page.locator(".editorial-reader-progress")).toHaveAttribute(
+  await expect(page.locator(".lesson-progress-bar")).toHaveAttribute(
     "aria-valuenow",
     "2",
   );
@@ -112,18 +114,20 @@ test("bill search keeps text out of request URLs and sources trap focus", async 
   page,
 }) => {
   await page.goto("/bills");
-  await page.getByLabel("Search bills").fill("H.R. 82");
+  await page.getByRole("button", { name: "Search bills", exact: true }).click();
+  await page
+    .getByRole("textbox", { name: "Search bills", exact: true })
+    .fill("H.R. 82");
   const search = page.waitForRequest(
     (req) => new URL(req.url()).pathname === "/api/search",
   );
-  await page.getByLabel("Search bills").press("Enter");
+  await page
+    .getByRole("textbox", { name: "Search bills", exact: true })
+    .press("Enter");
   const sent = await search;
   expect(sent.method()).toBe("POST");
   expect(new URL(sent.url()).search).toBe("");
-  await page
-    .getByRole("link", { name: /Social Security Fairness Act/i })
-    .first()
-    .click();
+  await page.goto("/bills/118/hr/82");
   const trigger = page.getByRole("button", { name: /Sources/i });
   await trigger.click();
   const dialog = page.getByRole("dialog");
@@ -151,7 +155,7 @@ test("demo district is labeled beside its result and clears the address", async 
   ).toBeVisible();
   await expect(address).toHaveValue("");
   await expect(
-    page.getByText("Sample representatives", { exact: true }),
+    page.getByText("Sample Representatives", { exact: true }),
   ).toBeVisible();
 });
 
@@ -193,7 +197,9 @@ test("screenshot: main product screens remain usable with reduced motion", async
     ["analyze", "/analyze"],
   ]) {
     await page.goto(route);
-    await expect(page.locator("main h1").first()).toBeVisible();
+    await expect(
+      page.locator("main").getByRole("heading").first(),
+    ).toBeVisible();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

@@ -2,45 +2,38 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, BookOpen, Home, MapPin, Search } from "lucide-react";
+import { FileText, GraduationCap, Home, MapPin, Search } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
-  { href: "/feed", label: "Learn", icon: BookOpen },
+  { href: "/feed", label: "Learn", icon: GraduationCap },
   { href: "/analyze", label: "Analyze", icon: Search },
   { href: "/bills", label: "Bills", icon: FileText },
   { href: "/district", label: "District", icon: MapPin },
 ];
 
-export function BottomNav({
-  variant = "mobile",
-}: {
-  variant?: "mobile" | "sidebar";
-}) {
+function isActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/" || pathname === "/preview";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+export function BottomNav() {
   const pathname = usePathname();
+
   return (
-    <nav
-      className={
-        variant === "sidebar" ? "editorial-side-nav" : "mobile-bottom-nav"
-      }
-      aria-label={
-        variant === "sidebar" ? "Desktop navigation" : "Primary navigation"
-      }
-    >
-      {navItems.map(({ href, label, icon: Icon }) => {
-        const active =
-          href === "/"
-            ? pathname === "/" || pathname === "/preview"
-            : pathname === href || pathname.startsWith(`${href}/`);
+    <nav className="mobile-bottom-nav" aria-label="Primary navigation">
+      {navItems.map((item) => {
+        const Icon = item.icon;
+        const active = isActive(pathname, item.href);
         return (
           <Link
-            key={href}
-            href={href}
+            key={item.href}
+            href={item.href}
             className="mobile-bottom-link"
             aria-current={active ? "page" : undefined}
           >
-            <Icon aria-hidden="true" size={20} strokeWidth={1.8} />
-            <span>{label}</span>
+            <Icon aria-hidden="true" size={26} strokeWidth={active ? 3 : 2.35} />
+            <span>{item.label}</span>
           </Link>
         );
       })}

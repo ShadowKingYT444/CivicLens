@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
 import type { Citation } from "./types";
 
 function citationTitle(citation: Citation, index: number) {
@@ -22,7 +21,6 @@ export function CitationDrawer({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleId = useId();
-  const descriptionId = useId();
   const usableCitations = citations?.filter(Boolean) ?? [];
 
   function closeDrawer() {
@@ -84,7 +82,6 @@ export function CitationDrawer({
               className="drawer-backdrop"
               data-state={state}
               aria-labelledby={titleId}
-              aria-describedby={descriptionId}
               onCancel={(event) => {
                 event.preventDefault();
                 closeDrawer();
@@ -111,34 +108,26 @@ export function CitationDrawer({
             >
               <section className="drawer" data-state={state}>
                 <div className="drawer-header">
-                  <div>
-                    <p className="eyebrow">The official record</p>
-                    <h2 id={titleId} className="section-title">
-                      Sources
-                    </h2>
-                  </div>
+                  <h2 id={titleId} className="section-title">
+                    Sources
+                  </h2>
                   <button
-                    ref={closeButtonRef}
                     type="button"
-                    className="button secondary drawer-close"
+                    ref={closeButtonRef}
+                    className="button secondary"
                     onClick={closeDrawer}
                   >
-                    <X aria-hidden="true" size={16} /> Close
+                    Close
                   </button>
                 </div>
-                <p className="subtle" id={descriptionId}>
-                  Read the underlying records. Source links open in a new tab.
-                </p>
-                <ol className="citation-list">
-                  {usableCitations.map((citation, index) => (
-                    <li
-                      className="citation-item"
-                      key={citation.id ?? citation.url ?? index}
-                    >
-                      <span className="citation-number" aria-hidden="true">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <div>
+
+                {usableCitations.length > 0 ? (
+                  <ol className="citation-list">
+                    {usableCitations.map((citation, index) => (
+                      <li
+                        className="citation-item"
+                        key={citation.id ?? citation.url ?? index}
+                      >
                         {citation.url ? (
                           <a
                             href={citation.url}
@@ -153,13 +142,17 @@ export function CitationDrawer({
                         <p className="subtle">
                           {[citation.sourceType, citation.sourceDate]
                             .filter(Boolean)
-                            .join(" · ") || "Source context"}
+                            .join(" - ") || "Source context"}
                         </p>
                         {citation.excerpt ? <p>{citation.excerpt}</p> : null}
-                      </div>
-                    </li>
-                  ))}
-                </ol>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="empty-state">
+                    No citations were returned for this item.
+                  </p>
+                )}
               </section>
             </dialog>,
             document.body,
