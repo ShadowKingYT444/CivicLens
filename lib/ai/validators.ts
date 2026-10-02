@@ -1,3 +1,4 @@
+import { containsAddressLikeText } from "../privacy/redaction";
 import { createHash } from "crypto";
 import {
   AnalysisResultSchema,
@@ -71,6 +72,8 @@ export type CitationValidationResult = {
   errors: string[];
 };
 
+export class AnalysisValidationError extends Error {}
+
 export function sha256Hex(input: string): string {
   return createHash("sha256").update(input).digest("hex");
 }
@@ -111,39 +114,25 @@ export function projectAnalysisResultForStorage(
   return projected;
 }
 
-const STREET_ADDRESS_SOURCE = String.raw`\b\d{1,6}\s+[A-Za-z0-9'.-]+(?:\s+[A-Za-z0-9'.-]+){0,6}\s+(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr|Lane|Ln|Court|Ct|Way|Place|Pl|Terrace|Ter|Parkway|Pkwy|Highway|Hwy|Circle|Cir|Trail|Trl|Square|Sq|Loop|Plaza)\.?\b(?:\s+(?:Apt|Apartment|Unit|Suite|#)\s*[A-Za-z0-9-]+)?`;
-const NUMBERED_ROUTE_ADDRESS_SOURCE = String.raw`\b\d{1,6}\s+(?:(?:U\.?S\.?|State|County)\s+)?(?:Highway|Hwy|Route|Rte|County\s+Road|CR)\s*\d+[A-Za-z-]*(?:\s+(?:Box|Unit)\s*[A-Za-z0-9-]+)?\b`;
-const RURAL_ROUTE_ADDRESS_SOURCE = String.raw`\b(?:Rural\s+Route|RR|HC)\s*\d+[A-Za-z-]*(?:\s*,?\s*Box\s*[A-Za-z0-9-]+)?\b`;
-const PO_BOX_ADDRESS_SOURCE = String.raw`\b(?:P\.?\s*O\.?|Post\s+Office)\s+Box\s*[A-Za-z0-9-]+\b`;
-const CONTEXTUAL_ADDRESS_SOURCE = String.raw`\b(?:(?:my|our)\s+)?(?:home\s+|mailing\s+|street\s+)?address\s*(?:is|:)\s*[^,;.!?\n]{2,100}|\b(?:I|we)\s+live\s+at\s+[^,;.!?\n]{2,100}`;
-
-function addressPatterns(flags: string): RegExp[] {
-  return [
-    PO_BOX_ADDRESS_SOURCE,
-    RURAL_ROUTE_ADDRESS_SOURCE,
-    NUMBERED_ROUTE_ADDRESS_SOURCE,
-    STREET_ADDRESS_SOURCE,
-    CONTEXTUAL_ADDRESS_SOURCE,
-  ].map((source) => new RegExp(source, flags));
+export function projectCitationsForStorage(citations: unknown[], storeRawInputs: boolean): unknown[] {
+  if (storeRawInputs) return citations;
+  return citations.flatMap((value) => {
+    const parsed = CitationSchema.safeParse(value);
+    if (!parsed.success) return [];
+    const { id, sourceDocumentId, sourceType, bill } = parsed.data;
+    const url = new URL(parsed.data.url);
+    url.search = "";
+    url.hash = "";
+    url.username = "";
+    url.password = "";
+    return [{ id, sourceDocumentId, sourceType, url: url.toString(), ...(bill ? { bill } : {}) }];
+  });
 }
 
-export function redactSensitiveText(input: string): string {
-  const addressRedacted = addressPatterns("gi").reduce(
-    (text, pattern) => text.replace(pattern, "[redacted address]"),
-    input,
-  );
-
-  return addressRedacted
-    .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, "[redacted email]")
-    .replace(
-      /\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g,
-      "[redacted phone]",
-    );
-}
+export { redactSensitiveText } from "../privacy/redaction";
 
 export function looksLikeAddress(input: string): boolean {
-  const unredactedText = input.replace(/\[redacted address\]/gi, " ");
-  return addressPatterns("i").some((pattern) => pattern.test(unredactedText));
+  return containsAddressLikeText(input.replace(/\[redacted address\]/gi, " "));
 }
 
 export function isPersuasionOrVotingAdvice(input: string): boolean {
@@ -154,7 +143,7 @@ export function isOfficialSourceUrl(url: string): boolean {
   try {
     const parsed = new URL(url);
     const host = parsed.hostname.toLowerCase();
-    return OFFICIAL_SOURCE_HOSTS.some(
+    return parsed.protocol === "https:" && !parsed.username && !parsed.password && OFFICIAL_SOURCE_HOSTS.some(
       (officialHost) =>
         host === officialHost || host.endsWith(`.${officialHost}`),
     );
@@ -195,7 +184,7 @@ export function validateCitations(
 export function parseJsonObject(raw: string): unknown {
   const parsed = JSON.parse(raw.trim());
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw new Error("Expected a strict JSON object");
+    throw new AnalysisValidationError("Expected a strict JSON object");
   }
 
   return parsed;
@@ -214,7 +203,7 @@ export function validateAnalysisPayload(
   const serialized = JSON.stringify(result);
 
   if (collectStrings(result).some(containsPoliticalPersuasion)) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "Analysis output contains political persuasion or voting advice",
     );
   }
@@ -225,7 +214,7 @@ export function validateAnalysisPayload(
   const independentlyCheckableClauseCount =
     countIndependentlyCheckableClauses(claimToCheck);
   if (independentlyCheckableClauseCount > result.claimChecks.length) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "Compound claim must be decomposed into separate claim checks",
     );
   }
@@ -239,8 +228,8 @@ export function validateAnalysisPayload(
   );
   const unknownIds = citedIds.filter((id) => !citationIds.has(id));
   if (unknownIds.length > 0) {
-    throw new Error(
-      `Unknown citation ids: ${Array.from(new Set(unknownIds)).join(", ")}`,
+    throw new AnalysisValidationError(
+      "Unknown citation ids",
     );
   }
 
@@ -248,8 +237,8 @@ export function validateAnalysisPayload(
     .flatMap((check) => check.citationIds)
     .filter((id) => !citationIds.has(id));
   if (unknownClaimCheckIds.length > 0) {
-    throw new Error(
-      `Unknown claim-check citation ids: ${Array.from(new Set(unknownClaimCheckIds)).join(", ")}`,
+    throw new AnalysisValidationError(
+      "Unknown claim-check citation ids",
     );
   }
 
@@ -257,14 +246,14 @@ export function validateAnalysisPayload(
     .flatMap((question) => question.citationIds)
     .filter((id) => !citationIds.has(id));
   if (unknownQuizCitationIds.length > 0) {
-    throw new Error(
-      `Unknown quiz citation ids: ${Array.from(new Set(unknownQuizCitationIds)).join(", ")}`,
+    throw new AnalysisValidationError(
+      "Unknown quiz citation ids",
     );
   }
 
   for (const question of result.quiz) {
     if (citations.length > 0 && question.citationIds.length === 0) {
-      throw new Error(
+      throw new AnalysisValidationError(
         "Every quiz generated from official evidence requires a supplied citation id",
       );
     }
@@ -285,7 +274,7 @@ export function validateAnalysisPayload(
       check.verdict !== "unverifiable" && check.citationIds.length === 0,
   );
   if (uncitedSettledCheck) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "Every settled claim check requires at least one supplied citation id",
     );
   }
@@ -295,7 +284,7 @@ export function validateAnalysisPayload(
       continue;
     }
     if (check.verdict === "mixed") {
-      throw new Error(
+      throw new AnalysisValidationError(
         "A mixed claim check must be decomposed into directional checks",
       );
     }
@@ -320,7 +309,7 @@ export function validateAnalysisPayload(
     result.claimChecks.every((check) => check.verdict === "unverifiable") &&
     result.truthVerdict !== "unverifiable"
   ) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "An analysis with only unverifiable claim checks must have an unverifiable overall verdict",
     );
   }
@@ -329,7 +318,7 @@ export function validateAnalysisPayload(
     result.truthVerdict === "true" &&
     result.claimChecks.some((check) => check.verdict !== "true")
   ) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "A true overall verdict requires every material claim check to be true",
     );
   }
@@ -338,7 +327,7 @@ export function validateAnalysisPayload(
     result.truthVerdict === "false" &&
     result.claimChecks.some((check) => check.verdict !== "false")
   ) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "A false overall verdict requires every material claim check to be false",
     );
   }
@@ -355,7 +344,7 @@ export function validateAnalysisPayload(
       )
     )
   ) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "A mixed overall verdict requires both supported and contradicted material claim checks",
     );
   }
@@ -366,7 +355,7 @@ export function validateAnalysisPayload(
       (check) => check.verdict === "true" || check.verdict === "mostly_true",
     )
   ) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "A mostly_true overall verdict requires supported material evidence",
     );
   }
@@ -377,7 +366,7 @@ export function validateAnalysisPayload(
       (check) => check.verdict === "false" || check.verdict === "mostly_false",
     )
   ) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "A mostly_false overall verdict requires contradicted material evidence",
     );
   }
@@ -386,17 +375,17 @@ export function validateAnalysisPayload(
     result.claimChecks.map((check) => check.verdict),
   );
   if (result.truthVerdict !== derivedVerdict) {
-    throw new Error(
+    throw new AnalysisValidationError(
       `Overall truth verdict must be derived from claim checks as ${derivedVerdict}`,
     );
   }
 
   if (result.evidenceStatus === "grounded" && citations.length === 0) {
-    throw new Error("Grounded analysis requires citations");
+    throw new AnalysisValidationError("Grounded analysis requires citations");
   }
 
   if (result.truthVerdict !== "unverifiable" && citations.length === 0) {
-    throw new Error("A substantive truth verdict requires citations");
+    throw new AnalysisValidationError("A substantive truth verdict requires citations");
   }
 
   return result;
@@ -511,7 +500,7 @@ function validateClaimCheckAlignment(
   const overlap = expectedTerms.filter((term) => checkedTerms.has(term)).length;
   const requiredOverlap = Math.max(2, Math.ceil(expectedTerms.length * 0.6));
   if (expectedTerms.length >= 2 && overlap < requiredOverlap) {
-    throw new Error("Claim checks do not cover the student's actual claim");
+    throw new AnalysisValidationError("Claim checks do not cover the student's actual claim");
   }
 
   const expectedClauses = splitClaimClauses(expectedClaim);
@@ -539,13 +528,13 @@ function validateClaimCheckAlignment(
       requiredClauseOverlap < 1 ||
       matchedClause.overlap < requiredClauseOverlap
     ) {
-      throw new Error("Claim check added material outside the student's claim");
+      throw new AnalysisValidationError("Claim check added material outside the student's claim");
     }
     if (
       hasEvidenceNegation(matchedClause.clause) !==
       hasEvidenceNegation(check.claim)
     ) {
-      throw new Error("Claim check changed the claim's truth polarity");
+      throw new AnalysisValidationError("Claim check changed the claim's truth polarity");
     }
   }
 }
@@ -624,8 +613,8 @@ function validateSettledCheckEvidence(
       isHighRiskNumericDetail(number) && !evidenceNumbers.includes(number),
   );
   if (unsupportedNumbers.length > 0) {
-    throw new Error(
-      `Unsupported numeric detail in claim check: ${Array.from(new Set(unsupportedNumbers)).join(", ")}`,
+    throw new AnalysisValidationError(
+      "Unsupported numeric detail in claim check",
     );
   }
 
@@ -636,7 +625,7 @@ function validateSettledCheckEvidence(
   ).length;
   const requiredOverlap = Math.min(2, new Set(claimTerms).size);
   if (requiredOverlap > 0 && overlapCount < requiredOverlap) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "Settled claim check is not meaningfully connected to its cited excerpts",
     );
   }
@@ -646,7 +635,7 @@ function validateSettledCheckEvidence(
     (verdict === "true" || verdict === "mostly_true") &&
     inferredVerdict !== "true"
   ) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "Cited excerpts do not directly support this claim verdict",
     );
   }
@@ -654,7 +643,7 @@ function validateSettledCheckEvidence(
     (verdict === "false" || verdict === "mostly_false") &&
     inferredVerdict !== "false"
   ) {
-    throw new Error(
+    throw new AnalysisValidationError(
       "Cited excerpts do not directly contradict this claim verdict",
     );
   }
@@ -676,8 +665,8 @@ function validateQuizEvidence(
       isHighRiskNumericDetail(number) && !evidenceNumbers.includes(number),
   );
   if (unsupportedNumbers.length > 0) {
-    throw new Error(
-      `Unsupported numeric detail in quiz: ${Array.from(new Set(unsupportedNumbers)).join(", ")}`,
+    throw new AnalysisValidationError(
+      "Unsupported numeric detail in quiz",
     );
   }
 }

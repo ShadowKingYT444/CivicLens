@@ -1,6 +1,7 @@
+import { isCensusGeocoderConfigured } from "../../../../lib/clients/census-client";
 import { NextRequest, NextResponse } from "next/server";
 import sampleMembersJson from "../../../../data/fixtures/members/sample-members.json";
-import { DistrictLookupRequestSchema, type DistrictLookupResult } from "../../../../lib/ai/schemas";
+import { DistrictLookupRequestSchema, DistrictLookupResultSchema, RepresentativeSummarySchema, type DistrictLookupResult } from "../../../../lib/ai/schemas";
 import { normalizeStateCode, stateCodeFromFips, stateCodeFromName } from "../../../../lib/fips";
 
 const PRIVACY_NOTE = "The raw address or coordinates are used only for this lookup and are not stored, logged, or sent to an LLM.";
@@ -38,26 +39,19 @@ export async function POST(request: NextRequest) {
   }
 
   const live = await tryCensusLookup(parsed.data);
-  return NextResponse.json(live || demoDistrictLookup());
+  const result = DistrictLookupResultSchema.safeParse(live || demoDistrictLookup());
+  return NextResponse.json(result.success ? result.data : demoDistrictLookup());
 }
 
 async function tryCensusLookup(input: DistrictLookupInput): Promise<DistrictLookupResult | null> {
-  if (process.env.CENSUS_GEOCODER_ENABLED === "false" || process.env.CENSUS_GEOCODER_LIVE === "false") {
-    return null;
-  }
-
-  const url = buildCensusUrl(input);
-  if (!url) {
+  if (!isCensusGeocoderConfigured()) {
     return null;
   }
 
   try {
-    const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) {
-      return null;
-    }
-
-    const payload = (await response.json()) as {
+    const url = buildCensusUrl(input);
+    if (!url) return null;
+    const payload = (await fetchJson(url.toString(), timeoutMs(process.env.CENSUS_TIMEOUT_MS, 6000))) as {
       result?: {
         addressMatches?: Array<{
           matchedAddress?: string;
@@ -73,12 +67,13 @@ async function tryCensusLookup(input: DistrictLookupInput): Promise<DistrictLook
     const stateCode = findStateCode(geographies, congressional);
     const district = normalizeDistrict(congressional);
     const coordinates = extractCoordinates(match?.coordinates, input);
-    const members = stateCode ? await fetchCongressMembers(stateCode, district) : fixtureMembers(stateCode, district);
 
-    if (!stateCode && !district && !coordinates) {
+
+    if (!stateCode || !district) {
       return { status: "not_found", houseMembers: [], senators: [], privacyNote: PRIVACY_NOTE };
     }
 
+    const members = await fetchCongressMembers(stateCode, district);
     return {
       status: "matched",
       matchedAddress: match?.matchedAddress,
@@ -88,6 +83,8 @@ async function tryCensusLookup(input: DistrictLookupInput): Promise<DistrictLook
       houseMembers: members.houseMembers,
       senators: members.senators,
       privacyNote: PRIVACY_NOTE,
+      representativesMode: members.houseMembers.length || members.senators.length ? "live" : "unavailable",
+      warnings: members.houseMembers.length && members.senators.length ? [] : ["Some representative data is unavailable; no unrelated demo members were substituted."],
     };
   } catch {
     return null;
@@ -193,7 +190,7 @@ async function fetchCongressMembers(
 ): Promise<{ houseMembers: Representative[]; senators: Representative[] }> {
   const apiKey = process.env.CONGRESS_API_KEY;
   if (!apiKey) {
-    return fixtureMembers(stateCode, district);
+    return { houseMembers: [], senators: [] };
   }
 
   const baseUrl = (process.env.CONGRESS_API_BASE_URL || process.env.CONGRESS_API_BASE || "https://api.congress.gov/v3").replace(/\/+$/, "");
@@ -211,41 +208,58 @@ async function fetchCongressMembers(
     const senators = stateMembers.filter((member) => member.chamber?.toLowerCase().includes("senate")).slice(0, 2);
 
     return {
-      houseMembers: houseMembers.length ? houseMembers : fixtureMembers(stateCode, district).houseMembers,
-      senators: senators.length ? senators : fixtureMembers(stateCode, district).senators,
+      houseMembers: houseMembers.filter((member) => member.state === stateCode && String(member.district) === districtPath),
+      senators: senators.filter((member) => member.state === stateCode),
     };
   } catch {
-    return fixtureMembers(stateCode, district);
+    return { houseMembers: [], senators: [] };
   }
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`Congress.gov member lookup failed: ${response.status}`);
+function timeoutMs(raw: string | undefined, fallback: number): number {
+  const value = Number(raw);
+  return Number.isFinite(value) && value > 0 ? Math.min(10000, Math.max(10, value)) : fallback;
+}
+
+async function fetchJson<T>(url: string, deadline = timeoutMs(process.env.CONGRESS_MEMBER_TIMEOUT_MS, 8000)): Promise<T> {
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      (async () => {
+        const response = await fetch(url, { cache: "no-store", signal: controller.signal });
+        if (!response.ok) throw new Error("Provider unavailable");
+        return await response.json() as T;
+      })(),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => { controller.abort(); reject(new Error("Provider deadline exceeded")); }, deadline);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
   }
-  return (await response.json()) as T;
 }
 
 function memberFromCongress(member: NonNullable<CongressMemberPayload["members"]>[number]): Extract<Representative, object> | null {
   const chamber = currentChamber(member.terms?.item);
-  const fullName = displayName(member.name);
+  const fullName = displayName(typeof member.name === "string" ? member.name : undefined);
   if (!fullName) {
     return null;
   }
 
-  return {
+  const parsed = RepresentativeSummarySchema.safeParse({
     bioguideId: member.bioguideId,
     fullName,
     name: fullName,
     party: member.partyName,
-    state: member.state,
+    state: normalizeStateCode(member.state) || stateCodeFromName(member.state),
     district: member.district,
     chamber,
     officialUrl: member.url,
     photoUrl: member.depiction?.imageUrl || congressPhotoUrl(member.bioguideId),
     imageAttribution: member.depiction?.attribution,
-  };
+  });
+  return parsed.success ? parsed.data : null;
 }
 
 function isRepresentativeObject(member: Extract<Representative, object> | null): member is Extract<Representative, object> {
@@ -294,8 +308,8 @@ function fixtureMembers(
   const senators = members.filter((member) => member.chamber.toLowerCase() === "senate" && member.state === stateCode);
 
   return {
-    houseMembers: houseMembers.length ? houseMembers : members.filter((member) => member.chamber.toLowerCase() === "house").slice(0, 1),
-    senators: senators.length ? senators : members.filter((member) => member.chamber.toLowerCase() === "senate").slice(0, 2),
+    houseMembers,
+    senators,
   };
 }
 
@@ -310,5 +324,7 @@ function demoDistrictLookup(): DistrictLookupResult {
     houseMembers: members.houseMembers,
     senators: members.senators,
     privacyNote: PRIVACY_NOTE,
+    representativesMode: "fixture",
+    warnings: ["Demo fixture district and representative data; no live lookup was performed."],
   };
 }

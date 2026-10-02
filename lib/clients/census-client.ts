@@ -31,7 +31,7 @@ let censusClientSingleton: CensusClient | undefined;
 
 export function createCensusClient(options: CensusClientOptions = {}): CensusClient {
   const env = options.env ?? process.env;
-  const configured = options.live ?? isTruthyEnv(env[ENV_VARS.censusLive]);
+  const configured = options.live ?? isCensusGeocoderConfigured(env);
   const baseUrl = trimTrailingSlash(options.baseUrl ?? env[ENV_VARS.censusApiBaseUrl] ?? OFFICIAL_SOURCE_URLS.censusGeocoder);
   const fetcher = options.fetcher ?? fetch;
   const timeoutMs = options.timeoutMs ?? NETWORK_LIMITS.censusTimeoutMs;
@@ -66,7 +66,13 @@ export function getCensusClient(options?: CensusClientOptions): CensusClient {
 }
 
 export function isCensusGeocoderConfigured(env: Record<string, string | undefined> = process.env): boolean {
-  return isTruthyEnv(env[ENV_VARS.censusLive]);
+  const flags = [env.CENSUS_GEOCODER_ENABLED, env.CENSUS_GEOCODER_LIVE];
+  if (flags.some((value) => /^(false|0|no)$/i.test(value?.trim() || ""))) return false;
+  if (flags.some((value) => isTruthyEnv(value))) return true;
+  if (isTruthyEnv(env.DEMO_MODE)) return false;
+  const base = env.CENSUS_GEOCODER_URL || env.CENSUS_GEOCODER_BASE_URL || env.CENSUS_GEOCODER_BASE;
+  if (!base) return false;
+  try { return ["https:", "http:"].includes(new URL(base).protocol); } catch { return false; }
 }
 
 function buildCensusUrl(baseUrl: string, address: string): string {

@@ -1,4 +1,5 @@
 import { CitationSchema, type Citation } from "../ai/schemas";
+import { redactSensitiveText } from "../privacy/redaction";
 
 export type OfficialProviderId =
   | "govinfo"
@@ -176,7 +177,8 @@ const PROVIDERS: ProviderDefinition[] = [
     tags: ["president", "white house", "executive order", "proclamation", "remarks", "statement"],
     keywords: ["president", "white house", "executive order", "proclamation", "remarks", "statement"],
     buildUrl: (_baseUrl, query, env) => {
-      const base = env.WHITEHOUSE_PRESIDENTIAL_ACTIONS_URL || env.WHITEHOUSE_REMARKS_URL || "https://www.whitehouse.gov/briefing-room/";
+      const base = env.WHITEHOUSE_PRESIDENTIAL_ACTIONS_URL || env.WHITEHOUSE_REMARKS_URL ||
+        new URL("briefing-room/", `${trimTrailingSlash(_baseUrl)}/`).toString();
       const url = new URL(base);
       url.searchParams.set("s", query);
       return url.toString();
@@ -195,7 +197,7 @@ export function buildOfficialSourceCandidates(
   limit = 4,
   env: Record<string, string | undefined> = process.env,
 ): OfficialSourceCandidate[] {
-  const cleanQuery = normalizeQuery(query);
+  const cleanQuery = normalizeQuery(redactSensitiveText(query));
   if (!cleanQuery) {
     return [];
   }
@@ -226,7 +228,8 @@ export async function resolveOfficialSourceCandidates(
   options: OfficialSourceFetchOptions = {},
 ): Promise<OfficialSourceCandidate[]> {
   const env = options.env ?? process.env;
-  const candidates = buildOfficialSourceCandidates(query, limit, env);
+  const safeQuery = normalizeQuery(redactSensitiveText(query));
+  const candidates = buildOfficialSourceCandidates(safeQuery, limit, env);
   if (isExplicitlyDisabled(env.OFFICIAL_SOURCE_LIVE) || isExplicitlyDisabled(env.OFFICIAL_SOURCE_FETCH)) {
     return candidates;
   }
@@ -237,7 +240,7 @@ export async function resolveOfficialSourceCandidates(
     candidates.map(async (candidate) => {
       try {
         const provider = PROVIDERS.find((item) => item.id === candidate.providerId);
-        return provider ? await fetchProviderCandidate(candidate, provider, query, env, fetcher, timeoutMs) : candidate;
+        return provider ? await fetchProviderCandidate(candidate, provider, safeQuery, env, fetcher, timeoutMs) : candidate;
       } catch {
         return candidate;
       }
@@ -257,21 +260,21 @@ async function fetchProviderCandidate(
     case "govinfo":
       return fetchGovInfoCandidate(candidate, query, env, fetcher, timeoutMs);
     case "federal-register":
-      return fetchFederalRegisterCandidate(candidate, query, fetcher, timeoutMs);
+      return fetchFederalRegisterCandidate(candidate, query, env, fetcher, timeoutMs);
     case "regulations":
       return fetchRegulationsCandidate(candidate, query, env, fetcher, timeoutMs);
     case "ecfr":
-      return fetchEcfrCandidate(candidate, query, fetcher, timeoutMs);
+      return fetchEcfrCandidate(candidate, query, env, fetcher, timeoutMs);
     case "nara":
-      return fetchNaraCandidate(candidate, query, fetcher, timeoutMs);
+      return fetchNaraCandidate(candidate, query, env, fetcher, timeoutMs);
     case "courtlistener":
-      return fetchCourtListenerCandidate(candidate, query, fetcher, timeoutMs);
+      return fetchCourtListenerCandidate(candidate, query, env, fetcher, timeoutMs);
     case "usaspending":
-      return fetchUsaSpendingCandidate(candidate, query, fetcher, timeoutMs);
+      return fetchUsaSpendingCandidate(candidate, query, env, fetcher, timeoutMs);
     case "openfec":
       return fetchOpenFecCandidate(candidate, query, env, fetcher, timeoutMs);
     case "whitehouse":
-      return fetchWhiteHouseCandidate(candidate, query, fetcher, timeoutMs);
+      return fetchWhiteHouseCandidate(candidate, query, env, fetcher, timeoutMs);
   }
 }
 
@@ -318,7 +321,10 @@ async function fetchGovInfoCandidate(
 ): Promise<OfficialSourceCandidate> {
   if (!env.GOVINFO_API_KEY) return fallback;
 
-  const url = new URL("/search", firstUrlValue(env, ["GOVINFO_API_BASE", "GOVINFO_API_BASE_URL"]) || "https://api.govinfo.gov");
+  const url = providerApiUrl(env, ["GOVINFO_API_BASE", "GOVINFO_API_BASE_URL"],
+    "https://api.govinfo.gov",
+    "search",
+  );
   url.searchParams.set("api_key", env.GOVINFO_API_KEY);
   const payload = await fetchJson(url.toString(), fetcher, timeoutMs, {
     method: "POST",
@@ -328,6 +334,11 @@ async function fetchGovInfoCandidate(
   const result = asArray(asRecord(payload)?.results)[0];
   const record = asRecord(result) ?? {};
   const packageId = readString(record, ["packageId"]);
+  if (
+    !packageId &&
+    !readString(record, ["title", "snippet", "summary", "text"])
+  )
+    return fallback;
   return withLiveCitation(fallback, {
     title: readString(record, ["title"]) || fallback.title,
     url: readString(record, ["link", "resultLink"]) || (packageId ? `https://www.govinfo.gov/app/details/${packageId}` : fallback.url),
@@ -340,15 +351,23 @@ async function fetchGovInfoCandidate(
 async function fetchFederalRegisterCandidate(
   fallback: OfficialSourceCandidate,
   query: string,
+  env: Record<string, string | undefined>,
   fetcher: typeof fetch,
   timeoutMs: number,
 ): Promise<OfficialSourceCandidate> {
-  const url = new URL("https://www.federalregister.gov/api/v1/documents.json");
+  const url = providerApiUrl(
+    env,
+    ["FEDERAL_REGISTER_API_BASE", "FEDERAL_REGISTER_API_BASE_URL"],
+    "https://www.federalregister.gov/api/v1",
+    "documents.json",
+  );
   url.searchParams.set("conditions[term]", query);
   url.searchParams.set("per_page", "1");
   url.searchParams.set("order", "relevance");
   const payload = await fetchJson(url.toString(), fetcher, timeoutMs);
   const record = asRecord(asArray(asRecord(payload)?.results)[0]) ?? {};
+  if (!readString(record, ["document_number", "title", "abstract"]))
+    return fallback;
   return withLiveCitation(fallback, {
     title: readString(record, ["title"]) || fallback.title,
     url: readString(record, ["html_url", "pdf_url", "public_inspection_pdf_url"]) || fallback.url,
@@ -374,6 +393,7 @@ async function fetchRegulationsCandidate(
   const record = asRecord(asArray(asRecord(payload)?.data)[0]) ?? {};
   const attributes = asRecord(record.attributes) ?? {};
   const documentId = readString(attributes, ["documentId", "objectId"]) || readString(record, ["id"]);
+  if (!documentId && !readString(attributes, ["title"])) return fallback;
   return withLiveCitation(fallback, {
     title: readString(attributes, ["title"]) || fallback.title,
     url: documentId ? `https://www.regulations.gov/document/${documentId}` : fallback.url,
@@ -386,10 +406,16 @@ async function fetchRegulationsCandidate(
 async function fetchEcfrCandidate(
   fallback: OfficialSourceCandidate,
   query: string,
+  env: Record<string, string | undefined>,
   fetcher: typeof fetch,
   timeoutMs: number,
 ): Promise<OfficialSourceCandidate> {
-  const url = new URL("https://www.ecfr.gov/api/search/v1/results");
+  const url = providerApiUrl(
+    env,
+    ["ECFR_API_BASE", "ECFR_API_BASE_URL"],
+    "https://www.ecfr.gov/api",
+    "search/v1/results",
+  );
   url.searchParams.set("query", query);
   url.searchParams.set("page", "1");
   url.searchParams.set("per_page", "1");
@@ -398,6 +424,12 @@ async function fetchEcfrCandidate(
   const hierarchy = asRecord(record.hierarchy) ?? {};
   const titleNumber = readString(hierarchy, ["title"]);
   const section = readString(record, ["section", "identifier"]);
+  if (
+    !titleNumber &&
+    !section &&
+    !readString(record, ["heading", "full_text_excerpt", "snippet"])
+  )
+    return fallback;
   return withLiveCitation(fallback, {
     title: [titleNumber ? `Title ${titleNumber}` : undefined, readString(record, ["type"]), readString(record, ["heading"])]
       .filter(Boolean)
@@ -412,10 +444,16 @@ async function fetchEcfrCandidate(
 async function fetchNaraCandidate(
   fallback: OfficialSourceCandidate,
   query: string,
+  env: Record<string, string | undefined>,
   fetcher: typeof fetch,
   timeoutMs: number,
 ): Promise<OfficialSourceCandidate> {
-  const url = new URL("https://catalog.archives.gov/api/v2/records/search");
+  const url = providerApiUrl(
+    env,
+    ["NARA_CATALOG_API_BASE", "NARA_CATALOG_API_BASE_URL"],
+    "https://catalog.archives.gov/api/v2",
+    "records/search",
+  );
   url.searchParams.set("q", query);
   url.searchParams.set("rows", "1");
   const payload = await fetchJson(url.toString(), fetcher, timeoutMs);
@@ -423,6 +461,11 @@ async function fetchNaraCandidate(
   const source = asRecord(hit?._source) ?? hit ?? {};
   const record = asRecord(source.record) ?? source;
   const naId = readString(record, ["naId", "naIds", "identifier"]);
+  if (
+    !naId &&
+    !readString(record, ["title", "scopeAndContentNote", "description"])
+  )
+    return fallback;
   return withLiveCitation(fallback, {
     title: readString(record, ["title"]) || fallback.title,
     url: naId ? `https://catalog.archives.gov/id/${naId}` : fallback.url,
@@ -435,15 +478,33 @@ async function fetchNaraCandidate(
 async function fetchCourtListenerCandidate(
   fallback: OfficialSourceCandidate,
   query: string,
+  env: Record<string, string | undefined>,
   fetcher: typeof fetch,
   timeoutMs: number,
 ): Promise<OfficialSourceCandidate> {
-  const url = new URL("https://www.courtlistener.com/api/rest/v4/search/");
+  const url = providerApiUrl(
+    env,
+    ["COURTLISTENER_API_BASE", "COURTLISTENER_API_BASE_URL"],
+    "https://www.courtlistener.com/api/rest/v4",
+    "search/",
+  );
   url.searchParams.set("q", query);
   url.searchParams.set("type", "o");
   const payload = await fetchJson(url.toString(), fetcher, timeoutMs);
   const record = asRecord(asArray(asRecord(payload)?.results)[0]) ?? {};
   const absoluteUrl = readString(record, ["absolute_url"]);
+  if (
+    !absoluteUrl &&
+    !readString(record, [
+      "id",
+      "cluster_id",
+      "caseName",
+      "caseNameFull",
+      "case_name",
+      "snippet",
+    ])
+  )
+    return fallback;
   return withLiveCitation(fallback, {
     title: readString(record, ["caseName", "caseNameFull", "case_name"]) || fallback.title,
     url: absoluteUrl ? new URL(absoluteUrl, "https://www.courtlistener.com").toString() : fallback.url,
@@ -456,10 +517,17 @@ async function fetchCourtListenerCandidate(
 async function fetchUsaSpendingCandidate(
   fallback: OfficialSourceCandidate,
   query: string,
+  env: Record<string, string | undefined>,
   fetcher: typeof fetch,
   timeoutMs: number,
 ): Promise<OfficialSourceCandidate> {
-  const payload = await fetchJson("https://api.usaspending.gov/api/v2/search/spending_by_award/", fetcher, timeoutMs, {
+  const url = providerApiUrl(
+    env,
+    ["USASPENDING_API_BASE", "USASPENDING_API_BASE_URL"],
+    "https://api.usaspending.gov",
+    "api/v2/search/spending_by_award/",
+  );
+  const payload = await fetchJson(url.toString(), fetcher, timeoutMs, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -473,6 +541,8 @@ async function fetchUsaSpendingCandidate(
   });
   const record = asRecord(asArray(asRecord(payload)?.results)[0]) ?? {};
   const awardId = readString(record, ["Award ID", "generated_unique_award_id"]);
+  if (!awardId && !readString(record, ["Recipient Name", "recipient_name"]))
+    return fallback;
   return withLiveCitation(fallback, {
     title: readString(record, ["Recipient Name", "recipient_name"]) || fallback.title,
     url: awardId ? `https://www.usaspending.gov/award/${encodeURIComponent(awardId)}` : fallback.url,
@@ -498,6 +568,7 @@ async function fetchOpenFecCandidate(
   const payload = await fetchJson(url.toString(), fetcher, timeoutMs);
   const record = asRecord(asArray(asRecord(payload)?.results)[0]) ?? {};
   const candidateId = readString(record, ["candidate_id"]);
+  if (!candidateId && !readString(record, ["name"])) return fallback;
   return withLiveCitation(fallback, {
     title: readString(record, ["name"]) || fallback.title,
     url: candidateId ? `https://www.fec.gov/data/candidate/${candidateId}/` : fallback.url,
@@ -514,14 +585,21 @@ async function fetchOpenFecCandidate(
 async function fetchWhiteHouseCandidate(
   fallback: OfficialSourceCandidate,
   query: string,
+  env: Record<string, string | undefined>,
   fetcher: typeof fetch,
   timeoutMs: number,
 ): Promise<OfficialSourceCandidate> {
-  const url = new URL("https://www.whitehouse.gov/wp-json/wp/v2/search");
+  const url = providerApiUrl(
+    env,
+    ["WHITEHOUSE_BASE"],
+    whiteHouseOrigin(env),
+    "wp-json/wp/v2/search",
+  );
   url.searchParams.set("search", query);
   url.searchParams.set("per_page", "1");
   const payload = await fetchJson(url.toString(), fetcher, timeoutMs);
   const record = asRecord(asArray(payload)[0]) ?? {};
+  if (!readString(record, ["id", "title", "url"])) return fallback;
   return withLiveCitation(fallback, {
     title: stripHtml(readString(record, ["title"]) || fallback.title),
     url: readString(record, ["url"]) || fallback.url,
@@ -567,11 +645,53 @@ function hasValue(value: string | undefined): boolean {
 }
 
 function firstUrlValue(env: Record<string, string | undefined>, keys: string[]): string | undefined {
-  return keys.map((key) => env[key]?.trim()).find((value): value is string => Boolean(value?.startsWith("http")));
+  return keys.map((key) => env[key]?.trim()).find((value): value is string => {
+    if (!value) return false;
+    try {
+      const url = new URL(value);
+      return ["https:", "http:"].includes(url.protocol) && !url.username && !url.password;
+    } catch {
+      return false;
+    }
+  });
 }
 
 function trimTrailingSlash(input: string): string {
   return input.replace(/\/+$/, "");
+}
+
+function providerApiUrl(
+  env: Record<string, string | undefined>,
+  keys: string[],
+  defaultBase: string,
+  path: string,
+): URL {
+  const base = firstUrlValue(env, keys) || defaultBase;
+  return new URL(`${trimTrailingSlash(base)}/${path}`);
+}
+
+function whiteHouseOrigin(env: Record<string, string | undefined>): string {
+  const configured = firstUrlValue(env, [
+    "WHITEHOUSE_PRESIDENTIAL_ACTIONS_URL",
+    "WHITEHOUSE_REMARKS_URL",
+  ]);
+  return configured ? new URL(configured).origin : "https://www.whitehouse.gov";
+}
+
+function sanitizeSourceUrl(value: string): string {
+  const url = new URL(value);
+  for (const key of [...url.searchParams.keys()]) {
+    if (/^(?:api[_-]?key|access[_-]?token|token|authorization)$/i.test(key)) {
+      url.searchParams.delete(key);
+      continue;
+    }
+    const values = url.searchParams.getAll(key).map(redactSensitiveText);
+    url.searchParams.delete(key);
+    values.forEach((item) => url.searchParams.append(key, item));
+  }
+  url.pathname = redactSensitiveText(decodeURIComponent(url.pathname));
+  url.hash = "";
+  return url.toString();
 }
 
 function publicGovInfoBase(baseUrl: string): string {
@@ -590,7 +710,7 @@ function withLiveCitation(
 ): OfficialSourceCandidate {
   const title = truncate(cleanText(update.title) || fallback.title, 240);
   const excerpt = truncate(cleanText(update.excerpt) || fallback.excerpt, 1200);
-  const url = update.url && isValidUrl(update.url) ? update.url : fallback.url;
+  const url = update.url && isValidUrl(update.url) ? sanitizeSourceUrl(update.url) : fallback.url;
   const sourceDocumentId = truncate(cleanText(update.sourceDocumentId) || fallback.citation.sourceDocumentId, 160);
   const citation = CitationSchema.parse({
     ...fallback.citation,
@@ -619,21 +739,29 @@ async function fetchJson(
   init: RequestInit = {},
 ): Promise<unknown> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<never>((_, reject) => {
+    timeout = setTimeout(() => {
+      controller.abort();
+      reject(new Error("Official source request timed out"));
+    }, timeoutMs);
+  });
   try {
-    const response = await fetcher(url, {
-      ...init,
-      signal: controller.signal,
-      headers: {
-        Accept: "application/json",
-        ...(init.headers || {}),
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`Official source returned HTTP ${response.status}`);
-    }
-    return response.json();
+    return await Promise.race([
+      (async () => {
+        const response = await fetcher(url, {
+          ...init,
+          signal: controller.signal,
+          headers: {
+            Accept: "application/json",
+            ...(init.headers || {}),
+          },
+        });
+        if (!response.ok) throw new Error("Official source request failed");
+        return await response.json();
+      })(),
+      deadline,
+    ]);
   } finally {
     clearTimeout(timeout);
   }
@@ -668,7 +796,7 @@ function stripHtml(input: string): string {
 }
 
 function cleanText(input: string | undefined): string {
-  return (input || "").replace(/\s+/g, " ").trim();
+  return redactSensitiveText(input || "").replace(/\s+/g, " ").trim();
 }
 
 function truncate(input: string | undefined, maxLength: number): string {
@@ -682,8 +810,8 @@ function truncate(input: string | undefined, maxLength: number): string {
 
 function isValidUrl(value: string): boolean {
   try {
-    new URL(value);
-    return true;
+    const url = new URL(value);
+    return url.protocol === "https:" && !url.username && !url.password;
   } catch {
     return false;
   }

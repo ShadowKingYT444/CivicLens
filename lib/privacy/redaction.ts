@@ -2,9 +2,23 @@ const EMAIL_PATTERN = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi;
 const PHONE_PATTERN = /(?:\+?1[\s.-]?)?(?:\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}\b/g;
 const SSN_PATTERN = /\b\d{3}-\d{2}-\d{4}\b/g;
 const ZIP_PATTERN = /\b\d{5}(?:-\d{4})?\b/g;
-const COORDINATE_PATTERN = /\b-?\d{1,3}\.\d{3,}\s*,\s*-?\d{1,3}\.\d{3,}\b/g;
-const STREET_ADDRESS_PATTERN =
-  /\b\d{1,6}\s+[A-Za-z0-9.'-]+(?:\s+[A-Za-z0-9.'-]+){0,5}\s+(?:Avenue|Ave|Boulevard|Blvd|Circle|Cir|Court|Ct|Drive|Dr|Highway|Hwy|Lane|Ln|Parkway|Pkwy|Place|Pl|Road|Rd|Route|Rt|Square|Sq|Street|St|Terrace|Ter|Trail|Trl|Way)\b\.?/gi;
+const COORDINATE_PATTERN = /(?<![\w.])-?\d{1,3}\.\d{3,}\s*,\s*-?\d{1,3}\.\d{3,}(?![\w.])/g;
+
+const STREET_ADDRESS_SOURCE = String.raw`\b\d{1,6}[A-Za-z]?\s+[A-Za-z0-9'.-]+(?:\s+[A-Za-z0-9'.-]+){0,6}\s+(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr|Lane|Ln|Court|Ct|Way|Place|Pl|Terrace|Ter|Parkway|Pkwy|Highway|Hwy|Circle|Cir|Trail|Trl|Square|Sq|Loop|Plaza)\.?\b(?:\s+(?:Apt|Apartment|Unit|Suite|#)\s*[A-Za-z0-9-]+)?`;
+const NUMBERED_ROUTE_ADDRESS_SOURCE = String.raw`\b\d{1,6}[A-Za-z]?\s+(?:(?:U\.?S\.?|State|County)\s+)?(?:Highway|Hwy|Route|Rte|County\s+Road|CR)\s*\d+[A-Za-z-]*(?:\s+(?:Box|Unit)\s*[A-Za-z0-9-]+)?\b`;
+const RURAL_ROUTE_ADDRESS_SOURCE = String.raw`\b(?:Rural\s+Route|RR|HC)\s*\d+[A-Za-z-]*(?:\s*,?\s*Box\s*[A-Za-z0-9-]+)?\b`;
+const PO_BOX_ADDRESS_SOURCE = String.raw`\b(?:P\.?\s*O\.?|Post\s+Office)\s+Box\s*[A-Za-z0-9-]+\b`;
+const CONTEXTUAL_ADDRESS_SOURCE = String.raw`\b(?:(?:my|our)\s+)?(?:home\s+|mailing\s+|street\s+)?address\s*(?:is|:)\s*[^,;.!?\n]{2,100}|\b(?:I|we)\s+live\s+at\s+[^,;.!?\n]{2,100}`;
+
+function addressPatterns(flags: string): RegExp[] {
+  return [
+    PO_BOX_ADDRESS_SOURCE,
+    RURAL_ROUTE_ADDRESS_SOURCE,
+    NUMBERED_ROUTE_ADDRESS_SOURCE,
+    STREET_ADDRESS_SOURCE,
+    CONTEXTUAL_ADDRESS_SOURCE,
+  ].map((source) => new RegExp(source, flags));
+}
 
 export interface RedactionResult {
   redacted: string;
@@ -18,7 +32,7 @@ export function redactClaimText(input: string): RedactionResult {
     [PHONE_PATTERN, "[phone]"],
     [SSN_PATTERN, "[ssn]"],
     [COORDINATE_PATTERN, "[coordinates]"],
-    [STREET_ADDRESS_PATTERN, "[address]"],
+    ...addressPatterns("gi").map((pattern): [RegExp, string] => [pattern, "[address]"]),
   ]);
 }
 
@@ -40,10 +54,15 @@ export function redactForLogging(input: string): string {
   return redactClaimText(input).redacted.replace(ZIP_PATTERN, "[zip]");
 }
 
+export function redactSensitiveText(input: string): string {
+  return redactClaimText(input).redacted.replace(
+    /\[(address|email|phone|ssn|coordinates)\]/g,
+    "[redacted $1]",
+  );
+}
+
 export function containsAddressLikeText(input: string): boolean {
-  STREET_ADDRESS_PATTERN.lastIndex = 0;
-  COORDINATE_PATTERN.lastIndex = 0;
-  return STREET_ADDRESS_PATTERN.test(input) || COORDINATE_PATTERN.test(input);
+  return addressPatterns("i").some((pattern) => pattern.test(input));
 }
 
 function redact(input: string, replacements: Array<[RegExp, string]>): RedactionResult {
