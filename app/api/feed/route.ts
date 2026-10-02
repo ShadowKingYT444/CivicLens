@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPrisma } from "../../../lib/db/prisma";
+import sourcePacks from "../../../data/source-packs.json";
+import authoredLessons from "../../../data/concept-cards.json";
 
 type FeedCard = {
   slug: string;
@@ -50,11 +52,30 @@ const BUILT_IN_FEED: FeedCard[] = [
 export async function GET() {
   const dbCards = await getFeedFromDb();
   if (dbCards.length > 0) {
-    return NextResponse.json({ data: dbCards, mode: "live" });
+    return NextResponse.json({ data: attachSources(dbCards), mode: "live" });
   }
 
   const fixtureCards = await loadFixtureCards();
-  return NextResponse.json({ data: fixtureCards, mode: "demo" });
+  return NextResponse.json({ data: attachSources(fixtureCards), mode: "demo" });
+}
+
+function attachSources(cards: FeedCard[]) {
+  const sources = new Map(sourcePacks.map((pack) => [pack.id, pack.citation]));
+  const authored = new Map(authoredLessons.map((lesson) => [lesson.slug, lesson]));
+  return cards.map((card) => {
+    const stored = card.quizJson && typeof card.quizJson === "object" ? card.quizJson as Record<string, unknown> : {};
+    const enriched = authored.get(card.slug);
+    return {
+    ...card,
+    visual: stored.visual ?? enriched?.visual,
+    flashcards: stored.flashcards ?? enriched?.flashcards,
+    quizQuestions: stored.quizQuestions ?? enriched?.quizQuestions,
+    citations: card.sourceIds.flatMap((id) => {
+      const citation = sources.get(id);
+      return citation ? [citation] : [];
+    }),
+    };
+  });
 }
 
 async function getFeedFromDb(): Promise<FeedCard[]> {
@@ -73,13 +94,13 @@ async function getFeedFromDb(): Promise<FeedCard[]> {
         body,
         category,
         difficulty,
-        source_ids AS "sourceIds",
-        quiz_json AS "quizJson",
-        order_index AS "orderIndex",
-        is_published AS "isPublished"
-      FROM concept_cards
-      WHERE is_published = true
-      ORDER BY order_index ASC, title ASC
+        "sourceIds",
+        "quizJson",
+        "orderIndex",
+        "isPublished"
+      FROM "ConceptCard"
+      WHERE "isPublished" = true
+      ORDER BY "orderIndex" ASC, title ASC
       `,
     );
   } catch {

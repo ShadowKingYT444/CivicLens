@@ -15,12 +15,12 @@ const cards = [
   {
     icon: Brain,
     title: "AI has limits",
-    body: "The app explains source context in plain English, but it does not invent missing facts or treat model output as evidence.",
+    body: "A configured LLM can explain supplied source context in plain English. Without a provider, explanations use guided templates. Either can make mistakes: a valid citation ID does not prove that every sentence follows from its source.",
   },
   {
     icon: Lock,
     title: "Privacy",
-    body: "Addresses are used only for lookup. Claim text is minimized by default and not kept as a social profile or public post.",
+    body: "An address is sent to the U.S. Census Geocoder only for district lookup; it is not stored or sent to an LLM. Claims sent for live analysis go to the configured model provider. Progress stays in this browser, and claim storage is disabled by default.",
   },
   {
     icon: Scale,
@@ -37,12 +37,23 @@ const cards = [
     title: "How citations work",
     body: "Source cards show where an answer came from, and dense details stay available behind source controls.",
   },
+  {
+    icon: BookOpen,
+    title: "Practice with honest progress",
+    body: "Lessons combine teaching cards, application questions, and official source links. Complete every check to unlock the next lesson. XP is earned once per lesson; missed concepts return in a review queue. Clearing browser storage removes your progress.",
+  },
+  {
+    icon: FileCheck2,
+    title: "Snapshots and live records",
+    body: "Curated bill records and the explicit sample district are dated examples, not current-data guarantees. Live records depend on provider availability. A search result points to a place to investigate; it does not establish a claim by itself.",
+  },
 ];
 
 export default function MethodologyPage() {
   return (
     <div className="page-shell">
       <TopIdentity title="Methodology" subtitle="How CivicLens keeps learning useful and careful." />
+      <h1 className="section-title">How CivicLens works</h1>
 
       <section className="grid">
         {cards.map((card) => {

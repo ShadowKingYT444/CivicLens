@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Search } from "lucide-react";
 import { AssetIcon } from "./AssetIcon";
@@ -35,9 +34,12 @@ export function HomeDashboard() {
             Is one president responsible for inflation?
           </h1>
           <p>Start with evidence, then context.</p>
-          <Link className="button yellow hero-cta" href="/analyze">
+          <button className="button yellow hero-cta" type="button" onClick={() => {
+            setPendingClaim("Is one president responsible for inflation?");
+            router.push("/analyze");
+          }}>
             Analyze <ArrowRight aria-hidden="true" size={22} />
-          </Link>
+          </button>
         </div>
         <AssetIcon
           asset={assets.government.congress}

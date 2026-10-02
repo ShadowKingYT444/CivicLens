@@ -284,6 +284,10 @@ async function expectBottomNavClear(page: Page) {
         parent !== document.body &&
         parent !== document.documentElement
       ) {
+        // Closed native details can retain layout rectangles for unpainted
+        // descendants. Their summaries remain visible and are still audited.
+        if (parent instanceof HTMLDetailsElement && !parent.open &&
+            !parent.querySelector(":scope > summary")?.contains(element)) return true;
         const parentStyle = window.getComputedStyle(parent);
         const clipsVertically = ["auto", "scroll", "hidden", "clip"].includes(
           parentStyle.overflowY,
@@ -351,6 +355,10 @@ async function expectNoInteractiveOverlap(page: Page) {
         parent !== document.body &&
         parent !== document.documentElement
       ) {
+        // Closed native details can retain layout rectangles for unpainted
+        // descendants. Their summaries remain visible and are still audited.
+        if (parent instanceof HTMLDetailsElement && !parent.open &&
+            !parent.querySelector(":scope > summary")?.contains(element)) return true;
         const parentStyle = window.getComputedStyle(parent);
         const clipsVertically = ["auto", "scroll", "hidden", "clip"].includes(
           parentStyle.overflowY,
@@ -804,111 +812,55 @@ test.describe("mobile CivicLens UI", () => {
   test("learn map and lesson flow screenshot", async ({ page }) => {
     await mockLearnFeed(page);
     await gotoMobilePage(page, "/feed");
-
-    await expect(page.getByAltText("CivicLens")).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Federalism" }),
-    ).toBeVisible();
-
     const path = page.getByRole("listbox", { name: /CivicLens lesson path/i });
-    const levelOne = page.getByRole("option", {
-      name: /Level 1: Separation of Powers/i,
-    });
-    const levelTwo = page.getByRole("option", {
-      name: /Level 2: Checks and Balances/i,
-    });
-    const levelThree = page.getByRole("option", {
-      name: /Level 3: Federalism/i,
-    });
-    const levelFour = page.getByRole("option", {
-      name: /Level 4: Rights Need Context/i,
-    });
-    const levelFive = page.getByRole("option", {
-      name: /Level 5: How a Bill Becomes Law/i,
-    });
-
-    await expect(path.getByRole("option")).toHaveCount(
-      learnFixtureCards.length,
-    );
-    await expect(levelOne).toHaveClass(/complete/);
-    await expect(levelTwo).toHaveClass(/complete/);
-    await expect(levelThree).toHaveAttribute("aria-selected", "true");
-    await expect(levelThree).toHaveClass(/active/);
-    await expect(levelFour).not.toBeDisabled();
-    await expect(levelFive).toBeDisabled();
+    const first = page.getByRole("option", { name: /Level 1: Separation of Powers/i });
+    const second = page.getByRole("option", { name: /Level 2: Checks and Balances/i });
+    await expect(page.getByAltText("CivicLens")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Separation of Powers" })).toBeVisible();
+    await expect(page.getByText("0 XP", { exact: true })).toBeVisible();
+    await expect(path.getByRole("option")).toHaveCount(learnFixtureCards.length);
+    await expect(first).not.toHaveClass(/complete/);
+    await expect(first).toHaveAttribute("aria-selected", "true");
+    await expect(second).toBeDisabled();
     await screenshot(page, test.info(), "learn-map");
     await verifyMobileLayout(page);
 
     await path.focus();
     await path.press("ArrowRight");
-    await expect(levelFour).toHaveAttribute("aria-selected", "true");
-    await path.press("ArrowRight");
-    await expect(levelFour).toHaveAttribute("aria-selected", "true");
+    await expect(first).toHaveAttribute("aria-selected", "true");
     await path.press("Enter");
-    await expect(
-      page.getByRole("article", { name: /Rights Need Context lesson/i }),
-    ).toBeVisible();
-    await page.getByRole("button", { name: /Back to learning path/i }).click();
-    await expect(path).toBeVisible();
-    await verifyMobileLayout(page);
-
-    await levelThree.click();
-    await expect(
-      page.getByRole("article", { name: /Federalism lesson/i }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Learn the idea" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /Advance flashcard/i }),
-    ).toContainText("Power is split by level");
-    await page.waitForTimeout(450);
+    await expect(page.getByRole("article", { name: /Separation of Powers lesson/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Learn the idea" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Advance flashcard/i })).toContainText("Congress writes laws");
     await screenshot(page, test.info(), "learn-lesson-flow");
     await verifyMobileLayout(page);
-
-    await page.getByRole("button", { name: /Advance flashcard/i }).click();
-    await expect(
-      page.getByRole("button", { name: /Advance flashcard/i }),
-    ).toContainText("Ask who has authority");
-    await page.getByRole("button", { name: /Advance flashcard/i }).click();
-    await expect(
-      page.getByRole("button", { name: /Advance flashcard/i }),
-    ).toContainText("Variation can be normal");
     await page.getByRole("button", { name: /Continue lesson/i }).click();
-    await expect(
-      page.getByRole("heading", { name: "Quick check" }),
-    ).toBeVisible();
-    await page.waitForTimeout(150);
+    await expect(page.getByRole("heading", { name: "Quick check" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Complete lesson/i })).toBeDisabled();
     await screenshot(page, test.info(), "learn-quiz-ready");
-
-    await page.getByRole("button", { name: "States have no laws" }).click();
+    await page.getByRole("button", { name: "Which party benefits?" }).click();
     await expect(page.getByText(/^Not quite/)).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: "States have no laws" }),
-    ).toHaveClass(/wrong/);
-    await page.waitForTimeout(150);
+    await expect(page.getByRole("button", { name: /Complete lesson/i })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Which branch has authority?" })).toBeDisabled();
     await screenshot(page, test.info(), "learn-quiz-wrong");
     await verifyMobileLayout(page);
-
-    await page
-      .getByRole("button", {
-        name: "Federalism gives states authority over many areas",
-      })
-      .click();
+    await page.getByRole("button", { name: "Try again" }).click();
+    await page.getByRole("button", { name: "Which branch has authority?" }).click();
     await expect(page.getByText(/^Correct/)).toBeVisible();
-    await expect(
-      page.getByRole("button", {
-        name: "Federalism gives states authority over many areas",
-      }),
-    ).toHaveClass(/correct/);
-    await page.waitForTimeout(150);
     await screenshot(page, test.info(), "learn-quiz-correct");
     await page.getByRole("button", { name: /Complete lesson/i }).click();
-    await expect(page.getByText(/Level complete/i)).toBeVisible();
-    await page.waitForTimeout(180);
+    await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    await expect(page.getByText("+25 XP", { exact: true })).toBeVisible();
     await screenshot(page, test.info(), "learn-complete");
-    await expect(path).toBeVisible();
-    await expect(levelFour).toHaveAttribute("aria-selected", "true");
+    await page.getByRole("button", { name: "Back to path" }).click();
+    await expect(first).toHaveClass(/complete/);
+    await expect(second).toBeEnabled();
+    await expect(second).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByText("25 XP", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Review missed concepts/ })).toBeVisible();
+    await page.reload();
+    await expect(second).toBeEnabled();
+    await expect(page.getByText("25 XP", { exact: true })).toBeVisible();
   });
 
   test("analyze initial screenshot", async ({ page }) => {
@@ -941,7 +893,7 @@ test.describe("mobile CivicLens UI", () => {
       /is-checking/,
     );
     await expect(page.getByText(/Reading sources/i)).toBeVisible();
-    await expect(page.getByText(/asking the AI/i)).toBeVisible();
+    await expect(page.getByText(/Retrieving source context/i)).toBeVisible();
     await expect(
       page.getByRole("heading", { name: /plain-English answer/i }),
     ).toBeVisible();
@@ -994,7 +946,7 @@ test.describe("mobile CivicLens UI", () => {
     ).toBeVisible();
     await expect(
       page.getByText(
-        /High-impact trending bill deck|Recent high-impact bills from Congress.gov/i,
+        /Curated historical bills|Recent high-impact bills from Congress.gov/i,
       ),
     ).toBeVisible();
     await expect(page.getByLabel(/trending bill flashcards/i)).toBeVisible();

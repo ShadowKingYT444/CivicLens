@@ -28,18 +28,14 @@ test.describe("CivicLens student flows", () => {
     ).toBeVisible();
   });
 
-  test("district flow returns representatives without exposing raw address text", async ({ page }) => {
+  test("sample district is explicit and clearly labels its saved representatives", async ({ page }) => {
     await page.goto("/district");
-
-    const address = "1600 Pennsylvania Ave NW, Washington, DC 20500";
-    await page.getByLabel(/address/i).fill(address);
-    await page.getByRole("button", { name: /find|look up|lookup|search/i }).click();
-
-    await expect(page.getByRole("heading", { name: /District/i }).first()).toBeVisible();
-    await expect(page.getByText(/Your Representatives/i)).toBeVisible();
-    await expect(page.getByText(/U\.S\. House|U\.S\. Senate|House of Representatives|Senate/i).first()).toBeVisible();
-    await expect(page.getByText(/privacy|not stored|not saved/i).first()).toBeVisible();
-    await expect(page.getByText(address)).toHaveCount(0);
+    await page.getByRole("button", { name: "Explore a sample district" }).click();
+    await expect(page.getByRole("heading", { name: "Sample representatives" })).toBeVisible();
+    await expect(page.getByText("Sample district · saved snapshot")).toBeVisible();
+    await expect(page.getByText(/U\.S\. House|U\.S\. Senate/i).first()).toBeVisible();
+    await expect(page.getByText(/not stored|not saved/i).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /Official House directory/i })).toBeVisible();
   });
 
   test("bill flow renders bill detail with citations and official-source context", async ({ page }) => {

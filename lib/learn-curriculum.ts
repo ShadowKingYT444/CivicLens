@@ -136,17 +136,23 @@ function normalizeFlashcards(record: AnyRecord, lessonVisual: LearnVisual): Lear
 
 function normalizeQuizQuestion(value: unknown, sourceIds: string[]): LearnQuizQuestion | null {
   const record = asRecord(value);
-  const options = stringArray(record.options ?? record.choices).slice(0, 4);
-  if (!record.question || options.length === 0) return null;
+  const rawOptions = record.options ?? record.choices;
+  const question = text(record.question).trim();
+  if (!question || !Array.isArray(rawOptions) || rawOptions.length < 2 || rawOptions.length > 4) return null;
+  if (!rawOptions.every((option) => typeof option === "string" && option.trim())) return null;
+  const options = rawOptions.map((option: string) => option.trim());
+  if (new Set(options.map((option) => option.toLowerCase())).size !== options.length) return null;
 
-  while (options.length < 4) {
-    options.push("Not enough information");
-  }
-
-  const explicitAnswerIndex = Number(record.correctIndex ?? record.answerIndex);
-  const answerIndex = Number.isInteger(explicitAnswerIndex)
-    ? explicitAnswerIndex
-    : options.findIndex((option) => option === record.correctAnswer);
+  // Do not turn corrupt persisted data into a question with an invented correct answer.
+  const explicitAnswer = record.correctIndex !== undefined ? record.correctIndex : record.answerIndex;
+  const answerIndex = explicitAnswer !== undefined
+    ? typeof explicitAnswer === "number"
+      ? explicitAnswer
+      : typeof explicitAnswer === "string" && /^\d+$/.test(explicitAnswer)
+        ? Number(explicitAnswer)
+        : NaN
+    : options.findIndex((option) => option === text(record.correctAnswer).trim());
+  if (!Number.isInteger(answerIndex) || answerIndex < 0 || answerIndex >= options.length) return null;
   const citationIds = stringArray(record.citationIds).length
     ? stringArray(record.citationIds)
     : sourceIds;
@@ -157,12 +163,9 @@ function normalizeQuizQuestion(value: unknown, sourceIds: string[]): LearnQuizQu
 
   return {
     id: text(record.id) || undefined,
-    question: String(record.question),
+    question,
     options,
-    correctIndex:
-      Number.isInteger(answerIndex) && answerIndex >= 0 && answerIndex < options.length
-        ? answerIndex
-        : 0,
+    correctIndex: answerIndex,
     explanation: text(record.explanation, "Use the cited source to check the answer."),
     feedback: {
       correct: text(feedback.correct, text(record.explanation, "Correct. The source supports this.")),

@@ -16,12 +16,15 @@ export default defineConfig({
   reporter: process.env.CI ? [["html"], ["github"]] : [["list"], ["html", { open: "never" }]],
   use: {
     baseURL,
+    launchOptions: process.env.CHROMIUM_EXECUTABLE_PATH
+      ? { executablePath: process.env.CHROMIUM_EXECUTABLE_PATH }
+      : undefined,
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure"
   },
   webServer: {
-    command: `pnpm dev --hostname 127.0.0.1 --port ${port}`,
+    command: `pnpm ${process.env.PLAYWRIGHT_PRODUCTION === "true" ? "start" : "dev"} --hostname 127.0.0.1 --port ${port}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000

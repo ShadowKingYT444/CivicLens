@@ -39,6 +39,7 @@ type RawBillResult = SearchResult & {
       };
   whyItMatters?: string | { text?: string };
   whatChanges?: string | { text?: string };
+  whoIsAffected?: string | { text?: string };
   sourceCount?: number;
 };
 
@@ -65,15 +66,6 @@ type BillDeckCard = {
   currentStep: number;
   mode?: string;
   citations: Citation[];
-};
-
-const officialBillsCitation: Citation = {
-  id: "congress-about-bills-card",
-  sourceType: "official",
-  title: "Congress.gov: About Bills",
-  url: "https://www.congress.gov/help/learn-about-the-legislative-process/bills",
-  excerpt:
-    "Congress.gov explains bill and resolution records, including text, actions, sponsors, committees, summaries, and related activity.",
 };
 
 const reconciliationCitation: Citation = {
@@ -106,8 +98,6 @@ const fundingCitation: Citation = {
     "Congress.gov lists H.R. 1968 as Public Law No. 119-4 providing continuing FY2025 appropriations and extensions.",
 };
 
-const starterCitations = [reconciliationCitation, immigrationCitation, fundingCitation, officialBillsCitation];
-
 const defaultBillDeck: BillDeckCard[] = [
   {
     id: "hr1-reconciliation",
@@ -133,7 +123,7 @@ const defaultBillDeck: BillDeckCard[] = [
       "Use the official action record before repeating viral claims.",
     ],
     sourceLabel: "Congress.gov budget and tax sources",
-    sourceCount: 2,
+    sourceCount: 1,
     asset: getBillCategoryAsset("reconciliation budget tax spending debt"),
     currentStep: 4,
     citations: [reconciliationCitation],
@@ -164,7 +154,7 @@ const defaultBillDeck: BillDeckCard[] = [
       "Keeps the explanation neutral: source, status, and gaps.",
     ],
     sourceLabel: "Congress.gov immigration source context",
-    sourceCount: 2,
+    sourceCount: 1,
     asset: getBillCategoryAsset("immigration detention enforcement state lawsuit"),
     currentStep: 4,
     citations: [immigrationCitation],
@@ -195,7 +185,7 @@ const defaultBillDeck: BillDeckCard[] = [
       "Extends selected programs in health, flood insurance, cybersecurity, and TANF.",
     ],
     sourceLabel: "Congress.gov appropriations source context",
-    sourceCount: 2,
+    sourceCount: 1,
     asset: getBillCategoryAsset("appropriations government funding public health medicare cybersecurity"),
     currentStep: 4,
     citations: [fundingCitation],
@@ -298,31 +288,6 @@ function formatShortDate(value: unknown) {
   }).format(date);
 }
 
-function affectedGroupsFor(text: string) {
-  const haystack = text.toLowerCase();
-
-  if (/\b(budget|tax|spending|appropriation|debt|reconciliation)\b/.test(haystack)) {
-    return ["Taxpayers", "Federal programs", "Future budgets", "The economy"];
-  }
-  if (/\b(immigration|border|detain|non-u\.?s\.?)\b/.test(haystack)) {
-    return ["Immigrants", "States", "Federal agencies", "Communities"];
-  }
-  if (/\b(health|medicare|medicaid|substance|patients|988)\b/.test(haystack)) {
-    return ["Patients", "Health programs", "Providers", "Families"];
-  }
-  if (/\b(technology|online|cyber|stablecoin|digital|payment)\b/.test(haystack)) {
-    return ["Online users", "Companies", "Regulators", "Consumers"];
-  }
-  if (/\b(education|school|student|lunch)\b/.test(haystack)) {
-    return ["Students", "Schools", "Families", "Local programs"];
-  }
-  if (/\b(defense|armed forces|national security)\b/.test(haystack)) {
-    return ["Service members", "Agencies", "Contractors", "Communities"];
-  }
-
-  return ["Students", "Families", "Local communities", "Federal programs"];
-}
-
 function normalizeDeckCard(result: RawBillResult, index: number): BillDeckCard | null {
   const title = cardTitle(result);
   const href = cardHref(result);
@@ -351,18 +316,16 @@ function normalizeDeckCard(result: RawBillResult, index: number): BillDeckCard |
     title,
     href,
     refLabel: label,
-    eyebrow: cleanText(result.impactLabel ?? result.quest, index === 0 ? "Trending bill" : `Trending ${index + 1}`),
+    eyebrow: cleanText(result.impactLabel ?? result.quest, result.mode === "live" ? "Recent bill" : "Curated bill"),
     reward: result.mode === "live" ? "Live source" : "High impact",
     summary: snippet
       ? clampText(snippet, 170)
       : "Recent bill card. Open details to inspect available official records and source gaps.",
     whyItMatters,
     whatChanges,
-    officialSummary: snippet
-      ? clampText(snippet, 210)
-      : "The current card does not include a longer official summary. Check attached sources before drawing conclusions.",
+    officialSummary: cleanText(result.summary, "This card has a short explainer. Open the bill details or its official source for the full summary."),
     issueArea,
-    whoItAffects: affectedGroupsFor(`${searchText} ${whyItMatters} ${whatChanges}`),
+    whoItAffects: [richText(result.whoIsAffected, "The returned source context does not identify specific affected groups.")],
     latestAction,
     latestActionDate: currentStepDate(result),
     currentStepLabel: stepLabel,
@@ -372,11 +335,11 @@ function normalizeDeckCard(result: RawBillResult, index: number): BillDeckCard |
       : result.mode === "live"
         ? "Congress.gov live record"
         : "CivicLens bill source",
-    sourceCount: result.sourceCount ?? (citations.length || starterCitations.length),
+    sourceCount: citations.length,
     asset: getBillCategoryAsset(searchText),
     currentStep: inferStep(`${stepLabel} ${latestAction}`),
     mode: result.mode,
-    citations: citations.length ? citations : starterCitations,
+    citations,
   };
 }
 
@@ -397,6 +360,7 @@ export function BillBrowser() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sourceResults, setSourceResults] = useState<SearchResult[]>([]);
   const cardRefs = useRef<Array<HTMLElement | null>>([]);
 
   useEffect(() => {
@@ -415,7 +379,7 @@ export function BillBrowser() {
           setMessage(
             normalized.some((card) => card.mode === "live")
               ? "Recent high-impact bills from Congress.gov"
-              : "High-impact trending bill deck",
+              : "Curated historical bills; verify current status in official records",
           );
         }
       })
@@ -452,13 +416,16 @@ export function BillBrowser() {
     event.preventDefault();
     const trimmed = query.trim();
     if (!trimmed) return;
+    if (loading) return;
 
     setLoading(true);
 
     try {
       const payload = await getJson<unknown>(`/api/search?q=${encodeURIComponent(trimmed)}`);
+      const matches = normalizeSearchResponse(payload) as RawBillResult[];
+      setSourceResults(matches.filter((result) => result.type !== "bill"));
       const normalized = uniqueCards(
-        (normalizeSearchResponse(payload) as RawBillResult[])
+        matches.filter((result) => result.type === "bill")
           .map((result, index) => normalizeDeckCard(result, index))
           .filter((card): card is BillDeckCard => Boolean(card)),
       );
@@ -470,7 +437,7 @@ export function BillBrowser() {
         setSearchOpen(false);
         window.setTimeout(() => cardRefs.current[0]?.scrollIntoView({ block: "start", behavior: "smooth" }), 0);
       } else {
-        setMessage("No exact bill match yet. Demo cards are still available.");
+        setMessage("No matching bill record. The previous deck remains below; source links are separate search results.");
       }
     } catch (reason) {
       setMessage(reason instanceof Error ? reason.message : "Bill search is unavailable right now.");
@@ -550,6 +517,12 @@ export function BillBrowser() {
         <span>{message}</span>
         <span>{activeCard.refLabel}</span>
       </div>
+      {sourceResults.length ? (
+        <details className="lesson-source-panel" open>
+          <summary>Related source links ({sourceResults.length})</summary>
+          <ul>{sourceResults.map((source, index) => <li key={source.url ?? index}><a href={source.url} target="_blank" rel="noreferrer">{source.title}</a><p>{source.snippet}</p></li>)}</ul>
+        </details>
+      ) : null}
 
       <div className="bill-snap-deck" aria-label="Trending bill flashcards">
         {cards.map((card, index) => (

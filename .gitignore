@@ -38,6 +38,11 @@ prisma/dev.db-journal
 PROJECT_CONTRACT.md
 /agent-workflow/
 /artifacts/
+*.keystore
+*.jks
+/android/local.properties
+/android/.gradle/
+/android/**/build/
 graphify-out/
 **/graphify-out/
 

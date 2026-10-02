@@ -124,6 +124,7 @@ export type BillAction = {
 };
 
 export type BillDetail = BillSummary & {
+  mode?: "live" | "demo";
   summary?: string;
   actions?: BillAction[];
   sponsors?: Array<
@@ -156,6 +157,11 @@ export type BillDetail = BillSummary & {
 
 export type DistrictLookupResult = {
   status?: string;
+  source?: "live" | "fixture" | "unavailable";
+  memberSource?: "live" | "fixture" | "unavailable";
+  sourceDate?: string;
+  message?: string;
+  congress?: number;
   matchedAddress?: string;
   stateCode?: string;
   district?: string | number;

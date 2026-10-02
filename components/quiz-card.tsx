@@ -1,7 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import type { QuizQuestion } from "./types";
+
+type ValidQuiz = {
+  id?: string;
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation?: string;
+  feedback?: QuizQuestion["feedback"];
+  citationIds: string[];
+};
 
 export function QuizCard({
   quiz,
@@ -10,102 +20,150 @@ export function QuizCard({
   quiz: QuizQuestion | QuizQuestion[] | null | undefined;
   sourceId?: string;
 }) {
+  const questions = (Array.isArray(quiz) ? quiz : [quiz])
+    .map(normalizeQuizInput)
+    .filter((question): question is ValidQuiz => Boolean(question));
+  return (
+    <>
+      {questions.map((question, index) => (
+        <PracticeQuestion
+          key={`${sourceId}-${question.id ?? question.question}`}
+          quiz={question}
+          sourceId={sourceId}
+          position={index + 1}
+          total={questions.length}
+        />
+      ))}
+    </>
+  );
+}
+
+function PracticeQuestion({
+  quiz,
+  sourceId,
+  position,
+  total,
+}: {
+  quiz: ValidQuiz;
+  sourceId?: string;
+  position: number;
+  total: number;
+}) {
+  const questionInstanceId = useId();
   const [selected, setSelected] = useState<number | null>(null);
-  const [serverMessage, setServerMessage] = useState<string>("");
-  const normalizedQuiz = normalizeQuizInput(quiz);
-  const correctIndex = normalizedQuiz?.correctIndex;
-
-  const status =
-    selected === null || correctIndex === undefined
-      ? ""
-      : selected === correctIndex
-        ? "Correct"
-        : "Try another source-backed answer";
-
-  if (!normalizedQuiz || !normalizedQuiz.question || normalizedQuiz.options.length === 0) {
-    return null;
-  }
+  const [serverMessage, setServerMessage] = useState("");
+  const correct = selected === quiz.correctIndex;
 
   async function submitAttempt(index: number) {
+    if (selected !== null) return;
     setSelected(index);
     setServerMessage("");
-
     try {
-      await fetch("/api/quiz/attempt", {
+      const response = await fetch("/api/quiz/attempt", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify({
-          sourceId,
-          answerIndex: index,
-          isCorrect: correctIndex === undefined ? undefined : index === correctIndex,
+          quizId: (sourceId || "civic-practice").slice(0, 120),
+          questionId: (quiz.id || `${questionInstanceId}-${position}`).slice(
+            0,
+            120,
+          ),
+          selectedAnswer: quiz.options[index],
+          correctAnswer: quiz.options[quiz.correctIndex],
+          citationIds: quiz.citationIds.slice(0, 5),
         }),
       });
+      if (!response.ok)
+        setServerMessage(
+          "Your answer is checked here; the practice log is unavailable.",
+        );
     } catch {
-      setServerMessage("Answer noted for this session.");
+      setServerMessage(
+        "Your answer is checked here; the practice log is unavailable.",
+      );
     }
   }
 
   return (
-    <section className="quiz" aria-label="Knowledge check">
+    <section
+      className="quiz"
+      aria-label={`Knowledge check ${position} of ${total}`}
+    >
       <div>
-        <p className="eyebrow">Quick Check</p>
-        <h3 className="section-title">{normalizedQuiz.question}</h3>
+        <p className="eyebrow">
+          Quick Check {total > 1 ? `${position} of ${total}` : ""}
+        </p>
+        <h3 className="section-title">{quiz.question}</h3>
       </div>
       <div className="option-grid">
-        {normalizedQuiz.options.map((option, index) => {
-          const selectedClass = selected === index ? " selected" : "";
-          const resultClass =
-            selected !== null && correctIndex === index
-              ? " correct"
-              : selected === index && correctIndex !== undefined
-                ? " incorrect"
-                : "";
-
-          return (
-            <button
-              key={option}
-              type="button"
-              className={`option-button${selectedClass}${resultClass}`}
-              onClick={() => void submitAttempt(index)}
-              aria-pressed={selected === index}
-            >
-              {option}
-            </button>
-          );
-        })}
+        {quiz.options.map((option, index) => (
+          <button
+            key={`${index}-${option}`}
+            type="button"
+            className={`option-button${selected === index ? ` selected ${correct ? "correct" : "incorrect"}` : ""}`}
+            onClick={() => void submitAttempt(index)}
+            disabled={selected !== null}
+            aria-pressed={selected === index}
+          >
+            {option}
+          </button>
+        ))}
       </div>
       <p aria-live="polite" className="subtle">
-        {[status, selected !== null ? normalizedQuiz.explanation : "", serverMessage].filter(Boolean).join(" ")}
+        {selected === null
+          ? "Choose the answer supported by the evidence."
+          : correct
+            ? `Correct. ${quiz.feedback?.correct ?? quiz.explanation ?? "The source supports this answer."}`
+            : `Not quite. ${quiz.feedback?.incorrect ?? "Revisit the source and try again."}`}{" "}
+        {serverMessage}
       </p>
+      {selected !== null && !correct ? (
+        <button
+          className="button secondary"
+          type="button"
+          onClick={() => {
+            setSelected(null);
+            setServerMessage("");
+          }}
+        >
+          Try again
+        </button>
+      ) : null}
     </section>
   );
 }
 
-function normalizeQuizInput(quiz: QuizQuestion | QuizQuestion[] | null | undefined): {
-  question: string;
-  options: string[];
-  correctIndex?: number;
-  explanation?: string;
-} | null {
-  const first = Array.isArray(quiz) ? quiz[0] : quiz;
-  if (!first?.question) {
+function normalizeQuizInput(
+  quiz: QuizQuestion | null | undefined,
+): ValidQuiz | null {
+  if (!quiz?.question) return null;
+  const options = quiz.options ?? quiz.choices;
+  if (
+    !Array.isArray(options) ||
+    options.length < 2 ||
+    options.some((option) => typeof option !== "string" || !option.trim())
+  )
     return null;
-  }
-
-  const options = first.options ?? first.choices ?? [];
-  if (!Array.isArray(options) || options.length === 0) {
+  const correctIndex =
+    quiz.correctIndex ??
+    quiz.answerIndex ??
+    options.findIndex((option) => option === quiz.correctAnswer);
+  if (
+    !Number.isInteger(correctIndex) ||
+    correctIndex < 0 ||
+    correctIndex >= options.length
+  )
     return null;
-  }
-
-  const answerIndex =
-    first.correctIndex ??
-    first.answerIndex ??
-    (first.correctAnswer ? options.findIndex((option) => option === first.correctAnswer) : -1);
-
   return {
-    question: first.question,
+    id: quiz.id,
+    question: quiz.question,
     options,
-    ...(answerIndex >= 0 ? { correctIndex: answerIndex } : {}),
-    explanation: first.explanation,
+    correctIndex,
+    explanation: quiz.explanation,
+    feedback: quiz.feedback,
+    citationIds: quiz.citationIds ?? [],
   };
 }

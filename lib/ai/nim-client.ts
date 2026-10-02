@@ -32,7 +32,7 @@ export function selectLlmProviders(
   env: LlmProviderEnv = process.env,
 ): LlmProvider[] {
   const providers: LlmProvider[] = [];
-  const nimApiKey = firstNonEmpty(env.NVIDIA_NIM_API_KEY, env.NVIDIA_API_KEY);
+  const nimApiKey = firstNonEmpty(env.NVIDIA_NIM_API_KEY, env.NIM_API_KEY, env.NVIDIA_API_KEY);
   if (nimApiKey && providerEnabled(env.ENABLE_NIM)) {
     providers.push({
       name: "nim",
@@ -44,14 +44,14 @@ export function selectLlmProviders(
           env.NVIDIA_NIM_API_BASE,
         ) || "https://integrate.api.nvidia.com/v1",
       ),
-      model: env.NVIDIA_NIM_MODEL || "meta/llama-3.1-8b-instruct",
+      model: env.NVIDIA_NIM_MODEL || "meta/llama-3.2-11b-vision-instruct",
       timeoutMs: parseTimeoutMs(
         firstNonEmpty(
           env.NVIDIA_NIM_TIMEOUT_MS,
           env.NIM_TIMEOUT_MS,
           env.LLM_TIMEOUT_MS,
         ),
-        12_000,
+        25_000,
       ),
     });
   }

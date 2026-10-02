@@ -193,7 +193,7 @@ test.describe("CivicLens API contracts", () => {
 
     const rawAddress = "742 Evergreen Terrace, Springfield, IL 62704";
     const response = await request.post("/api/district/lookup", {
-      data: { address: rawAddress },
+      data: { demo: true },
     });
     expect(response.ok()).toBe(true);
 

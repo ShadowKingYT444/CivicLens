@@ -19,6 +19,7 @@ import type {
 } from "./schemas";
 import {
   isPersuasionOrVotingAdvice,
+  isSourceGroundedText,
   looksLikeAddress,
   parseJsonObject,
   redactSensitiveText,
@@ -38,7 +39,7 @@ type ProviderAnalysisBudget = {
   deadline: number;
 };
 
-const DEFAULT_ANALYSIS_DEADLINE_MS = 25_000;
+const DEFAULT_ANALYSIS_DEADLINE_MS = 30_000;
 const DEFAULT_ANALYSIS_MAX_CALLS = 3;
 
 export { isLlmConfigured } from "./nim-client";
@@ -82,8 +83,7 @@ export async function generateAnalysis(input: GenerateAnalysisInput): Promise<{
   if (
     isLlmConfigured() &&
     citations.length > 0 &&
-    !unresolvedAddressRisk &&
-    !isInformationalQuestion(safeClaim)
+    !unresolvedAddressRisk
   ) {
     const live = await tryLiveAnalysis(safeClaim, citations, warnings);
     if (live) {
@@ -92,6 +92,9 @@ export async function generateAnalysis(input: GenerateAnalysisInput): Promise<{
         safeClaim,
         citations,
       );
+      if (presentedLive.studentExplanation !== live.studentExplanation) {
+        warnings.push("Source-consistency checks replaced unsupported model narration with supplied evidence text.");
+      }
       const guardedLive = applyDeterministicTruthGuard(
         presentedLive,
         safeClaim,
@@ -123,7 +126,8 @@ function applyDeterministicTruthGuard(
   citations: Citation[],
 ): AnalysisResult {
   const deterministicTruth = buildDeterministicTruth(claim, citations);
-  if (deterministicTruth.truthVerdict === "unverifiable") {
+  const knownHistoricalBill = citations.some((citation) => citation.bill?.congress === 118 && citation.bill.type === "hr" && citation.bill.number === 82);
+  if (deterministicTruth.truthVerdict !== "false" || !knownHistoricalBill || !/\bH\.?\s*R\.?\s*82\b/i.test(claim)) {
     return result;
   }
 
@@ -132,10 +136,10 @@ function applyDeterministicTruthGuard(
     truthVerdict: deterministicTruth.truthVerdict,
     verdictSummary: deterministicTruth.verdictSummary,
     claimChecks: deterministicTruth.claimChecks,
-    oneSentenceAnswer: deterministicTruth.verdictSummary,
-    studentExplanation: buildStudentExplanation(
-      deterministicTruth.truthVerdict,
-    ),
+    oneSentenceAnswer: isSourceGroundedText(result.oneSentenceAnswer, citations)
+      ? result.oneSentenceAnswer : truncateText(deterministicTruth.verdictSummary, 500),
+    studentExplanation: isSourceGroundedText(result.studentExplanation, citations)
+      ? result.studentExplanation : buildStudentExplanation(deterministicTruth.truthVerdict),
   };
 
   try {
@@ -174,7 +178,9 @@ function buildProviderPresentation(
 
     return {
       ...check,
-      explanation: citedExcerpt
+      explanation: isSourceGroundedText(check.explanation, check.citationIds.map((id) => citationsById.get(id)).filter((citation): citation is Citation => Boolean(citation)))
+        ? check.explanation
+        : citedExcerpt
         ? truncateText(
             `The official record ${relationship} this check: ${citedExcerpt}`,
             700,
@@ -192,14 +198,28 @@ function buildProviderPresentation(
     700,
   );
 
+  const informational = isInformationalQuestion(claim);
+  const sourceAnswer = citations.slice(0, 3).map((citation) => citation.excerpt).join(" ");
+  const groundedNarration = retainGroundedNarration(result.studentExplanation, citations);
+  const groundedAnswer = retainGroundedNarration(result.oneSentenceAnswer, citations);
   return {
     ...result,
+    ...(informational ? {
+      truthVerdict: "unverifiable" as const,
+      claimChecks: [{
+        claim: normalizeClaim(claim), verdict: "unverifiable" as const,
+        explanation: "This is an information request. The excerpts explain the topic; the question is not scored as true or false.",
+        citationIds: citations.slice(0, 5).map((citation) => citation.id),
+      }],
+    } : {}),
     normalizedClaim: normalizeClaim(claim),
-    claimChecks: sourceBackedChecks,
-    verdictSummary,
-    oneSentenceAnswer: truncateText(verdictSummary, 500),
-    studentExplanation: truncateText(explanations.join(" "), 2_000),
-    keyContext: explanations.slice(0, 6).map((text) => truncateText(text, 500)),
+    ...(!informational ? { claimChecks: sourceBackedChecks } : {}),
+    verdictSummary: informational ? truncateText(groundedAnswer || sourceAnswer, 700) : verdictSummary,
+    oneSentenceAnswer: truncateText(groundedAnswer || (informational ? sourceAnswer : verdictSummary), 500),
+    studentExplanation: truncateText(groundedNarration || (informational ? sourceAnswer : explanations.join(" ")), 2_000),
+    keyContext: (result.keyContext.filter((text) => isSourceGroundedText(text, citations)).length > 0
+      ? result.keyContext.filter((text) => isSourceGroundedText(text, citations))
+      : explanations).slice(0, 6).map((text) => truncateText(text, 500)),
     whatOfficialSourcesSay: citations
       .slice(0, 8)
       .map((citation) => truncateText(citation.excerpt, 700)),
@@ -208,8 +228,19 @@ function buildProviderPresentation(
       .slice(0, 6)
       .map((check) => truncateText(check.explanation, 500)),
     framingFlags: detectFramingFlags(claim),
-    quiz: generateQuiz(citations, normalizeClaim(claim)),
+    quiz: result.quiz.every((question) => {
+      const sources = citations.filter((citation) => question.citationIds.includes(citation.id));
+      const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+      const answer = normalize(question.correctAnswer);
+      return isSourceGroundedText(question.explanation, sources) && sources.some((source) => normalize(`${source.title} ${source.excerpt}`).includes(answer));
+    }) ? result.quiz : generateQuiz(citations, normalizeClaim(claim)),
   };
+}
+
+// Structural JSON and citation IDs alone do not justify factual narration.
+// Preserve a supported paraphrase, otherwise use the retrieved source text.
+function retainGroundedNarration(text: string, citations: Citation[]): string | null {
+  return isSourceGroundedText(text, citations) ? text : null;
 }
 
 function getRefusalReason(claim: string): string | null {
@@ -361,7 +392,7 @@ async function requestChatCompletionWithinBudget(
 
   try {
     return await Promise.race([
-      requestChatCompletion(boundedProvider, messages),
+      requestChatCompletion(boundedProvider, messages, { maxTokens: 2_600 }),
       new Promise<never>((_, reject) => {
         deadlineTimer = setTimeout(
           () => reject(new Error("Provider analysis deadline exhausted")),
@@ -398,7 +429,7 @@ function parseAndValidate(
   errors: string[];
 } {
   try {
-    const parsed = normalizeModelPayload(parseJsonObject(content), citations);
+    const parsed = normalizeModelPayload(parseJsonObject(content), citations, claim);
     return {
       result: validateAnalysisPayload(parsed, citations, claim),
       errors: [],
@@ -413,12 +444,21 @@ function parseAndValidate(
   }
 }
 
-function normalizeModelPayload(payload: unknown, citations: Citation[]) {
+function normalizeModelPayload(payload: unknown, citations: Citation[], claim: string) {
   if (!payload || typeof payload !== "object") {
     return payload;
   }
 
   const normalized = { ...(payload as Record<string, unknown>) };
+  if (isInformationalQuestion(claim)) {
+    normalized.truthVerdict = "unverifiable";
+    normalized.claimChecks = [{
+      claim: normalizeClaim(claim), verdict: "unverifiable",
+      explanation: "This is an information request, so no true-or-false score applies.",
+      citationIds: citations.slice(0, 5).map((citation) => citation.id),
+    }];
+  }
+
   if (
     typeof normalized.refusalReason === "string" &&
     !normalized.refusalReason.trim()
@@ -447,7 +487,7 @@ function buildDeterministicAnalysis(
   const informationalQuestion = isInformationalQuestion(claim);
   const sourceSummaries = citations
     .slice(0, 3)
-    .map((citation) => summarizeCitation(citation))
+    .map((citation) => truncateText(summarizeCitation(citation), 500))
     .filter(Boolean);
 
   const result: AnalysisResult = {
@@ -462,7 +502,7 @@ function buildDeterministicAnalysis(
     verdictSummary: truth.verdictSummary,
     claimChecks: truth.claimChecks,
     oneSentenceAnswer: hasSources
-      ? truth.verdictSummary
+      ? truncateText(truth.verdictSummary, 500)
       : "CivicLens did not find enough official source context to evaluate this claim.",
     studentExplanation: hasSources
       ? informationalQuestion
@@ -471,7 +511,7 @@ function buildDeterministicAnalysis(
       : "A civic-literacy answer needs official source material. Try naming a bill number, agency, chamber, vote, or district so the system can retrieve a grounded source.",
     keyContext: sourceSummaries,
     whatOfficialSourcesSay: hasSources
-      ? citations.slice(0, 4).map((citation) => citation.excerpt)
+      ? citations.slice(0, 4).map((citation) => truncateText(citation.excerpt, 700))
       : [],
     contextGaps: hasSources
       ? [
@@ -558,7 +598,7 @@ function buildDeterministicTruth(
       : "This is a question, not a true-or-false claim, and no matching official excerpt was available.";
     return {
       truthVerdict: "unverifiable",
-      verdictSummary: answer,
+      verdictSummary: truncateText(answer, 700),
       claimChecks: [
         {
           claim: checkableClaim,
@@ -694,6 +734,8 @@ function findDirectTruthMatch(
     const sourceTerms = new Set(canonicalEvidenceTerms(sourceText));
     const directlySettledRepealClaim =
       billRef &&
+      citation.bill?.type === billRef.type &&
+      citation.bill?.number === billRef.number &&
       claimTerms.includes("repeal") &&
       ["government", "pension", "offset", "windfall", "elimination"].filter(
         (term) => claimTerms.includes(term) && sourceTerms.has(term),

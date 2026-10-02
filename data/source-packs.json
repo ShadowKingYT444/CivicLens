@@ -695,5 +695,202 @@
       "url": "https://www.epa.gov/environmental-topics",
       "excerpt": "EPA provides official information about environmental topics including air, water, climate, chemicals, waste, and environmental health."
     }
+  },
+  {
+    "id": "source-pack-constitutional-amendments",
+    "title": "National Archives: Amendments 11–27",
+    "excerpt": "The Fourteenth Amendment requires states to provide due process and equal protection. The Seventeenth Amendment provides for two senators per state elected by the people. The Twenty-Sixth Amendment protects voting rights of citizens eighteen and older.",
+    "body": "The Fourteenth Amendment requires states to provide due process and equal protection. The Seventeenth Amendment provides for two senators per state elected by the people. The Twenty-Sixth Amendment protects voting rights of citizens eighteen and older.",
+    "url": "https://www.archives.gov/founding-docs/amendments-11-27",
+    "sourceType": "constitution",
+    "tags": [
+      "fourteenth amendment",
+      "equal protection",
+      "due process",
+      "senators",
+      "voting age",
+      "amendments"
+    ],
+    "citation": {
+      "id": "source-pack-constitutional-amendments",
+      "sourceDocumentId": "constitutional-amendments",
+      "sourceType": "constitution",
+      "title": "National Archives: Amendments 11–27",
+      "url": "https://www.archives.gov/founding-docs/amendments-11-27",
+      "excerpt": "The Fourteenth Amendment requires states to provide due process and equal protection. The Seventeenth Amendment provides for two senators per state elected by the people. The Twenty-Sixth Amendment protects voting rights of citizens eighteen and older."
+    }
+  },
+  {
+    "id": "source-pack-electoral-college",
+    "title": "National Archives: What Is the Electoral College?",
+    "excerpt": "The Electoral College is the presidential selection process. Each state has electors equal to its House and Senate seats; DC has three. A majority of electoral votes is required to win. Under the current allocation there are 538 electoral votes and a majority is 270.",
+    "body": "The Electoral College is the presidential selection process. Each state has electors equal to its House and Senate seats; DC has three. A majority of electoral votes is required to win. Under the current allocation there are 538 electoral votes and a majority is 270.",
+    "url": "https://www.archives.gov/electoral-college/about",
+    "sourceType": "elections",
+    "tags": [
+      "electoral college",
+      "electors",
+      "president",
+      "270",
+      "538",
+      "presidential election"
+    ],
+    "citation": {
+      "id": "source-pack-electoral-college",
+      "sourceDocumentId": "electoral-college",
+      "sourceType": "elections",
+      "title": "National Archives: What Is the Electoral College?",
+      "url": "https://www.archives.gov/electoral-college/about",
+      "excerpt": "The Electoral College is the presidential selection process. Each state has electors equal to its House and Senate seats; DC has three. A majority of electoral votes is required to win. Under the current allocation there are 538 electoral votes and a majority is 270."
+    }
+  },
+  {
+    "id": "source-pack-primaries-caucuses",
+    "title": "USAGov: Presidential Primaries and Caucuses",
+    "excerpt": "Presidential primaries and caucuses help parties choose nominees through delegates. Eligibility depends on state and party rules; open and closed contests differ. A primary is different from the general election that selects officeholders.",
+    "body": "Presidential primaries and caucuses help parties choose nominees through delegates. Eligibility depends on state and party rules; open and closed contests differ. A primary is different from the general election that selects officeholders.",
+    "url": "https://www.usa.gov/primaries-caucuses",
+    "sourceType": "elections",
+    "tags": [
+      "primary",
+      "primaries",
+      "caucus",
+      "caucuses",
+      "nominee",
+      "general election",
+      "delegates"
+    ],
+    "citation": {
+      "id": "source-pack-primaries-caucuses",
+      "sourceDocumentId": "primaries-caucuses",
+      "sourceType": "elections",
+      "title": "USAGov: Presidential Primaries and Caucuses",
+      "url": "https://www.usa.gov/primaries-caucuses",
+      "excerpt": "Presidential primaries and caucuses help parties choose nominees through delegates. Eligibility depends on state and party rules; open and closed contests differ. A primary is different from the general election that selects officeholders."
+    }
+  },
+  {
+    "id": "source-pack-jury-types",
+    "title": "U.S. Courts: Types of Juries",
+    "excerpt": "Trial juries decide criminal and civil cases. In a criminal trial the government must prove its case beyond a reasonable doubt. Grand juries evaluate probable cause for an indictment; an indictment is not a verdict of guilt.",
+    "body": "Trial juries decide criminal and civil cases. In a criminal trial the government must prove its case beyond a reasonable doubt. Grand juries evaluate probable cause for an indictment; an indictment is not a verdict of guilt.",
+    "url": "https://www.uscourts.gov/court-programs/jury-service/types-juries",
+    "sourceType": "courts",
+    "tags": [
+      "jury",
+      "juror",
+      "trial jury",
+      "grand jury",
+      "indictment",
+      "reasonable doubt",
+      "probable cause"
+    ],
+    "citation": {
+      "id": "source-pack-jury-types",
+      "sourceDocumentId": "jury-types",
+      "sourceType": "courts",
+      "title": "U.S. Courts: Types of Juries",
+      "url": "https://www.uscourts.gov/court-programs/jury-service/types-juries",
+      "excerpt": "Trial juries decide criminal and civil cases. In a criminal trial the government must prove its case beyond a reasonable doubt. Grand juries evaluate probable cause for an indictment; an indictment is not a verdict of guilt."
+    }
+  },
+  {
+    "id": "source-pack-budget-terms",
+    "title": "Congressional Budget Office: Common Budgetary Terms Explained",
+    "excerpt": "Authorization laws establish or continue programs; appropriation laws provide budget authority. Some authorization laws directly provide mandatory funding. Budget authority permits obligations, while outlays are payments. A continuing resolution provides temporary funding.",
+    "body": "Authorization laws establish or continue programs; appropriation laws provide budget authority. Some authorization laws directly provide mandatory funding. Budget authority permits obligations, while outlays are payments. A continuing resolution provides temporary funding.",
+    "url": "https://www.cbo.gov/publication/57660",
+    "sourceType": "congress",
+    "tags": [
+      "budget",
+      "authorization",
+      "appropriation",
+      "continuing resolution",
+      "mandatory",
+      "discretionary",
+      "outlays",
+      "funding"
+    ],
+    "citation": {
+      "id": "source-pack-budget-terms",
+      "sourceDocumentId": "budget-terms",
+      "sourceType": "congress",
+      "title": "Congressional Budget Office: Common Budgetary Terms Explained",
+      "url": "https://www.cbo.gov/publication/57660",
+      "excerpt": "Authorization laws establish or continue programs; appropriation laws provide budget authority. Some authorization laws directly provide mandatory funding. Budget authority permits obligations, while outlays are payments. A continuing resolution provides temporary funding."
+    }
+  },
+  {
+    "id": "source-pack-house-committee-work",
+    "title": "House.gov: In Committee",
+    "excerpt": "Committees study bills, hold hearings, consider amendments in markup, and may report legislation to the House. Hearings gather testimony and evidence; reporting a bill is a committee step, not passage by the full House.",
+    "body": "Committees study bills, hold hearings, consider amendments in markup, and may report legislation to the House. Hearings gather testimony and evidence; reporting a bill is a committee step, not passage by the full House.",
+    "url": "https://www.house.gov/the-house-explained/the-legislative-process/in-committee",
+    "sourceType": "house",
+    "tags": [
+      "committee",
+      "hearing",
+      "testimony",
+      "markup",
+      "reported",
+      "oversight"
+    ],
+    "citation": {
+      "id": "source-pack-house-committee-work",
+      "sourceDocumentId": "house-committee-work",
+      "sourceType": "house",
+      "title": "House.gov: In Committee",
+      "url": "https://www.house.gov/the-house-explained/the-legislative-process/in-committee",
+      "excerpt": "Committees study bills, hold hearings, consider amendments in markup, and may report legislation to the House. Hearings gather testimony and evidence; reporting a bill is a committee step, not passage by the full House."
+    }
+  },
+  {
+    "id": "source-pack-elected-officials",
+    "title": "USAGov: Find and Contact Elected Officials",
+    "excerpt": "USAGov directs residents to official contacts for federal, state, territorial, and local elected officials. House members represent districts, senators represent states, and state and local officials handle matters within their jurisdictions.",
+    "body": "USAGov directs residents to official contacts for federal, state, territorial, and local elected officials. House members represent districts, senators represent states, and state and local officials handle matters within their jurisdictions.",
+    "url": "https://www.usa.gov/elected-officials",
+    "sourceType": "state-local",
+    "tags": [
+      "contact",
+      "representative",
+      "senator",
+      "constituent",
+      "local",
+      "state",
+      "officials"
+    ],
+    "citation": {
+      "id": "source-pack-elected-officials",
+      "sourceDocumentId": "elected-officials",
+      "sourceType": "state-local",
+      "title": "USAGov: Find and Contact Elected Officials",
+      "url": "https://www.usa.gov/elected-officials",
+      "excerpt": "USAGov directs residents to official contacts for federal, state, territorial, and local elected officials. House members represent districts, senators represent states, and state and local officials handle matters within their jurisdictions."
+    }
+  },
+  {
+    "id": "source-pack-foia-faq",
+    "title": "FOIA.gov: Frequently Asked Questions",
+    "excerpt": "FOIA provides access to existing federal executive-branch agency records, subject to exemptions such as personal privacy and law-enforcement interests. Requests should describe the records sought. FOIA does not require agencies to create new records or answer research questions.",
+    "body": "FOIA provides access to existing federal executive-branch agency records, subject to exemptions such as personal privacy and law-enforcement interests. Requests should describe the records sought. FOIA does not require agencies to create new records or answer research questions.",
+    "url": "https://www.foia.gov/faq.html",
+    "sourceType": "records",
+    "tags": [
+      "foia",
+      "records",
+      "request",
+      "exemptions",
+      "privacy",
+      "agency"
+    ],
+    "citation": {
+      "id": "source-pack-foia-faq",
+      "sourceDocumentId": "foia-faq",
+      "sourceType": "records",
+      "title": "FOIA.gov: Frequently Asked Questions",
+      "url": "https://www.foia.gov/faq.html",
+      "excerpt": "FOIA provides access to existing federal executive-branch agency records, subject to exemptions such as personal privacy and law-enforcement interests. Requests should describe the records sought. FOIA does not require agencies to create new records or answer research questions."
+    }
   }
 ]

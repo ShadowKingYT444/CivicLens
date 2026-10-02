@@ -116,6 +116,15 @@ describe("official source connectors", () => {
     expect(candidate?.citation.excerpt).toBe("Agency final rule summary.");
   });
 
+  it("does not turn empty API search results into live evidence", async () => {
+    const [candidate] = await resolveOfficialSourceCandidates("EPA final rule", 1, {
+      env: { FEDERAL_REGISTER_API_BASE: "https://www.federalregister.gov/api/v1" },
+      fetcher: async () => Response.json({ results: [] }),
+    });
+    expect(candidate?.live).toBe(false);
+    expect(candidate?.citation.sourceDocumentId).toBe("federal-register-configured-search");
+  });
+
   it("falls back to a citation target when a live provider request fails", async () => {
     const fetcher = async () => new Response("nope", { status: 503 });
 

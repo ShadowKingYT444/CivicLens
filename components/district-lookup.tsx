@@ -40,7 +40,7 @@ export function DistrictLookup() {
     await lookupDistrict({ address: address.trim() });
   }
 
-  async function lookupDistrict(requestBody: { address?: string; latitude?: number; longitude?: number }) {
+  async function lookupDistrict(requestBody: { demo?: boolean; address?: string; latitude?: number; longitude?: number }) {
     setLoading(true);
     setError("");
     setResult(null);
@@ -83,12 +83,16 @@ export function DistrictLookup() {
     );
   }
 
+  const hasDistrict = result?.status === "matched" || result?.status === "demo";
+  const isSample = result?.status === "demo";
   const districtCode = result?.stateCode && result?.district ? `${result.stateCode} District ${result.district}` : "Your District";
 
   return (
     <section className="page-shell" aria-label="District lookup">
-      <TopIdentity title="District" subtitle="Find representatives without storing your address." />
+      <TopIdentity title="District" subtitle="Connect civic lessons to the people who represent you." />
+      <h1 className="section-title">Find your federal district</h1>
 
+      <p className="muted">Your address or location is sent once to the U.S. Census Bureau to find your federal district. CivicLens does not save it or send it to AI.</p>
       <form className="form-grid" onSubmit={handleSubmit}>
         <label className="sr-only" htmlFor="address">
           Street address
@@ -102,6 +106,8 @@ export function DistrictLookup() {
             onChange={(event) => setAddress(event.target.value)}
             autoComplete="street-address"
             placeholder="1600 Pennsylvania Ave NW, Washington, DC"
+            maxLength={250}
+            minLength={5}
             required
           />
           <button className="button secondary" type="submit" disabled={loading} aria-label="Look up district">
@@ -110,6 +116,9 @@ export function DistrictLookup() {
         </div>
         <button className="button secondary location-button" type="button" onClick={handleUseLocation} disabled={loading}>
           <LocateFixed aria-hidden="true" size={20} /> Use my location
+        </button>
+        <button className="button secondary" type="button" onClick={() => void lookupDistrict({ demo: true })} disabled={loading}>
+          Explore a sample district
         </button>
         {error ? (
           <p className="empty-state" role="alert">
@@ -120,45 +129,57 @@ export function DistrictLookup() {
 
       {loading ? <p className="empty-state">Looking up your district...</p> : null}
 
-      {result ? (
+      {result && hasDistrict ? (
         <>
+          <div className="privacy-card" role="status">
+            <div>
+              <h3>{isSample ? "Sample district · saved snapshot" : "Verified district"}</h3>
+              <p>{result.message}</p>
+              {result.sourceDate ? <p className="muted">{isSample ? "Snapshot" : "Retrieved"}: {result.sourceDate}{result.congress ? ` · ${result.congress}th Congress` : ""}</p> : null}
+            </div>
+          </div>
           <DistrictHeroCard districtCode={districtCode} location={result.stateCode ? `${result.stateCode}` : undefined} />
 
           <section className="page-shell">
             <div className="section-row">
-              <h2>Your Representatives</h2>
-              <span className="status-pill good">Why these?</span>
+              <h2>{isSample ? "Sample representatives" : "Your Representatives"}</h2>
+              <span className="status-pill good">{isSample ? "Sample" : "Federal"}</span>
             </div>
             <div className="representatives-row">
               {result.houseMembers?.length ? (
                 result.houseMembers.map((member, index) => (
+                  <div key={`${memberName(member)}-${index}`}>
                   <RepresentativeMiniCard
-                    key={`${memberName(member)}-${index}`}
                     name={memberName(member)}
                     role={memberRole(member, "U.S. House")}
                     label={String(result.district ? `${result.stateCode}-${result.district}` : "House")}
                     photoUrl={memberPhoto(member)}
                     tone="blue"
                   />
+                  {typeof member !== "string" && member.officialUrl ? <a className="source-link" href={member.officialUrl} target="_blank" rel="noreferrer">{memberName(member)} official profile ↗</a> : null}
+                  </div>
                 ))
               ) : (
-                <p className="empty-state">No House member data returned.</p>
+                <p className="empty-state">Current House member data is unavailable. The official directory can verify your representative.</p>
               )}
               {result.senators?.length ? (
                 result.senators.map((member, index) => (
+                  <div key={`${memberName(member)}-${index}`}>
                   <RepresentativeMiniCard
-                    key={`${memberName(member)}-${index}`}
                     name={memberName(member)}
                     role={memberRole(member, "U.S. Senate")}
                     label={result.stateCode}
                     photoUrl={memberPhoto(member)}
                     tone={index % 2 ? "purple" : "teal"}
                   />
+                  {typeof member !== "string" && member.officialUrl ? <a className="source-link" href={member.officialUrl} target="_blank" rel="noreferrer">{memberName(member)} official profile ↗</a> : null}
+                  </div>
                 ))
               ) : (
-                <p className="empty-state">No senator data returned.</p>
+                <p className="empty-state">{["DC", "PR", "GU", "VI", "AS", "MP"].includes(result.stateCode ?? "") ? "D.C. and U.S. territories have no U.S. senators." : "Current senator data is unavailable. Check the official Senate directory."}</p>
               )}
             </div>
+            <div className="district-directories"><a href="https://www.house.gov/representatives/find-your-representative" target="_blank" rel="noreferrer">Official House directory ↗</a><a href="https://www.senate.gov/senators/senators-contact.htm" target="_blank" rel="noreferrer">Official Senate directory ↗</a></div>
           </section>
 
           <section className="privacy-card">
@@ -201,6 +222,14 @@ export function DistrictLookup() {
             />
           </div>
         </>
+      ) : result && !hasDistrict ? (
+        <section className="privacy-card" role="status">
+          <div>
+            <h2>{result.status === "not_found" ? "No district found" : "Lookup unavailable"}</h2>
+            <p>{result.message ?? "Try a full street address with city, state and ZIP code."}</p>
+            <p><a href="https://www.house.gov/representatives/find-your-representative" target="_blank" rel="noreferrer">Find your representative on House.gov ↗</a></p>
+          </div>
+        </section>
       ) : !loading ? (
         <section className="district-hero-card">
           <div>

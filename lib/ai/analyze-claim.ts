@@ -23,12 +23,16 @@ export async function analyzeClaim(claim: string): Promise<AnalyzeClaimResult> {
           (candidate) => JSON.stringify(candidate) === JSON.stringify(bill),
         ) === index,
     );
+  const retrievalWarnings = grounded.warnings ?? [];
+  const identityContext = retrievalWarnings.filter((warning) => warning.includes("Bill numbers restart"));
   return {
-    result: generated.result,
+    result: identityContext.length > 0
+      ? { ...generated.result, keyContext: [...identityContext, ...generated.result.keyContext].slice(0, 6) }
+      : generated.result,
     citations: grounded.citations,
     relatedBills,
     mode: generated.mode,
     sourceMode: grounded.mode,
-    warnings: generated.warnings,
+    warnings: [...retrievalWarnings, ...generated.warnings],
   };
 }

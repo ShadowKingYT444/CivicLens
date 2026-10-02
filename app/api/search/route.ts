@@ -39,6 +39,10 @@ export async function GET(request: NextRequest) {
         billType: bill.type,
         number: bill.number,
         summary: bill.summary,
+        citations: bill.citations,
+        currentStep: { text: bill.latestAction, label: bill.currentStatus },
+        whoIsAffected: bill.whoIsAffected,
+        whatChanges: bill.whatChanges,
         mode: bill.mode,
       });
     }
@@ -64,5 +68,6 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     results: results.slice(0, 10),
     mode: grounded.mode,
+    warnings: grounded.warnings,
   });
 }

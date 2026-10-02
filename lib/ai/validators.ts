@@ -153,6 +153,7 @@ export function isPersuasionOrVotingAdvice(input: string): boolean {
 export function isOfficialSourceUrl(url: string): boolean {
   try {
     const parsed = new URL(url);
+    if (parsed.protocol !== "https:" || parsed.username || parsed.password) return false;
     const host = parsed.hostname.toLowerCase();
     return OFFICIAL_SOURCE_HOSTS.some(
       (officialHost) =>
@@ -224,7 +225,7 @@ export function validateAnalysisPayload(
     : result.normalizedClaim;
   const independentlyCheckableClauseCount =
     countIndependentlyCheckableClauses(claimToCheck);
-  if (independentlyCheckableClauseCount > result.claimChecks.length) {
+  if (!/^\s*(?:what|who|why|how|where|when)\b/i.test(claimToCheck) && independentlyCheckableClauseCount > result.claimChecks.length) {
     throw new Error(
       "Compound claim must be decomposed into separate claim checks",
     );
@@ -682,6 +683,30 @@ function validateQuizEvidence(
   }
 }
 
+/** Conservative prose checks complement citation ownership; they cannot prove entailment. */
+export function isSourceGroundedText(text: string, citations: Citation[]): boolean {
+  const sentences = text.replace(/\bH\.R\./gi, "HR").replace(/\bS\./g, "S")
+    .split(/(?<=[.!?])\s+/).filter(Boolean);
+  if (sentences.length === 0) return false;
+  return sentences.every((sentence) => {
+    const terms = [...new Set(meaningfulEvidenceTerms(sentence))];
+    const numbers = extractNumericDetails(sentence);
+    if (terms.length < 2) return false;
+    return citations.some((citation) => {
+      const evidence = `${citation.title} ${citation.excerpt}`;
+      const evidenceTerms = new Set(meaningfulEvidenceTerms(evidence));
+      const overlap = terms.filter((term) => evidenceTerms.has(term)).length;
+      const scopes = (sentence.toLowerCase().match(/\b(?:all|every|always|exactly|solely|only)\b/g) || []);
+      const predicates = terms.filter((term) => /^(?:repeal|increase|decrease|raise|lower|ban|require|allow|prohibit|pass|fail|remove|fund|pay|cut)$/.test(term));
+      return overlap >= Math.max(2, Math.ceil(terms.length * 0.75)) &&
+        numbers.every((number) => extractNumericDetails(evidence).includes(number)) &&
+        predicates.every((predicate) => evidenceTerms.has(predicate)) &&
+        scopes.every((scope) => new RegExp(`\\b${scope}\\b`, "i").test(evidence)) &&
+        hasEvidenceNegation(sentence) === hasRelevantEvidenceNegation(evidence, terms);
+    });
+  });
+}
+
 function inferSimpleEvidenceVerdict(
   claim: string,
   evidence: string,
@@ -795,6 +820,34 @@ function normalizeEvidenceTerm(term: string): string {
     lists: "list",
     passed: "pass",
     repealed: "repeal",
+    repeals: "repeal",
+    removes: "repeal",
+    removed: "repeal",
+    abolishes: "repeal",
+    abolished: "repeal",
+    raises: "raise",
+    lowers: "lower",
+    increases: "increase",
+    decreases: "decrease",
+    requires: "require",
+    required: "require",
+    requiring: "require",
+    allows: "allow",
+    allowed: "allow",
+    allowing: "allow",
+    prohibits: "prohibit",
+    prohibited: "prohibit",
+    prohibiting: "prohibit",
+    bans: "ban",
+    banned: "ban",
+    banning: "ban",
+    funds: "fund",
+    funded: "fund",
+    pays: "pay",
+    paid: "pay",
+    cuts: "cut",
+    fails: "fail",
+    failed: "fail",
   };
   return knownForms[term] || term;
 }

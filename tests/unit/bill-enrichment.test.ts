@@ -425,6 +425,15 @@ describe("official bill enrichment", () => {
     ]);
   });
 
+  it("uses a configured OpenAI-compatible provider for bill enrichment", async () => {
+    const detail = officialDetail();
+    const generic: LlmProvider = { ...providers[0], name: "generic" };
+    const request = vi.fn().mockResolvedValue(JSON.stringify(createDeterministicBillExplainer(detail)));
+    const result = await generateBillExplainer(detail, { providers: [generic], request });
+    expect(request).toHaveBeenCalledOnce();
+    expect(result).toMatchObject({ method: "llm", provider: "generic" });
+  });
+
   it("uses deterministic official-source output when every provider fails", async () => {
     const request = vi
       .fn()

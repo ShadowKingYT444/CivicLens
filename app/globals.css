@@ -1048,7 +1048,7 @@ nextjs-portal {
   align-items: center;
   overflow: hidden;
   border-radius: 8px;
-  background: linear-gradient(135deg, #18bf00, #58d900);
+  background: linear-gradient(135deg, #187a17, #23800f);
   box-shadow:
     inset 0 -6px 0 rgba(7, 120, 0, 0.24),
     0 12px 24px rgba(22, 172, 0, 0.18);
@@ -1064,7 +1064,7 @@ nextjs-portal {
   text-transform: uppercase;
 }
 
-.duo-unit-banner h1 {
+.duo-unit-banner h1, .duo-unit-banner h2 {
   margin: 0.25rem 0 0;
   color: white;
   font-size: clamp(1.5rem, 7vw, 2.15rem);
@@ -4597,7 +4597,59 @@ nextjs-portal {
   display: grid;
   place-items: end center;
   background: rgba(7, 26, 51, 0.38);
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--ink);
 }
+
+.drawer-backdrop::backdrop { background: transparent; }
+
+.analysis-provenance {
+  margin: 0;
+  color: var(--teal-dark);
+  font-size: .85rem;
+  line-height: 1.5;
+}
+
+.analysis-detail { border-top: 1px solid var(--line); padding-top: .85rem; }
+.analysis-detail summary { cursor: pointer; font-weight: 700; line-height: 1.5; }
+.analysis-detail ul, .analysis-context-gaps ul { padding-left: 1.2rem; line-height: 1.6; }
+.analysis-detail li + li, .analysis-context-gaps li + li { margin-top: .45rem; }
+.analysis-context-gaps { border-left: 3px solid var(--yellow); padding: .2rem .8rem; }
+.analysis-context-gaps h3, .analysis-knowledge-checks h3 { margin: .35rem 0; }
+.analysis-source-excerpt { padding: .65rem 0; overflow-wrap: anywhere; }
+.analysis-source-excerpt h3 { font-size: 1rem; margin: .4rem 0; }
+.analysis-source-excerpt p { line-height: 1.55; }
+.analysis-knowledge-checks { display: grid; gap: .8rem; }
+.analyze-simple-claim small { display: block; overflow-wrap: anywhere; color: var(--muted); }
+
+.learning-progress-summary { display: grid; gap: .65rem; }
+.learning-progress-summary p { margin: 0; line-height: 1.45; color: var(--muted); }
+.learning-progress-summary small { line-height: 1.45; color: var(--muted); }
+.learning-progress-summary .button { justify-content: center; }
+.duo-node-row { min-height: 168px; flex-direction: column; justify-content: center; gap: .35rem; padding-top: 1.25rem; }
+.duo-node-row-0 { padding-inline: 0; }
+.duo-node-row-1 { padding-left: 22%; }
+.duo-node-row-2 { padding-left: 0; padding-right: 26%; }
+.duo-node-row-3 { padding-right: 0; padding-left: 8%; }
+.duo-node-caption { display: grid; gap: .3rem; max-width: 215px; text-align: center; line-height: 1.3; font-size: .9rem; }
+.duo-node-caption small { color: var(--muted); font-size: .78rem; }
+.lesson-source-panel { border: 1px solid var(--line); border-radius: 8px; padding: .65rem .9rem; background: var(--panel); }
+.lesson-source-panel summary { display: flex; align-items: center; min-height: 44px; cursor: pointer; font-weight: 700; color: var(--teal-dark); }
+.lesson-source-panel ul { margin: .4rem 0; padding-left: 1rem; }
+.lesson-source-panel li { margin-bottom: .8rem; line-height: 1.5; overflow-wrap: anywhere; }
+.lesson-source-panel p { margin: .45rem 0; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+.lesson-retry-actions, .lesson-complete-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; }
+.lesson-complete-screen { display: grid; place-items: center; min-height: 55vh; }
+.lesson-complete-card h1 { margin: .7rem 0 .2rem; font-size: 1.6rem; line-height: 1.2; }
+.lesson-complete-card p { margin: .55rem 0; line-height: 1.5; }
+.district-directories { display: grid; gap: .4rem; }
+.district-directories a { display: flex; align-items: center; min-height: 44px; color: var(--teal-dark); line-height: 1.4; }
 
 .drawer {
   width: min(var(--drawer-width), 100%);
@@ -4723,7 +4775,7 @@ nextjs-portal {
   align-content: center;
   gap: 0.18rem;
   border-radius: 12px;
-  color: #7b8794;
+  color: #637181;
   font-size: 0.76rem;
   font-weight: 900;
   text-decoration: none;
@@ -5180,3 +5232,11 @@ nextjs-portal {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Keep bill navigation out of reading content and give long titles a full line. */
+.bill-cover-layout { grid-template-columns: minmax(0, 1fr); gap: .6rem; }
+.bill-cover-layout > .asset-icon, .bill-cover-layout > .asset-fallback { order: -1; justify-self: center; width: 80px; }
+.bill-cover-layout .bill-hero-copy h2 { font-size: 1.65rem; overflow-wrap: normal; word-break: normal; }
+.bill-slide-controls { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: .45rem; text-align: center; color: var(--muted); font-size: .8rem; font-weight: 800; }
+.bill-slide-controls .bill-slide-arrow { position: static; transform: none; }
+.bill-reel-card { grid-template-rows: minmax(0, 1fr) auto auto; }

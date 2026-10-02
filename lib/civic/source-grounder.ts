@@ -57,6 +57,14 @@ export type BillDetailBase = {
 
 export type BillDetail = BillDetailBase & BillReadableFields;
 
+type GroundedRetrieval = {
+  citations: Citation[];
+  documents: GroundedSource[];
+  mode: "live" | "demo";
+  validationErrors: string[];
+  warnings: string[];
+};
+
 const SourcePackSchema = z
   .object({
     id: z.string().min(1),
@@ -236,12 +244,7 @@ export const DEMO_SOURCE_DOCUMENTS: GroundedSource[] = [
 export async function retrieveGroundedSources(
   query: string,
   limit = 5,
-): Promise<{
-  citations: Citation[];
-  documents: GroundedSource[];
-  mode: "live" | "demo";
-  validationErrors: string[];
-}> {
+): Promise<GroundedRetrieval> {
   const billRef = parseBillReference(query);
   if (billRef) {
     return retrieveBillSpecificSources(billRef, limit);
@@ -258,9 +261,10 @@ export async function retrieveGroundedSources(
     .map(dbResultToGroundedSource)
     .filter((document): document is GroundedSource => Boolean(document));
   const sourcePackDocuments = rankSourcePackDocuments(query, limit);
-  const officialDocuments = officialCandidates.map(
-    officialCandidateToGroundedSource,
-  );
+  // Search destinations are useful navigation, but are not retrieved evidence.
+  const officialDocuments = officialCandidates
+    .filter((candidate) => candidate.live === true)
+    .map(officialCandidateToGroundedSource);
   const documents = dedupeById([
     ...dbDocuments,
     ...officialDocuments,
@@ -270,12 +274,20 @@ export async function retrieveGroundedSources(
     documents.map((document) => document.citation),
   );
 
+  const validIds = new Set(citationValidation.citations.map((citation) => citation.id));
+  const validDocuments = documents.filter((document) => validIds.has(document.citation.id));
+  const liveIds = new Set([...dbDocuments, ...officialDocuments].map((document) => document.id));
+  const hasLive = validDocuments.some((document) => liveIds.has(document.id));
+  const hasPackaged = validDocuments.some((document) => !liveIds.has(document.id));
   return {
     citations: citationValidation.citations,
-    documents,
-    mode:
-      dbDocuments.length > 0 || officialDocuments.length > 0 ? "live" : "demo",
+    documents: validDocuments,
+    // With a two-value contract, mixed evidence uses the conservative demo label.
+    mode: hasLive && !hasPackaged ? "live" : "demo",
     validationErrors: citationValidation.errors,
+    warnings: hasLive && hasPackaged
+      ? ["Evidence combines fetched records with packaged reference excerpts. Source mode is demo to disclose the mixed provenance."]
+      : [],
   };
 }
 
@@ -337,12 +349,7 @@ export function getDemoBill(
 async function retrieveBillSpecificSources(
   ref: ParsedBillRef,
   limit: number,
-): Promise<{
-  citations: Citation[];
-  documents: GroundedSource[];
-  mode: "live" | "demo";
-  validationErrors: string[];
-}> {
+): Promise<GroundedRetrieval> {
   const candidates = getCongressCandidates(ref);
   let bill: BillDetail | null = null;
 
@@ -361,6 +368,7 @@ async function retrieveBillSpecificSources(
       documents: [],
       mode: "demo",
       validationErrors: [],
+      warnings: [],
     };
   }
 
@@ -380,6 +388,9 @@ async function retrieveBillSpecificSources(
     documents,
     mode: bill.mode,
     validationErrors: citationValidation.errors,
+    warnings: ref.congress ? [] : [
+      `No Congress was specified. This result uses ${bill.type === "hr" ? "H.R." : bill.type.toUpperCase()} ${bill.number} in the ${bill.congress}th Congress. Bill numbers restart every Congress; specify the Congress to check another bill.`,
+    ],
   };
 }
 
@@ -727,7 +738,7 @@ function dbResultToGroundedSource(
   if (!result.url) return null;
   const citation = CitationSchema.safeParse({
     id: `db-${result.id}`,
-    sourceDocumentId: result.id,
+    sourceDocumentId: result.sourceDocumentId ?? result.id,
     sourceType: result.sourceType || "other",
     title: result.title,
     url: result.url,

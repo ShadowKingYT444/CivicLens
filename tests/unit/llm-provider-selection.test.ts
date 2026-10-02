@@ -4,6 +4,7 @@ import { isLlmConfigured, selectLlmProvider, selectLlmProviders } from "@/lib/ai
 const providerEnvKeys = [
   "ENABLE_NIM",
   "NVIDIA_NIM_API_KEY",
+  "NIM_API_KEY",
   "NVIDIA_API_KEY",
   "NVIDIA_NIM_BASE_URL",
   "NVIDIA_NIM_API_BASE_URL",
@@ -119,8 +120,15 @@ describe("LLM provider selection", () => {
       name: "nim",
       apiKey: "legacy-nvidia-secret",
       baseUrl: "https://integrate.api.nvidia.com/v1",
-      model: "meta/llama-3.1-8b-instruct",
+      model: "meta/llama-3.2-11b-vision-instruct",
     });
+  });
+
+  it("recognizes the cloud NIM_API_KEY binding and honors explicit disabling", () => {
+    process.env.NIM_API_KEY = "cloud-nim-test-key";
+    expect(selectLlmProvider()).toMatchObject({ name: "nim", apiKey: "cloud-nim-test-key" });
+    process.env.ENABLE_NIM = "false";
+    expect(selectLlmProvider()).toBeNull();
   });
 
   it("selects Groq before generic OpenAI-compatible providers", () => {

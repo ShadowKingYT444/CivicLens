@@ -175,7 +175,7 @@ describe("AI provider verification", () => {
     expect(selectLlmProvider(env)).toMatchObject({
       name: "nim",
       baseUrl: "https://integrate.api.nvidia.com/v1",
-      model: "meta/llama-3.1-8b-instruct",
+      model: "meta/llama-3.2-11b-vision-instruct",
       timeoutMs: 9000,
     });
     expect(
@@ -221,7 +221,7 @@ describe("AI provider verification", () => {
     expect(nimRequest.body).toMatchObject({
       model: "nim-model",
       temperature: 0.1,
-      max_tokens: 1200,
+      max_tokens: 2600,
       response_format: { type: "json_object" },
     });
     expect(nimRequest.body.messages[0]).toMatchObject({ role: "system" });
@@ -586,6 +586,42 @@ describe("AI provider verification", () => {
 
     expect(generated.mode).toBe("demo");
     expect(generated.result.truthVerdict).toBe("unverifiable");
+  });
+
+  it("calls the configured provider for information requests and preserves a grounded paraphrase", async () => {
+    process.env.NVIDIA_NIM_API_KEY = "nim-test-secret";
+    const sources = [{ ...citations[0], excerpt: "H.R. 82 repeals the government pension offset and windfall elimination provisions." }];
+    const narration = "H.R. 82 removed the government pension offset and windfall elimination provisions.";
+    const fetchMock = vi.fn().mockResolvedValue(chatCompletion(JSON.stringify(analysisPayload({
+      normalizedClaim: "What did H.R. 82 change?", truthVerdict: "unverifiable",
+      studentExplanation: narration, oneSentenceAnswer: narration,
+      claimChecks: [{ claim: "What did H.R. 82 change?", verdict: "unverifiable", explanation: "This question requests information.", citationIds: ["c1"] }],
+    }))));
+    vi.stubGlobal("fetch", fetchMock);
+    const generated = await generateAnalysis({ claim: "What did H.R. 82 change?", citations: sources });
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(generated.mode).toBe("live");
+    expect(generated.result.truthVerdict).toBe("unverifiable");
+    expect(generated.result.studentExplanation).toBe(narration);
+    expect(generated.result.oneSentenceAnswer).toBe(narration);
+    expect(generated.result.verdictSummary).toBe(narration);
+    expect(generated.result.claimChecks[0].claim).toBe("What did H.R. 82 change?");
+  });
+
+  it("replaces fabricated informational narration with supplied source context", async () => {
+    process.env.NVIDIA_NIM_API_KEY = "nim-test-secret";
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(chatCompletion(JSON.stringify(analysisPayload({
+      normalizedClaim: "What did H.R. 82 change?", truthVerdict: "unverifiable",
+      studentExplanation: "Every student receives a fictional grant of $5,000.",
+      oneSentenceAnswer: "Every student receives a fictional grant of $5,000.",
+      claimChecks: [{ claim: "What did H.R. 82 change?", verdict: "unverifiable", explanation: "This question requests information.", citationIds: ["c1"] }],
+    })))));
+    const generated = await generateAnalysis({ claim: "What did H.R. 82 change?", citations });
+    expect(generated.mode).toBe("live");
+    expect(JSON.stringify(generated.result)).not.toMatch(/fictional grant|\$5,000/);
+    expect(generated.result.studentExplanation).toContain(citations[0].excerpt);
+    expect(generated.result.verdictSummary).toContain(citations[0].excerpt);
+    expect(generated.result.verdictSummary).not.toMatch(/^Unverifiable:/);
   });
 
   it("uses deterministic demo analysis without provider calls when no LLM keys are present", async () => {

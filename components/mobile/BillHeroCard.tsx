@@ -330,6 +330,7 @@ export function BillHeroCard({
         </section>
       </div>
 
+      <div className="bill-slide-controls">
       <button
         className="bill-slide-arrow previous"
         type="button"
@@ -339,6 +340,7 @@ export function BillHeroCard({
       >
         <ArrowLeft aria-hidden="true" size={22} />
       </button>
+      <span aria-hidden="true">{slideLabels[activeSlide]} · {activeSlide + 1}/{slideCount}</span>
       <button
         className="bill-slide-arrow next"
         type="button"
@@ -349,6 +351,7 @@ export function BillHeroCard({
         <ArrowRight aria-hidden="true" size={22} />
       </button>
 
+      </div>
       <div className="lesson-dots bill-slide-dots" aria-label={`${slideLabels[activeSlide]} slide`}>
         {slideLabels.map((label, slideIndex) => (
           <button

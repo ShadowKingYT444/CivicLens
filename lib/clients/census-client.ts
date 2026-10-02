@@ -5,10 +5,9 @@ import {
   OFFICIAL_SOURCE_URLS,
   isTruthyEnv,
 } from "../constants";
-import { ValidationError } from "../errors";
+import { ExternalServiceError, ValidationError } from "../errors";
 import {
   createDemoDistrictResult,
-  noMatchResult,
   parseCensusGeocoderResponse,
   type DistrictLookupResult,
 } from "../civic/district-parser";
@@ -48,9 +47,11 @@ export function createCensusClient(options: CensusClientOptions = {}): CensusCli
 
       try {
         const payload = await fetchJson(buildCensusUrl(baseUrl, address), fetcher, timeoutMs);
-        return parseCensusGeocoderResponse(payload);
+        const result = parseCensusGeocoderResponse(payload);
+        // Only the coarse district leaves this server-side client.
+        return { ...result, matchedAddress: undefined, coordinates: undefined };
       } catch {
-        return fixture;
+        return { status: "error", source: "live", houseMembers: [], senators: [], privacyNote: fixture.privacyNote };
       }
     },
   };
@@ -73,7 +74,7 @@ function buildCensusUrl(baseUrl: string, address: string): string {
   const url = new URL(`${baseUrl}/geographies/onelineaddress`);
   url.searchParams.set("address", address);
   url.searchParams.set("benchmark", "Public_AR_Current");
-  url.searchParams.set("vintage", "Current_Current");
+  url.searchParams.set("vintage", process.env.CENSUS_VINTAGE ?? "ACS2025_Current");
   url.searchParams.set("layers", "all");
   url.searchParams.set("format", "json");
   return url.toString();
@@ -86,7 +87,7 @@ async function fetchJson(url: string, fetcher: typeof fetch, timeoutMs: number):
   try {
     const response = await fetcher(url, { signal: controller.signal });
     if (!response.ok) {
-      return noMatchResult("live");
+      throw new ExternalServiceError("U.S. Census Bureau", response.status);
     }
     return response.json();
   } finally {

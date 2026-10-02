@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeClaim } from "../../../lib/ai/analyze-claim";
 import { AnalysisRequestSchema } from "../../../lib/ai/schemas";
@@ -68,17 +69,24 @@ async function storeAnalysisIfEnabled(
   );
 
   try {
-    await prisma.$queryRawUnsafe(
+    const rows = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
       `
-      INSERT INTO analyses (claim_hash, redacted_claim, result_json, citations_json, created_at)
-      VALUES ($1, $2, $3::jsonb, $4::jsonb, NOW())
+      INSERT INTO "ClaimAnalysis" ("id", "inputHash", "normalizedClaimHash", "evidenceStatus", "resultJson", "redactedInput", "createdAt")
+      VALUES ($1, $2, $3, $4, $5::jsonb, $6, NOW())
+      RETURNING "id"
       `,
+      randomUUID(),
       claimHash,
+      result && typeof result === "object" && "normalizedClaim" in result && typeof result.normalizedClaim === "string" ? sha256Hex(result.normalizedClaim) : null,
+      result && typeof result === "object" && "evidenceStatus" in result && typeof result.evidenceStatus === "string" ? result.evidenceStatus : "insufficient",
+      JSON.stringify({ result: resultForStorage, citations: storeRawInputs ? citations : citations.map((citation) => {
+        if (!citation || typeof citation !== "object") return {};
+        const record = citation as Record<string, unknown>;
+        return { id: record.id, sourceDocumentId: record.sourceDocumentId, sourceType: record.sourceType };
+      }) }, (_key, value: unknown) => typeof value === "string" ? redactSensitiveText(value) : value),
       redactedClaim,
-      JSON.stringify(resultForStorage),
-      JSON.stringify(citations),
     );
-    return { stored: true };
+    return rows.length > 0 ? { stored: true } : { stored: false, reason: "database write was not confirmed" };
   } catch {
     return { stored: false, reason: "database write failed" };
   }

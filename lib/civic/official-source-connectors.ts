@@ -588,6 +588,18 @@ function withLiveCitation(
     sourceDocumentId?: string;
   },
 ): OfficialSourceCandidate {
+  // A successful HTTP response can still be an empty search result. A search
+  // link or canned provider description must never become fetched evidence.
+  const fetchedExcerpt = cleanText(update.excerpt);
+  if (
+    !fetchedExcerpt ||
+    fetchedExcerpt === cleanText(fallback.excerpt) ||
+    !update.url ||
+    !isValidUrl(update.url) ||
+    update.url === fallback.url
+  ) {
+    return fallback;
+  }
   const title = truncate(cleanText(update.title) || fallback.title, 240);
   const excerpt = truncate(cleanText(update.excerpt) || fallback.excerpt, 1200);
   const url = update.url && isValidUrl(update.url) ? update.url : fallback.url;

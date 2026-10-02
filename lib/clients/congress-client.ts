@@ -8,7 +8,7 @@ import {
   DEMO_MODE,
   LIVE_MODE,
 } from "../constants";
-import { ExternalServiceError } from "../errors";
+import { ExternalServiceError, NotFoundError } from "../errors";
 import { congressBillUrl, parseBillRefs, type ParsedBillRef } from "../civic/bill-parser";
 
 export type CongressClientSource = "live" | "fixture";
@@ -240,15 +240,28 @@ export function createCongressClient(options: CongressClientOptions = {}): Congr
         return searchFixtureBills(fixtures, query, parsedRefs, limit);
       }
 
+      // The official API offers bill lists and exact references, not free-text search.
+      // Keyword searches below are intentionally bounded to the latest 250 bills.
+      const safeLimit = Math.min(250, Math.max(1, Math.trunc(limit) || 10));
       try {
-        const url = buildCongressUrl(baseUrl, apiKey, "/bill", {
-          query,
-          limit: String(limit),
+        if (parsedRefs.length) {
+          const details = await Promise.allSettled(parsedRefs.slice(0, safeLimit).map((ref) =>
+            this.getBill({ ...ref, congress: ref.congress ?? currentCongress(env) }),
+          ));
+          return details.flatMap((detail) => detail.status === "fulfilled"
+            ? fixturesToSearchResults([detail.value], 1).map((bill) => ({ ...bill, source: detail.value.source }))
+            : []);
+        }
+        const url = buildCongressUrl(baseUrl, apiKey, `/bill/${currentCongress(env)}`, {
+          limit: "250",
         });
         const payload = await fetchJson(url, fetcher, timeoutMs);
-        return mapSearchResults(payload).slice(0, limit);
+        const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        return mapSearchResults(payload).filter((bill) => words.every((word) =>
+          `${bill.title} ${bill.latestAction?.text ?? ""}`.toLowerCase().includes(word),
+        )).slice(0, safeLimit);
       } catch {
-        return searchFixtureBills(fixtures, query, parsedRefs, limit);
+        return searchFixtureBills(fixtures, query, parsedRefs, safeLimit);
       }
     },
     async listBills(options, limit): Promise<CongressClientResult<CongressSearchResult[]>> {
@@ -352,7 +365,10 @@ function mapBillDetail(
   summariesResult: PromiseSettledResult<unknown>,
   actionsResult: PromiseSettledResult<unknown>,
 ): CongressBillDetail {
-  const bill = asRecord(asRecord(detailPayload)?.bill) ?? {};
+  const bill = asRecord(asRecord(detailPayload)?.bill);
+  if (!bill || Number(bill.number) !== ref.number || Number(bill.congress) !== ref.congress || normalizeCongressBillType(String(bill.type)) !== ref.type) {
+    throw new NotFoundError("The official bill response did not match the requested bill.");
+  }
   const title = readString(bill, ["title", "shortTitle"]) ?? `${BILL_TYPE_LABELS[ref.type]} ${ref.number}`;
   const summaryPayload = summariesResult.status === "fulfilled" ? summariesResult.value : undefined;
   const actionPayload = actionsResult.status === "fulfilled" ? actionsResult.value : undefined;
@@ -406,7 +422,7 @@ function mapSearchResults(payload: unknown): CongressSearchResult[] {
       type,
       number: Number.isFinite(number) ? number : 0,
       title: readString(bill, ["title", "shortTitle"]) ?? `${BILL_TYPE_LABELS[type]} ${number}`,
-      url: readString(bill, ["url"]),
+      url: congressBillUrl({ raw: "", congress, type, number }),
       latestAction: mapAction(asRecord(bill.latestAction)),
     };
   });
@@ -480,7 +496,7 @@ function searchFixtureBills(
     );
   });
 
-  return (results.length ? results : fixtures).slice(0, limit).map((bill) => ({
+  return results.slice(0, limit).map((bill) => ({
     source: "fixture",
     congress: bill.congress,
     type: bill.type,
@@ -512,7 +528,7 @@ function resolveCongressOption(options: number | Pick<ListBillsOptions, "congres
     return options;
   }
 
-  return options?.congress ?? DEFAULT_FIXTURE_BILL.congress;
+  return options?.congress ?? currentCongress(process.env);
 }
 
 function resolveListOptions(options?: number | ListBillsOptions, limit?: number): Required<ListBillsOptions> {
@@ -524,13 +540,20 @@ function resolveListOptions(options?: number | ListBillsOptions, limit?: number)
   }
 
   return {
-    congress: options?.congress ?? DEFAULT_FIXTURE_BILL.congress,
+    congress: options?.congress ?? currentCongress(process.env),
     limit: options?.limit ?? limit ?? 20,
   };
 }
 
+function currentCongress(env: Record<string, string | undefined>) {
+  const value = Number(env.CURRENT_CONGRESS ?? 119);
+  return Number.isInteger(value) && value > 0 ? value : 119;
+}
+
 function findFixture(fixtures: CongressBillDetail[], ref: ParsedBillRef): CongressBillDetail {
-  return fixtures.find((bill) => billMatchesRef(bill, ref)) ?? fixtures[0];
+  const matched = fixtures.find((bill) => billMatchesRef(bill, ref));
+  if (!matched) throw new NotFoundError("No matching official bill or saved example is available.");
+  return matched;
 }
 
 function billMatchesRef(bill: CongressBillDetail, ref: ParsedBillRef): boolean {

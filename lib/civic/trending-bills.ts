@@ -154,7 +154,7 @@ export type TrendingBillCard = {
   whoIsAffected: CitedText;
   enrichment: {
     method: "llm" | "deterministic";
-    provider?: "nim" | "groq";
+    provider?: "nim" | "groq" | "generic";
     officialDetail: boolean;
   };
   sourceCount: number;

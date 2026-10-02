@@ -42,6 +42,7 @@ export function buildAnalysisPrompt(
     "",
     "Evaluation rules:",
     "- Split the student's claim into 1 to 4 material, independently checkable parts. Do not split hairs or invent extra claims.",
+    "- For an informational question beginning what/who/why/how/where/when, keep the question as one unverifiable claim check and give no true-or-false verdict. Answer it using a concise plain-language explanation supported by supplied excerpts; relevant quotations are welcome. Do not paste irrelevant records or invent facts.",
     "- For each part, compare its exact meaning with only the supplied excerpts.",
     "- Preserve the student's positive or negative wording in every claim check. Never turn a claim that says did not, does not, is not, or never into a positive claim. A negative claim contradicted by the source gets a false verdict; do not rewrite it as a positive true claim.",
     "- A true, mostly_true, mixed, mostly_false, or false claim check must list every excerpt id needed to support that judgment in citationIds.",

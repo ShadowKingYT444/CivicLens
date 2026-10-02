@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type Prisma } from "@prisma/client";
 
 type ConceptCardSeed = {
   slug: string;
@@ -18,6 +18,9 @@ type ConceptCardSeed = {
   };
   orderIndex: number;
   isPublished: boolean;
+  visual?: Record<string, string>;
+  flashcards?: unknown[];
+  quizQuestions?: unknown[];
 };
 
 const conceptPath = path.join(process.cwd(), "data", "concept-cards.json");
@@ -55,20 +58,29 @@ async function main() {
   const prisma = new PrismaClient();
   try {
     for (const card of cards) {
+      // Keep the authored lesson inside the existing JSON column. Extra display
+      // fields are not Prisma model columns and must never reach create directly.
+      const row = {
+        slug: card.slug,
+        title: card.title,
+        hook: card.hook,
+        body: card.body,
+        category: card.category,
+        difficulty: card.difficulty,
+        sourceIds: card.sourceIds,
+        quizJson: {
+          ...card.quizJson,
+          visual: card.visual,
+          flashcards: card.flashcards,
+          quizQuestions: card.quizQuestions,
+        } as Prisma.InputJsonValue,
+        orderIndex: card.orderIndex,
+        isPublished: card.isPublished,
+      };
       await prisma.conceptCard.upsert({
         where: { slug: card.slug },
-        create: card,
-        update: {
-          title: card.title,
-          hook: card.hook,
-          body: card.body,
-          category: card.category,
-          difficulty: card.difficulty,
-          sourceIds: card.sourceIds,
-          quizJson: card.quizJson,
-          orderIndex: card.orderIndex,
-          isPublished: card.isPublished,
-        },
+        create: row,
+        update: row,
       });
     }
     console.info(`Seeded ${cards.length} concept cards.`);

@@ -9,7 +9,7 @@ const timeoutMs = Number(process.env.PROVIDER_SMOKE_TIMEOUT_MS ?? 120_000);
 const env = loadLocalEnv({ ...process.env });
 const provider = detectProvider(env);
 const externallyHostedBaseUrl =
-  env.PROVIDER_SMOKE_BASE_URL || env.PLAYWRIGHT_BASE_URL;
+  env.PROVIDER_SMOKE_BASE_URL || process.env.PLAYWRIGHT_BASE_URL;
 const baseUrl =
   externallyHostedBaseUrl?.replace(/\/+$/, "") ??
   `http://127.0.0.1:${env.PROVIDER_SMOKE_PORT ?? DEFAULT_PORT}`;
@@ -20,9 +20,9 @@ let serverLog = "";
 try {
   if (!provider) {
     console.info(
-      "Provider smoke skipped: configure NVIDIA_NIM_API_KEY, GROQ_API_KEY, LLM_API_KEY, or OPENAI_API_KEY. Set ENABLE_* to false only to disable a configured provider.",
+      "Provider smoke skipped: configure NIM_API_KEY (or NVIDIA_NIM_API_KEY), GROQ_API_KEY, LLM_API_KEY, or OPENAI_API_KEY. Set ENABLE_* to false only to disable a configured provider.",
     );
-    process.exit(0);
+    process.exit(env.REQUIRE_LIVE_PROVIDERS === "true" ? 1 : 0);
   }
 
   if (!externallyHostedBaseUrl) {
@@ -147,15 +147,14 @@ try {
 
   const billEvidence = classifyBillEvidence(bills.results, {
     congressConfigured: health.congressApiConfigured === true,
-    nimOrGroqConfigured: provider === "nim" || provider === "groq",
+    llmConfigured: Boolean(provider),
   });
   if (
-    health.congressApiConfigured === true &&
-    (provider === "nim" || provider === "groq")
+    health.congressApiConfigured === true && Boolean(provider)
   ) {
     assert(
       billEvidence.llmLiveCards.length > 0,
-      "Congress and NIM/Groq are configured, but no identity-matched live card used validated autonomous LLM enrichment.",
+      "Congress and an LLM are configured, but no identity-matched live card used validated autonomous LLM enrichment.",
     );
   }
   for (const card of billEvidence.llmLiveCards) {
@@ -165,8 +164,9 @@ try {
     );
     assert(
       card.enrichment?.provider === "nim" ||
-        card.enrichment?.provider === "groq",
-      "An LLM-enriched live card does not name NIM or Groq as its provider.",
+        card.enrichment?.provider === "groq" ||
+      card.enrichment?.provider === "generic",
+      "An LLM-enriched live card does not name a supported LLM provider as its provider.",
     );
     assert(
       card.citations.every(
@@ -207,7 +207,7 @@ try {
 function detectProvider(source) {
   if (
     !isExplicitlyDisabled(source.ENABLE_NIM) &&
-    (source.NVIDIA_NIM_API_KEY || source.NVIDIA_API_KEY)
+    (source.NVIDIA_NIM_API_KEY || source.NIM_API_KEY || source.NVIDIA_API_KEY)
   ) {
     return "nim";
   }
@@ -227,24 +227,24 @@ function detectProvider(source) {
 }
 
 function loadLocalEnv(source) {
-  if (!existsSync(".env")) {
-    return source;
-  }
-
   const merged = { ...source };
-  for (const line of readFileSync(".env", "utf8").split(/\r?\n/)) {
-    const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)\s*$/);
-    if (!match || merged[match[1]] !== undefined) {
-      continue;
+  const mode = source.NODE_ENV || "development";
+  // Match Next's precedence while keeping explicitly supplied environment first.
+  for (const path of [`.env.${mode}.local`, ".env.local", `.env.${mode}`, ".env"]) {
+    if (!existsSync(path)) continue;
+    for (const line of readFileSync(path, "utf8").split(/\r?\n/)) {
+      const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)\s*$/);
+      if (!match || merged[match[1]] !== undefined) continue;
+      merged[match[1]] = match[2].replace(/^['"]|['"]$/g, "").trim();
     }
-
-    merged[match[1]] = match[2].replace(/^['"]|['"]$/g, "").trim();
   }
-
   return merged;
 }
 
 function startServer(source) {
+  if (source.HTTPS_PROXY || source.HTTP_PROXY) {
+    source = { ...source, NODE_OPTIONS: `${source.NODE_OPTIONS || ""} --use-env-proxy`.trim() };
+  }
   const hasPnpmCli = source.npm_execpath && existsSync(source.npm_execpath);
   const command = hasPnpmCli ? process.execPath : "pnpm";
   const port = source.PROVIDER_SMOKE_PORT ?? DEFAULT_PORT;
@@ -260,6 +260,7 @@ function startServer(source) {
     cwd: process.cwd(),
     env: sanitizeSpawnEnv({ ...source, PORT: port }),
     stdio: ["ignore", "pipe", "pipe"],
+    detached: process.platform !== "win32",
   });
 
   child.stdout.setEncoding("utf8");
@@ -282,7 +283,13 @@ function stopServer(child) {
     return;
   }
 
-  child.kill();
+  // pnpm launches Next through a shell. Kill the group so the server and its
+  // inherited pipes cannot outlive the smoke check or keep it hanging.
+  try {
+    process.kill(-child.pid, "SIGTERM");
+  } catch (error) {
+    if (error.code !== "ESRCH") throw error;
+  }
 }
 
 function sanitizeSpawnEnv(source) {
@@ -309,6 +316,7 @@ async function waitForHealth(targetBaseUrl, limitMs) {
     try {
       const response = await fetch(`${targetBaseUrl}${HEALTH_PATH}`, {
         cache: "no-store",
+        signal: AbortSignal.timeout(5_000),
       });
       if (response.ok) {
         return await response.json();
@@ -421,7 +429,8 @@ function classifyBillEvidence(cards, configuration) {
       card.enrichment?.method === "llm" &&
       card.enrichment?.officialDetail === true &&
       (card.enrichment?.provider === "nim" ||
-        card.enrichment?.provider === "groq"),
+        card.enrichment?.provider === "groq" ||
+        card.enrichment?.provider === "generic"),
   );
   const deterministicLiveCards = cards.filter(
     (card) =>
@@ -447,9 +456,9 @@ function classifyBillEvidence(cards, configuration) {
   }
 
   const note =
-    configuration.congressConfigured && configuration.nimOrGroqConfigured
-      ? "Congress and NIM/Groq were configured, but this run produced no suitable matching live candidate with validated LLM enrichment; deterministic or fixture cards are not counted as model proof."
-      : "This run did not have both live Congress access and NIM/Groq bill enrichment available; deterministic or fixture cards are not counted as model proof.";
+    configuration.congressConfigured && configuration.llmConfigured
+      ? "Congress and an LLM were configured, but this run produced no suitable matching live candidate with validated LLM enrichment; deterministic or fixture cards are not counted as model proof."
+      : "This run did not have both live Congress access and LLM bill enrichment available; deterministic or fixture cards are not counted as model proof.";
   const tier =
     deterministicLiveCards.length > 0
       ? fixtureCards.length > 0

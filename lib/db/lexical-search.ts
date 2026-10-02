@@ -2,6 +2,7 @@ import { getPrisma } from "./prisma";
 
 export type SearchableDocument = {
   id: string;
+  sourceDocumentId?: string;
   title: string;
   body?: string;
   excerpt?: string;
@@ -12,7 +13,7 @@ export type SearchableDocument = {
 
 export type RankedDocument<T extends SearchableDocument = SearchableDocument> = T & {
   score: number;
-  matchType: "lexical";
+  matchType: "lexical" | "vector";
 };
 
 export function rankLexically<T extends SearchableDocument>(
@@ -62,21 +63,24 @@ export async function searchDatabaseLexically(query: string, limit = 10): Promis
     return await prisma.$queryRawUnsafe<Array<RankedDocument>>(
       `
       SELECT
-        id::text,
-        title,
-        body,
-        excerpt,
-        url,
-        source_type AS "sourceType",
-        ts_rank_cd(search_vector, plainto_tsquery('english', $1)) AS score,
+        c."id"::text AS id,
+        d."id" AS "sourceDocumentId",
+        d."title",
+        c."text" AS body,
+        LEFT(c."text", 1200) AS excerpt,
+        d."url",
+        d."sourceType",
+        c."metadata",
+        ts_rank_cd(to_tsvector('english', d."title" || ' ' || c."text"), plainto_tsquery('english', $1)) AS score,
         'lexical' AS "matchType"
-      FROM source_chunks
-      WHERE search_vector @@ plainto_tsquery('english', $1)
-      ORDER BY score DESC
+      FROM "SourceChunk" c
+      JOIN "SourceDocument" d ON d."id" = c."sourceDocumentId"
+      WHERE to_tsvector('english', d."title" || ' ' || c."text") @@ plainto_tsquery('english', $1)
+      ORDER BY score DESC, c."id"
       LIMIT $2
       `,
       query,
-      limit,
+      Math.min(50, Math.max(1, Math.trunc(limit) || 10)),
     );
   } catch {
     return [];

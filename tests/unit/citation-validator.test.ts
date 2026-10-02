@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Citation } from "@/lib/ai/schemas";
 import {
   looksLikeAddress,
+  isSourceGroundedText,
   redactSensitiveText,
   validateAnalysisPayload,
   validateCitations,
@@ -93,6 +94,10 @@ describe("citation validators", () => {
         expect.stringMatching(/official source/i),
       ]),
     );
+  });
+
+  it.each(["javascript://www.congress.gov/payload", "http://www.congress.gov/bill", "https://user:password@www.congress.gov/bill"])("rejects unsafe official-looking source URL %s", (url) => {
+    expect(validateCitations([{ ...citations[0], url }]).ok).toBe(false);
   });
 
   it("accepts factual analysis fields when every claim cites provided sources", () => {
@@ -419,5 +424,17 @@ describe("citation validators", () => {
         citations,
       ),
     ).toThrow(/compound claim must be decomposed into separate claim checks/i);
+  });
+});
+
+
+describe("narration scope and predicate grounding", () => {
+  const sources: Citation[] = [{ ...citations[0], title: "Agency rule", excerpt: "The agency requires reports from schools and businesses." }];
+  it("rejects an unsupported restriction to only schools", () => {
+    expect(isSourceGroundedText("The agency requires reports only from schools.", sources)).toBe(false);
+  });
+  it("rejects changing a requirement into permission", () => {
+    expect(isSourceGroundedText("The agency allows reports from schools.", sources)).toBe(false);
+    expect(isSourceGroundedText("The agency requires reports from schools and businesses.", sources)).toBe(true);
   });
 });

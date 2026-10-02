@@ -135,13 +135,14 @@ export const BillRouteParamsSchema = z.object({
 
 export const DistrictLookupRequestSchema = z
   .object({
+    demo: z.boolean().optional(),
     address: z.string().trim().min(5).max(250).optional(),
     latitude: z.number().min(-90).max(90).optional(),
     longitude: z.number().min(-180).max(180).optional(),
   })
   .refine(
     (value) =>
-      Boolean(value.address) ||
+      value.demo === true || Boolean(value.address) ||
       (typeof value.latitude === "number" &&
         typeof value.longitude === "number"),
     {
@@ -167,9 +168,14 @@ export const RepresentativeSummarySchema = z.object({
 
 export const DistrictLookupResultSchema = z.object({
   status: z.enum(["matched", "demo", "unavailable", "not_found"]),
+  source: z.enum(["live", "fixture", "unavailable"]).optional(),
+  memberSource: z.enum(["live", "fixture", "unavailable"]).optional(),
+  sourceDate: z.string().max(40).optional(),
+  message: z.string().max(500).optional(),
+  congress: z.number().int().positive().optional(),
   matchedAddress: z.string().max(300).optional(),
   stateCode: z.string().length(2).optional(),
-  district: z.string().max(4).optional(),
+  district: z.string().max(20).optional(),
   coordinates: z
     .object({
       latitude: z.number(),

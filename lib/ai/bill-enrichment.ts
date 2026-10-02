@@ -57,7 +57,7 @@ export type BillEnrichmentResult = {
   explainer: BillExplainer;
   citations: BillEnrichmentCitation[];
   method: "llm" | "deterministic";
-  provider?: "nim" | "groq";
+  provider?: LlmProvider["name"];
 };
 
 type BillIdentity = {
@@ -282,12 +282,9 @@ export async function generateBillExplainer(
     citations,
     method: "deterministic",
   });
+  const priority = { nim: 0, groq: 1, generic: 2 };
   const providers = uniqueProviders(options.providers ?? selectLlmProviders())
-    .filter(
-      (provider): provider is LlmProvider & { name: "nim" | "groq" } =>
-        provider.name === "nim" || provider.name === "groq",
-    )
-    .sort((a, b) => (a.name === b.name ? 0 : a.name === "nim" ? -1 : 1))
+    .sort((a, b) => priority[a.name] - priority[b.name])
     .slice(0, MAX_PROVIDER_CALLS);
 
   if (providers.length === 0) {

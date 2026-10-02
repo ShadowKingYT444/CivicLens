@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   CheckCircle2,
@@ -10,14 +10,16 @@ import {
   X,
 } from "lucide-react";
 import { billHref, getJson, normalizeAnalyzeResponse } from "./api";
-import { takePendingClaim } from "../lib/client-claim-handoff";
+import { peekPendingClaim, takePendingClaim } from "../lib/client-claim-handoff";
 import { TopIdentity } from "./mobile/TopIdentity";
+import { FramingFlags } from "./framing-flags";
+import { QuizCard } from "./quiz-card";
 import type { AnalysisResult, AnalyzeResponse } from "./types";
 
 const examples = [
   {
     label: "H.R. 82",
-    claim: "What does H.R. 82 say about Social Security?",
+    claim: "What does H.R. 82 in the 118th Congress say about Social Security?",
   },
   {
     label: "Gas prices",
@@ -30,11 +32,21 @@ const examples = [
 ];
 
 export function AnalyzeClient() {
-  const [claim, setClaim] = useState(() => takePendingClaim().trim().slice(0, 2000));
+  const [claim, setClaim] = useState(() => peekPendingClaim().trim().slice(0, 2000));
   const [response, setResponse] = useState<AnalyzeResponse | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [lastSubmittedClaim, setLastSubmittedClaim] = useState("");
+  const [llmConfigured, setLlmConfigured] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    takePendingClaim();
+    getJson<{ llmConfigured?: boolean }>("/api/health")
+      .then((health) => { if (active) setLlmConfigured(Boolean(health.llmConfigured)); })
+      .catch(() => { if (active) setLlmConfigured(false); });
+    return () => { active = false; };
+  }, []);
 
   const result = response?.result;
   const trimmedClaim = claim.trim();
@@ -43,6 +55,7 @@ export function AnalyzeClient() {
     trimmedClaim.length >= 10 &&
     claim.length <= 2000 &&
     !loading &&
+    llmConfigured !== null &&
     trimmedClaim !== lastSubmittedClaim;
   const analysisText =
     result?.verdictSummary ||
@@ -104,7 +117,7 @@ export function AnalyzeClient() {
 
   return (
     <section className="page-shell analyze-simple" aria-label="Analyze bills">
-      <TopIdentity title="CivicLens" subtitle="AI analysis in plain English." />
+      <TopIdentity title="CivicLens" subtitle="Check the evidence. Understand the context." />
 
       <form className="panel analyze-simple-card" onSubmit={handleSubmit}>
         <div className="analyze-simple-header">
@@ -118,13 +131,13 @@ export function AnalyzeClient() {
             ) : (
               <Sparkles aria-hidden="true" size={16} />
             )}
-            {isLiveAi ? "Live AI" : loading ? "Checking" : "AI ready"}
+            {loading ? "Checking" : isLiveAi ? "Live AI" : llmConfigured ? "AI connected" : llmConfigured === null ? "Checking mode" : "Guided mode"}
           </span>
         </div>
 
         <label className="field-label" htmlFor="claim">
           Claim or bill question
-          <span>Example: What does H.R. 82 say about Social Security?</span>
+          <span>Include the Congress number: H.R. 82, 118th Congress.</span>
         </label>
         <div className={`analyze-simple-input${loading ? " is-checking" : ""}`}>
           <textarea
@@ -139,6 +152,7 @@ export function AnalyzeClient() {
             }}
             placeholder="Type the claim or bill question here..."
             required
+            disabled={loading || llmConfigured === null}
           />
           <div className="analyze-simple-actions">
             <span
@@ -153,6 +167,7 @@ export function AnalyzeClient() {
                 type="button"
                 onClick={clearClaim}
                 aria-label="Clear text"
+                disabled={loading}
               >
                 <X aria-hidden="true" size={18} />
                 Clear
@@ -180,6 +195,7 @@ export function AnalyzeClient() {
               type="button"
               className="example-chip"
               aria-pressed={claim === example.claim}
+              disabled={loading || llmConfigured === null}
               onClick={() => applyExample(example.claim)}
             >
               {example.label}
@@ -194,11 +210,10 @@ export function AnalyzeClient() {
           aria-live="polite"
           aria-busy="true"
         >
-          <p className="eyebrow">AI analysis</p>
+          <p className="eyebrow">Source check</p>
           <h2>Reading sources...</h2>
           <p>
-            CivicLens is asking the AI for a short, plain-English answer
-            grounded in retrieved sources.
+            Retrieving source context and checking what the evidence can support.
           </p>
         </section>
       ) : null}
@@ -216,17 +231,32 @@ export function AnalyzeClient() {
         >
           <div className="analyze-simple-result-top">
             <div>
-              <p className="eyebrow">AI analysis</p>
+              <p className="eyebrow">Source check</p>
               <h2 id="plain-answer-heading">Plain-English answer</h2>
             </div>
             <span className={`analyze-live-pill${isLiveAi ? " live" : ""}`}>
               <CheckCircle2 aria-hidden="true" size={16} />
-              {isLiveAi ? "Live AI" : "Fallback"}
+              {isLiveAi ? "Live AI" : "Guided fallback"}
             </span>
           </div>
           <p className="analyze-simple-answer">
             {analysisText || "The sources did not settle this claim."}
           </p>
+          <p className="analysis-provenance">
+            {isLiveAi ? "Live AI response checked against source excerpts" : "Template-based explanation; no live AI response"}
+            {" · "}{response?.sourceMode === "live" ? "Live source retrieval" : "Curated source context"}.
+            {" "}A citation link is a starting point for checking the answer.
+          </p>
+          {response?.warnings?.length ? (
+            <details className="analysis-detail">
+              <summary>How this answer was produced</summary>
+              <ul>{response.warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul>
+            </details>
+          ) : null}
+
+          {result.studentExplanation && result.studentExplanation !== analysisText ? (
+            <p className="analysis-explanation">{result.studentExplanation}</p>
+          ) : null}
 
           {truthAssessment.showScore && result.truthVerdict ? (
             <p className="analyze-simple-claim">
@@ -252,9 +282,35 @@ export function AnalyzeClient() {
                 >
                   <span>{formatTruthVerdict(check.verdict)}</span>
                   {check.explanation}
+                  {check.citationIds.length ? <small>Sources: {check.citationIds.join(", ")}</small> : null}
                 </p>
               ))}
             </div>
+          ) : null}
+
+          {result.whatOfficialSourcesSay?.length ? (
+            <details className="analysis-detail" open>
+              <summary>What the source context says</summary>
+              <ul>{result.whatOfficialSourcesSay.map((point, index) => <li key={index}>{point}</li>)}</ul>
+            </details>
+          ) : null}
+          {result.keyContext?.length ? (
+            <details className="analysis-detail">
+              <summary>Context to keep in mind</summary>
+              <ul>{result.keyContext.map((point, index) => <li key={index}>{point}</li>)}</ul>
+            </details>
+          ) : null}
+          {result.contextGaps?.length ? (
+            <section className="analysis-context-gaps" aria-label="Evidence gaps">
+              <h3>What remains uncertain</h3>
+              <ul>{result.contextGaps.map((point, index) => <li key={index}>{point}</li>)}</ul>
+            </section>
+          ) : null}
+          {result.framingFlags?.length ? (
+            <details className="analysis-detail">
+              <summary>Look closely at the wording</summary>
+              <FramingFlags flags={result.framingFlags} />
+            </details>
           ) : null}
 
           {result.normalizedClaim ? (
@@ -270,7 +326,7 @@ export function AnalyzeClient() {
                 {response.citations.length} source
                 {response.citations.length === 1 ? "" : "s"}
               </span>
-              {response.citations.slice(0, 2).map((citation, index) =>
+              {response.citations.map((citation, index) =>
                 citation.url ? (
                   <a
                     key={citation.id ?? citation.url ?? index}
@@ -287,6 +343,27 @@ export function AnalyzeClient() {
                 ),
               )}
             </div>
+          ) : null}
+
+          {response?.citations?.length ? (
+            <details className="analysis-detail">
+              <summary>Read source excerpts</summary>
+              {response.citations.map((citation, index) => (
+                <article className="analysis-source-excerpt" key={citation.id ?? index}>
+                  <h3>{citation.title}</h3>
+                  <p className="subtle">{citation.id}{citation.sourceDate ? ` · ${citation.sourceDate}` : ""}</p>
+                  <p>{citation.excerpt || "Open this source to inspect its context."}</p>
+                </article>
+              ))}
+            </details>
+          ) : null}
+
+          {result.status === "answered" && result.quiz?.length ? (
+            <section className="analysis-knowledge-checks" aria-label="Practice this explanation">
+              <h3>Can you apply it?</h3>
+              {result.quiz.map((quiz, index) => <QuizCard key={`${lastSubmittedClaim}-${quiz.id}-${index}`} quiz={quiz} sourceId={quiz.id} />)}
+              <Link className="button secondary" href="/feed">Keep learning</Link>
+            </section>
           ) : null}
 
           {response?.relatedBills?.length ? (

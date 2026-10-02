@@ -82,6 +82,7 @@ export function BillDetailView({
 
   return (
     <section className="page-shell" aria-label="Bill detail">
+      <p className="analysis-provenance">{bill?.mode === "live" ? "Live Congress.gov record" : "Curated historical record"}. Verify the latest action using the linked official sources.</p>
       <article className="bill-hero-card">
         <div className="bill-hero-copy">
           <Pill tone="teal">Current step</Pill>

@@ -20,7 +20,29 @@ describe("source grounder official provider integration", () => {
     expect(getDemoBill(118, "hr", 82)?.number).toBe(82);
   });
 
-  it("adds configured official endpoint candidates to non-bill retrieval", async () => {
+  it("discloses the assumed historical Congress for an unspecified demo bill", async () => {
+    process.env = { ...originalEnv, CONGRESS_API_KEY: "" };
+    const result = await retrieveGroundedSources("H.R. 82 became law.");
+    expect(result.mode).toBe("demo");
+    expect(result.warnings).toEqual([expect.stringMatching(/118th Congress.*Bill numbers restart/)]);
+  });
+
+  it("labels mixed live and packaged evidence conservatively", async () => {
+    process.env = {
+      ...originalEnv, DATABASE_URL: "", FEDERAL_REGISTER_API_BASE: "https://www.federalregister.gov/api/v1",
+    };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ results: [{
+      title: "Agency public comment notice", abstract: "The agency invites public comments on a proposed rule.",
+      html_url: "https://www.federalregister.gov/documents/2026/01/02/public-comment", document_number: "2026-001",
+    }] })));
+    const result = await retrieveGroundedSources("public comment on an agency rule", 5);
+    expect(result.citations.some((citation) => citation.id === "official-federal-register")).toBe(true);
+    expect(result.citations.some((citation) => citation.id !== "official-federal-register")).toBe(true);
+    expect(result.mode).toBe("demo");
+    expect(result.warnings).toEqual([expect.stringMatching(/mixed provenance/)]);
+  });
+
+  it("does not present configured search links as fetched evidence", async () => {
     process.env = {
       ...originalEnv,
       DATABASE_URL: "",
@@ -34,13 +56,9 @@ describe("source grounder official provider integration", () => {
       5,
     );
 
-    expect(result.mode).toBe("live");
-    expect(result.citations.map((citation) => citation.id)).toContain(
-      "official-openfec",
-    );
-    expect(
-      result.documents.some((document) => document.id === "official-openfec"),
-    ).toBe(true);
+    expect(result.mode).toBe("demo");
+    expect(result.citations.map((citation) => citation.id)).not.toContain("official-openfec");
+    expect(result.documents.some((document) => document.id === "official-openfec")).toBe(false);
   });
 
   it("keeps the latest action and substantive official summary as distinct analysis inputs", async () => {

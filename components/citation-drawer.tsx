@@ -16,19 +16,22 @@ export function CitationDrawer({
 }) {
   const [open, setOpen] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
   const usableCitations = citations?.filter(Boolean) ?? [];
 
   useEffect(() => {
     if (!open) return;
+    dialogRef.current?.showModal();
     closeButtonRef.current?.focus();
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+    const previousOverflow = document.body.style.overflow;
+    const trigger = triggerRef.current;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      trigger?.focus();
     };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open]);
 
   return (
@@ -36,6 +39,8 @@ export function CitationDrawer({
       <button
         type="button"
         className="citation-button"
+        ref={triggerRef}
+        aria-haspopup="dialog"
         onClick={() => setOpen(true)}
         disabled={usableCitations.length === 0}
       >
@@ -43,12 +48,11 @@ export function CitationDrawer({
       </button>
 
       {open ? (
-        <div className="drawer-backdrop" role="presentation" onMouseDown={() => setOpen(false)}>
+        <dialog ref={dialogRef} className="drawer-backdrop" aria-labelledby={titleId}
+          onCancel={() => setOpen(false)} onClose={() => setOpen(false)}
+          onMouseDown={(event) => { if (event.target === event.currentTarget) setOpen(false); }}>
           <aside
             className="drawer"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={titleId}
             onMouseDown={(event) => event.stopPropagation()}
           >
             <div className="drawer-header">
@@ -88,7 +92,7 @@ export function CitationDrawer({
               <p className="empty-state">No citations were returned for this item.</p>
             )}
           </aside>
-        </div>
+        </dialog>
       ) : null}
     </>
   );
