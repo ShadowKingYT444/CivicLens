@@ -1,3 +1,5 @@
+> Historical rejected-design evidence. The current UI is documented in [the restoration report](../restored-mobile-ui/REPORT.md).
+
 # CivicLens editorial UI verification
 
 Tested application SHA: `30ee62c49cd9d174a440bb125b7ce734ec3e6c58`.
