@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { redactSensitiveText } from "../privacy/redaction";
 import sourcePacksJson from "../../data/source-packs.json";
 import { CitationSchema, type BillType, type Citation } from "../ai/schemas";
 import {
@@ -242,6 +243,7 @@ export async function retrieveGroundedSources(
   mode: "live" | "demo";
   validationErrors: string[];
 }> {
+  query = redactSensitiveText(query);
   const billRef = parseBillReference(query);
   if (billRef) {
     return retrieveBillSpecificSources(billRef, limit);
@@ -270,11 +272,25 @@ export async function retrieveGroundedSources(
     documents.map((document) => document.citation),
   );
 
+  const validCitationIds = new Set(
+    citationValidation.citations.map((citation) => citation.id),
+  );
+  const validDocuments = documents.filter((document) =>
+    validCitationIds.has(document.citation.id),
+  );
+  const liveIds = new Set([
+    ...dbDocuments.map((document) => document.id),
+    ...officialCandidates
+      .filter((candidate) => candidate.live === true)
+      .map((candidate) => candidate.id),
+  ]);
+
   return {
     citations: citationValidation.citations,
-    documents,
-    mode:
-      dbDocuments.length > 0 || officialDocuments.length > 0 ? "live" : "demo",
+    documents: validDocuments,
+    mode: validDocuments.some((document) => liveIds.has(document.id))
+      ? "live"
+      : "demo",
     validationErrors: citationValidation.errors,
   };
 }
@@ -408,26 +424,41 @@ export async function fetchCongressBill(
   try {
     const [billResponse, summariesResponse, actionsResponse] =
       await Promise.all([
-        fetch(`${billPath}?api_key=${apiKey}&format=json`, {
-          next: { revalidate: 3600 },
-          signal: controller.signal,
-        }),
-        fetch(`${billPath}/summaries?api_key=${apiKey}&format=json`, {
-          next: { revalidate: 3600 },
-          signal: controller.signal,
-        }),
-        fetch(`${billPath}/actions?api_key=${apiKey}&format=json`, {
-          next: { revalidate: 3600 },
-          signal: controller.signal,
-        }),
+        withAbortDeadline(
+          fetch(`${billPath}?api_key=${apiKey}&format=json`, {
+            next: { revalidate: 3600 },
+            signal: controller.signal,
+          }),
+          controller.signal,
+        ),
+        withAbortDeadline(
+          fetch(`${billPath}/summaries?api_key=${apiKey}&format=json`, {
+            next: { revalidate: 3600 },
+            signal: controller.signal,
+          }),
+          controller.signal,
+        ),
+        withAbortDeadline(
+          fetch(`${billPath}/actions?api_key=${apiKey}&format=json`, {
+            next: { revalidate: 3600 },
+            signal: controller.signal,
+          }),
+          controller.signal,
+        ),
       ]);
 
     if (!billResponse.ok) {
       return null;
     }
 
-    const billPayload = (await billResponse.json()) as {
+    const billPayload = (await withAbortDeadline(
+      billResponse.json(),
+      controller.signal,
+    )) as {
       bill?: {
+        congress?: unknown;
+        type?: unknown;
+        number?: unknown;
         title?: string;
         shortTitle?: string;
         latestAction?: { text?: string; actionDate?: string };
@@ -440,21 +471,30 @@ export async function fetchCongressBill(
         url?: string;
       };
     };
+    const bill = billPayload.bill;
+    if (
+      !bill?.title ||
+      !matchesCongressIdentity(bill, congress, type, number)
+    ) {
+      return null;
+    }
+
     const summariesPayload = summariesResponse.ok
-      ? ((await summariesResponse.json()) as {
+      ? ((await withAbortDeadline(
+          summariesResponse.json(),
+          controller.signal,
+        )) as {
           summaries?: Array<{ text?: string; updateDate?: string }>;
         })
       : { summaries: [] };
     const actionsPayload = actionsResponse.ok
-      ? ((await actionsResponse.json()) as {
+      ? ((await withAbortDeadline(
+          actionsResponse.json(),
+          controller.signal,
+        )) as {
           actions?: Array<{ text?: string; actionDate?: string }>;
         })
       : { actions: [] };
-
-    const bill = billPayload.bill;
-    if (!bill?.title) {
-      return null;
-    }
 
     const title = sanitizeBillText(bill.title);
     const shortTitle = sanitizeBillText(bill.shortTitle);
@@ -539,6 +579,45 @@ export async function fetchCongressBill(
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function withAbortDeadline<T>(
+  operation: Promise<T>,
+  signal: AbortSignal,
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const abort = () => reject(new Error("Congress request timed out"));
+    if (signal.aborted) {
+      // Consume the pending operation's rejection even when the deadline already elapsed.
+      operation.catch(() => undefined);
+      abort();
+      return;
+    }
+    signal.addEventListener("abort", abort, { once: true });
+    operation
+      .then(resolve, reject)
+      .finally(() => signal.removeEventListener("abort", abort));
+  });
+}
+
+function matchesCongressIdentity(
+  bill: { congress?: unknown; type?: unknown; number?: unknown },
+  congress: number,
+  type: BillType,
+  number: number,
+): boolean {
+  return (
+    (bill.congress === undefined ||
+      ((typeof bill.congress === "string" ||
+        typeof bill.congress === "number") &&
+        Number(bill.congress) === congress)) &&
+    (bill.number === undefined ||
+      ((typeof bill.number === "string" || typeof bill.number === "number") &&
+        Number(bill.number) === number)) &&
+    (bill.type === undefined ||
+      (typeof bill.type === "string" &&
+        bill.type.toLowerCase().replace(/[.\s]/g, "") === type))
+  );
 }
 
 function enrichBillDetail(detail: BillDetailBase): BillDetail {

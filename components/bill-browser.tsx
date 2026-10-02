@@ -2,13 +2,7 @@
 
 import Image from "next/image";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Sparkles, X } from "lucide-react";
 import { billHref, getJson, normalizeSearchResponse } from "./api";
 import { BillHeroCard } from "./mobile/BillHeroCard";
 import { Pill } from "./mobile/Pill";
@@ -99,14 +93,20 @@ const immigrationCitation: Citation = {
 const fundingCitation: Citation = {
   id: "hr1968-appropriations-card",
   sourceType: "congress",
-  title: "H.R.1968 - Full-Year Continuing Appropriations and Extensions Act, 2025",
+  title:
+    "H.R.1968 - Full-Year Continuing Appropriations and Extensions Act, 2025",
   url: "https://www.congress.gov/bill/119th-congress/house-bill/1968",
   sourceDate: "2025-03-15",
   excerpt:
     "Congress.gov lists H.R. 1968 as Public Law No. 119-4 providing continuing FY2025 appropriations and extensions.",
 };
 
-const starterCitations = [reconciliationCitation, immigrationCitation, fundingCitation, officialBillsCitation];
+const starterCitations = [
+  reconciliationCitation,
+  immigrationCitation,
+  fundingCitation,
+  officialBillsCitation,
+];
 
 const defaultBillDeck: BillDeckCard[] = [
   {
@@ -118,12 +118,19 @@ const defaultBillDeck: BillDeckCard[] = [
     reward: "Source +10",
     summary:
       "A budget-and-tax card for tracking how reconciliation bundles tax, spending, and debt-limit changes.",
-    whyItMatters: "This bill shows how Congress can package tax, spending, and debt-limit changes in one law.",
-    whatChanges: "It changes tax rules, federal spending provisions, and debt-limit rules across programs.",
+    whyItMatters:
+      "This bill shows how Congress can package tax, spending, and debt-limit changes in one law.",
+    whatChanges:
+      "It changes tax rules, federal spending provisions, and debt-limit rules across programs.",
     officialSummary:
       "Congress.gov and CRS describe tax, spending, debt-limit, agency, and program changes across the federal government.",
     issueArea: "Budget and taxes",
-    whoItAffects: ["Taxpayers", "Federal programs", "Future budgets", "The economy"],
+    whoItAffects: [
+      "Taxpayers",
+      "Federal programs",
+      "Future budgets",
+      "The economy",
+    ],
     latestAction: "Became Public Law No. 119-21.",
     latestActionDate: "Jul 4, 2025",
     currentStepLabel: "Became law",
@@ -165,7 +172,9 @@ const defaultBillDeck: BillDeckCard[] = [
     ],
     sourceLabel: "Congress.gov immigration source context",
     sourceCount: 2,
-    asset: getBillCategoryAsset("immigration detention enforcement state lawsuit"),
+    asset: getBillCategoryAsset(
+      "immigration detention enforcement state lawsuit",
+    ),
     currentStep: 4,
     citations: [immigrationCitation],
   },
@@ -185,7 +194,12 @@ const defaultBillDeck: BillDeckCard[] = [
     officialSummary:
       "Congress.gov and CRS describe continuing appropriations for agencies and extensions for selected programs.",
     issueArea: "Appropriations",
-    whoItAffects: ["Federal agencies", "Program users", "Communities", "Public services"],
+    whoItAffects: [
+      "Federal agencies",
+      "Program users",
+      "Communities",
+      "Public services",
+    ],
     latestAction: "Became Public Law No. 119-4.",
     latestActionDate: "Mar 15, 2025",
     currentStepLabel: "Became law",
@@ -196,7 +210,9 @@ const defaultBillDeck: BillDeckCard[] = [
     ],
     sourceLabel: "Congress.gov appropriations source context",
     sourceCount: 2,
-    asset: getBillCategoryAsset("appropriations government funding public health medicare cybersecurity"),
+    asset: getBillCategoryAsset(
+      "appropriations government funding public health medicare cybersecurity",
+    ),
     currentStep: 4,
     citations: [fundingCitation],
   },
@@ -208,7 +224,8 @@ function cleanText(value: unknown, fallback = "") {
 }
 
 function richText(value: unknown, fallback = "") {
-  if (typeof value === "string" || typeof value === "number") return cleanText(value, fallback);
+  if (typeof value === "string" || typeof value === "number")
+    return cleanText(value, fallback);
   if (value && typeof value === "object" && "text" in value) {
     return cleanText((value as { text?: unknown }).text, fallback);
   }
@@ -221,11 +238,20 @@ function clampText(value: string, maxLength: number) {
 }
 
 function cardTitle(result: RawBillResult) {
-  return cleanText(result.title ?? result.label ?? result.bill?.title, "Bill result");
+  return cleanText(
+    result.title ?? result.label ?? result.bill?.title,
+    "Bill result",
+  );
 }
 
 function cardSnippet(result: RawBillResult) {
-  return cleanText(result.hook ?? result.snippet ?? result.summary ?? result.excerpt ?? result.bill?.latestAction);
+  return cleanText(
+    result.hook ??
+      result.snippet ??
+      result.summary ??
+      result.excerpt ??
+      result.bill?.latestAction,
+  );
 }
 
 function cardHref(result: RawBillResult) {
@@ -242,24 +268,34 @@ function billLabel(result: RawBillResult) {
   const congress = bill?.congress ?? result.congress;
   const type = bill?.type ?? result.billType;
   const number = bill?.number ?? result.number;
-  if (congress && type && number) return `${String(type).toUpperCase()} ${number} - ${congress}th`;
+  if (congress && type && number)
+    return `${String(type).toUpperCase()} ${number} - ${congress}th`;
   return cleanText(result.type, "Bill card");
 }
 
 function inferStep(text: string) {
-  if (/\b(public law|became law|signed by the president|enacted)\b/i.test(text)) return 4;
-  if (/\b(senate|presented to president|cleared for president)\b/i.test(text)) return 3;
-  if (/\b(house passed|passed house|passed\/agreed|passed)\b/i.test(text)) return 2;
+  if (/\b(public law|became law|signed by the president|enacted)\b/i.test(text))
+    return 4;
+  if (/\b(senate|presented to president|cleared for president)\b/i.test(text))
+    return 3;
+  if (/\b(house passed|passed house|passed\/agreed|passed)\b/i.test(text))
+    return 2;
   if (/\b(committee|referred|reported)\b/i.test(text)) return 1;
   return 0;
 }
 
 function keyPointsFor(result: RawBillResult, snippet: string) {
-  const richPoints = result.keyPoints?.map((point) => richText(point)).filter(Boolean).slice(0, 4) ?? [];
+  const richPoints =
+    result.keyPoints
+      ?.map((point) => richText(point))
+      .filter(Boolean)
+      .slice(0, 4) ?? [];
   if (richPoints.length > 0) return richPoints;
 
   const points = [
-    snippet ? `Latest source clue: ${clampText(snippet, 108)}` : "Start with the latest official action.",
+    snippet
+      ? `Latest source clue: ${clampText(snippet, 108)}`
+      : "Start with the latest official action.",
     "Open the detail page before treating the status as settled.",
     "CivicLens keeps this neutral: source, status, and gaps.",
   ];
@@ -272,14 +308,22 @@ function currentStepText(result: RawBillResult, fallback: string) {
 }
 
 function currentStepLabel(result: RawBillResult, fallback: string) {
-  if (result.currentStep && typeof result.currentStep === "object" && "label" in result.currentStep) {
+  if (
+    result.currentStep &&
+    typeof result.currentStep === "object" &&
+    "label" in result.currentStep
+  ) {
     return cleanText(result.currentStep.label, fallback);
   }
   return fallback;
 }
 
 function currentStepDate(result: RawBillResult) {
-  if (result.currentStep && typeof result.currentStep === "object" && "date" in result.currentStep) {
+  if (
+    result.currentStep &&
+    typeof result.currentStep === "object" &&
+    "date" in result.currentStep
+  ) {
     return formatShortDate(result.currentStep.date);
   }
   return "";
@@ -290,7 +334,11 @@ function formatShortDate(value: unknown) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
   if (!match) return text;
 
-  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  const date = new Date(
+    Number(match[1]),
+    Number(match[2]) - 1,
+    Number(match[3]),
+  );
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
@@ -301,7 +349,9 @@ function formatShortDate(value: unknown) {
 function affectedGroupsFor(text: string) {
   const haystack = text.toLowerCase();
 
-  if (/\b(budget|tax|spending|appropriation|debt|reconciliation)\b/.test(haystack)) {
+  if (
+    /\b(budget|tax|spending|appropriation|debt|reconciliation)\b/.test(haystack)
+  ) {
     return ["Taxpayers", "Federal programs", "Future budgets", "The economy"];
   }
   if (/\b(immigration|border|detain|non-u\.?s\.?)\b/.test(haystack)) {
@@ -310,7 +360,9 @@ function affectedGroupsFor(text: string) {
   if (/\b(health|medicare|medicaid|substance|patients|988)\b/.test(haystack)) {
     return ["Patients", "Health programs", "Providers", "Families"];
   }
-  if (/\b(technology|online|cyber|stablecoin|digital|payment)\b/.test(haystack)) {
+  if (
+    /\b(technology|online|cyber|stablecoin|digital|payment)\b/.test(haystack)
+  ) {
     return ["Online users", "Companies", "Regulators", "Consumers"];
   }
   if (/\b(education|school|student|lunch)\b/.test(haystack)) {
@@ -323,27 +375,43 @@ function affectedGroupsFor(text: string) {
   return ["Students", "Families", "Local communities", "Federal programs"];
 }
 
-function normalizeDeckCard(result: RawBillResult, index: number): BillDeckCard | null {
+function normalizeDeckCard(
+  result: RawBillResult,
+  index: number,
+): BillDeckCard | null {
   const title = cardTitle(result);
   const href = cardHref(result);
   if (!href) return null;
 
   const snippet = cardSnippet(result);
   const label = billLabel(result);
-  const latestAction = currentStepText(result, snippet || "Latest official action unavailable from this card.");
+  const latestAction = currentStepText(
+    result,
+    snippet || "Latest official action unavailable from this card.",
+  );
   const searchText = `${title} ${snippet} ${label} ${result.issueArea ?? ""} ${result.impactLabel ?? ""}`;
-  const citations = result.citations?.length ? result.citations : result.citation ? [result.citation] : [];
-  const currentStepFallback = inferStep(latestAction) >= 4 ? "Became law" : "Current step";
+  const citations = result.citations?.length
+    ? result.citations
+    : result.citation
+      ? [result.citation]
+      : [];
+  const currentStepFallback =
+    inferStep(latestAction) >= 4 ? "Became law" : "Current step";
   const stepLabel = currentStepLabel(result, currentStepFallback);
   const issueArea = cleanText(result.issueArea, "Civic impact");
-  const firstSourcePoint = result.keyPoints?.map((point) => richText(point)).find(Boolean);
+  const firstSourcePoint = result.keyPoints
+    ?.map((point) => richText(point))
+    .find(Boolean);
   const whyItMatters = richText(
     result.whyItMatters,
-    snippet ? clampText(snippet, 145) : "Use the official record to understand why this bill matters.",
+    snippet
+      ? clampText(snippet, 145)
+      : "Use the official record to understand why this bill matters.",
   );
   const whatChanges = richText(
     result.whatChanges,
-    firstSourcePoint ?? "Compare the official summary with the latest action before sharing claims.",
+    firstSourcePoint ??
+      "Compare the official summary with the latest action before sharing claims.",
   );
 
   return {
@@ -351,7 +419,10 @@ function normalizeDeckCard(result: RawBillResult, index: number): BillDeckCard |
     title,
     href,
     refLabel: label,
-    eyebrow: cleanText(result.impactLabel ?? result.quest, index === 0 ? "Trending bill" : `Trending ${index + 1}`),
+    eyebrow: cleanText(
+      result.impactLabel ?? result.quest,
+      index === 0 ? "Trending bill" : `Trending ${index + 1}`,
+    ),
     reward: result.mode === "live" ? "Live source" : "High impact",
     summary: snippet
       ? clampText(snippet, 170)
@@ -362,7 +433,9 @@ function normalizeDeckCard(result: RawBillResult, index: number): BillDeckCard |
       ? clampText(snippet, 210)
       : "The current card does not include a longer official summary. Check attached sources before drawing conclusions.",
     issueArea,
-    whoItAffects: affectedGroupsFor(`${searchText} ${whyItMatters} ${whatChanges}`),
+    whoItAffects: affectedGroupsFor(
+      `${searchText} ${whyItMatters} ${whatChanges}`,
+    ),
     latestAction,
     latestActionDate: currentStepDate(result),
     currentStepLabel: stepLabel,
@@ -372,7 +445,8 @@ function normalizeDeckCard(result: RawBillResult, index: number): BillDeckCard |
       : result.mode === "live"
         ? "Congress.gov live record"
         : "CivicLens bill source",
-    sourceCount: result.sourceCount ?? (citations.length || starterCitations.length),
+    sourceCount:
+      result.sourceCount ?? (citations.length || starterCitations.length),
     asset: getBillCategoryAsset(searchText),
     currentStep: inferStep(`${stepLabel} ${latestAction}`),
     mode: result.mode,
@@ -429,7 +503,9 @@ export function BillBrowser() {
   }, []);
 
   useEffect(() => {
-    const nodes = cardRefs.current.filter((node): node is HTMLElement => Boolean(node));
+    const nodes = cardRefs.current.filter((node): node is HTMLElement =>
+      Boolean(node),
+    );
     if (!nodes.length) return;
 
     const observer = new IntersectionObserver(
@@ -451,12 +527,16 @@ export function BillBrowser() {
   async function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmed = query.trim();
-    if (!trimmed) return;
+    if (!trimmed || loading) return;
 
     setLoading(true);
 
     try {
-      const payload = await getJson<unknown>(`/api/search?q=${encodeURIComponent(trimmed)}`);
+      const payload = await getJson<unknown>("/api/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ q: trimmed }),
+      });
       const normalized = uniqueCards(
         (normalizeSearchResponse(payload) as RawBillResult[])
           .map((result, index) => normalizeDeckCard(result, index))
@@ -468,12 +548,23 @@ export function BillBrowser() {
         setMessage(`Search deck for "${trimmed}"`);
         setActiveIndex(0);
         setSearchOpen(false);
-        window.setTimeout(() => cardRefs.current[0]?.scrollIntoView({ block: "start", behavior: "smooth" }), 0);
+        window.setTimeout(
+          () =>
+            cardRefs.current[0]?.scrollIntoView({
+              block: "start",
+              behavior: "smooth",
+            }),
+          0,
+        );
       } else {
         setMessage("No exact bill match yet. Demo cards are still available.");
       }
     } catch (reason) {
-      setMessage(reason instanceof Error ? reason.message : "Bill search is unavailable right now.");
+      setMessage(
+        reason instanceof Error
+          ? reason.message
+          : "Bill search is unavailable right now.",
+      );
     } finally {
       setLoading(false);
     }
@@ -481,16 +572,30 @@ export function BillBrowser() {
 
   function scrollToCard(index: number) {
     const nextIndex = Math.min(Math.max(index, 0), cards.length - 1);
-    cardRefs.current[nextIndex]?.scrollIntoView({ block: "start", behavior: "smooth" });
+    cardRefs.current[nextIndex]?.scrollIntoView({
+      block: "start",
+      behavior: "smooth",
+    });
     setActiveIndex(nextIndex);
   }
 
-  const activeCard = cards[Math.min(activeIndex, cards.length - 1)] ?? defaultBillDeck[0];
+  const activeCard =
+    cards[Math.min(activeIndex, cards.length - 1)] ?? defaultBillDeck[0];
 
   return (
-    <section className="bill-deck-shell learn-shell" aria-label="Bills made simple">
+    <section
+      className="bill-deck-shell learn-shell"
+      aria-label="Bills made simple"
+    >
       <header className="duo-learn-topbar bill-deck-topbar">
-        <Image className="learn-logo" src={learningPathAssets.logo} alt="CivicLens" width={160} height={42} priority />
+        <Image
+          className="learn-logo"
+          src={learningPathAssets.logo}
+          alt="CivicLens"
+          width={160}
+          height={42}
+          priority
+        />
         <div className="duo-stat" aria-label="Current bill card">
           <Sparkles aria-hidden="true" size={23} />
           <strong>
@@ -504,7 +609,11 @@ export function BillBrowser() {
           aria-expanded={searchOpen}
           onClick={() => setSearchOpen((open) => !open)}
         >
-          {searchOpen ? <X aria-hidden="true" size={24} /> : <Search aria-hidden="true" size={24} />}
+          {searchOpen ? (
+            <X aria-hidden="true" size={24} />
+          ) : (
+            <Search aria-hidden="true" size={24} />
+          )}
         </button>
       </header>
 
@@ -529,7 +638,10 @@ export function BillBrowser() {
       <div className="bill-feed-heading">
         <h1>Bill feed</h1>
         <p>Learn. Understand. Check sources.</p>
-        <div className="lesson-dots bill-feed-dots" aria-label={`Bill ${activeIndex + 1} of ${cards.length}`}>
+        <div
+          className="lesson-dots bill-feed-dots"
+          aria-label={`Bill ${activeIndex + 1} of ${cards.length}`}
+        >
           {cards.map((card, index) => (
             <button
               key={card.id}
@@ -562,6 +674,11 @@ export function BillBrowser() {
             }}
             aria-label={`Bill ${index + 1} of ${cards.length}: ${card.title}`}
           >
+            <p className="status-pill" role="status">
+              {card.mode === "live"
+                ? "Live Congress.gov record"
+                : "Sample record — not a live update."}
+            </p>
             <BillHeroCard
               title={card.title}
               summary={card.summary}
@@ -591,7 +708,11 @@ export function BillBrowser() {
       </div>
 
       <nav className="bill-deck-controls" aria-label="Bill deck controls">
-        <button type="button" onClick={() => scrollToCard(activeIndex - 1)} disabled={activeIndex === 0}>
+        <button
+          type="button"
+          onClick={() => scrollToCard(activeIndex - 1)}
+          disabled={activeIndex === 0}
+        >
           <ChevronLeft aria-hidden="true" size={24} />
           <span className="sr-only">Previous bill</span>
         </button>
@@ -599,7 +720,11 @@ export function BillBrowser() {
           <span>Swipe sideways for details</span>
           <span>Scroll down for next bill</span>
         </p>
-        <button type="button" onClick={() => scrollToCard(activeIndex + 1)} disabled={activeIndex >= cards.length - 1}>
+        <button
+          type="button"
+          onClick={() => scrollToCard(activeIndex + 1)}
+          disabled={activeIndex >= cards.length - 1}
+        >
           <ChevronRight aria-hidden="true" size={24} />
           <span className="sr-only">Next bill</span>
         </button>

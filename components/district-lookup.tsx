@@ -1,7 +1,13 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { ArrowRight, LocateFixed, Lock, MapPin, ShieldCheck } from "lucide-react";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import {
+  ArrowRight,
+  LocateFixed,
+  Lock,
+  MapPin,
+  ShieldCheck,
+} from "lucide-react";
 import { getJson } from "./api";
 import { assets } from "../lib/asset-manifest";
 import { ActionTile } from "./mobile/ActionTile";
@@ -19,7 +25,12 @@ function memberName(member: MemberSummary) {
 
 function memberRole(member: MemberSummary, fallback: string) {
   if (typeof member === "string") return fallback;
-  const party = member.party === "D" ? "Democratic" : member.party === "R" ? "Republican" : member.party;
+  const party =
+    member.party === "D"
+      ? "Democratic"
+      : member.party === "R"
+        ? "Republican"
+        : member.party;
   return [fallback, party, member.state].filter(Boolean).join(" - ");
 }
 
@@ -32,40 +43,67 @@ export function DistrictLookup() {
   const [result, setResult] = useState<DistrictLookupResult | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const pending = useRef(false);
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!result || loading) return;
+    resultRef.current?.focus({ preventScroll: true });
+    resultRef.current?.scrollIntoView({
+      block: "start",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  }, [result, loading]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!address.trim()) return;
-
+    if (!address.trim() || pending.current) return;
     await lookupDistrict({ address: address.trim() });
   }
 
-  async function lookupDistrict(requestBody: { address?: string; latitude?: number; longitude?: number }) {
+  async function lookupDistrict(requestBody: {
+    address?: string;
+    latitude?: number;
+    longitude?: number;
+  }) {
+    pending.current = true;
     setLoading(true);
     setError("");
     setResult(null);
-
     try {
-      const responsePayload = await getJson<DistrictLookupResult>("/api/district/lookup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-      setResult(responsePayload);
+      const payload = await getJson<DistrictLookupResult>(
+        "/api/district/lookup",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestBody),
+        },
+      );
+      setResult(payload);
       setAddress("");
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "District lookup unavailable.");
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : "District lookup unavailable. Try again with a full address.",
+      );
     } finally {
+      pending.current = false;
       setLoading(false);
     }
   }
 
   function handleUseLocation() {
+    if (pending.current) return;
     if (!navigator.geolocation) {
-      setError("Location lookup is not available in this browser.");
+      setError(
+        "Location lookup is not available in this browser. Enter an address instead.",
+      );
       return;
     }
-
+    pending.current = true;
     setError("");
     setLoading(true);
     navigator.geolocation.getCurrentPosition(
@@ -76,18 +114,28 @@ export function DistrictLookup() {
         });
       },
       () => {
+        pending.current = false;
         setLoading(false);
-        setError("Location permission was not granted. You can still enter an address.");
+        setError(
+          "Location permission was not granted. You can still enter an address.",
+        );
       },
       { enableHighAccuracy: false, timeout: 8_000, maximumAge: 300_000 },
     );
   }
 
-  const districtCode = result?.stateCode && result?.district ? `${result.stateCode} District ${result.district}` : "Your District";
+  const isDemo = result?.status === "demo";
+  const districtCode =
+    result?.stateCode && result?.district != null
+      ? `${result.stateCode} District ${result.district}`
+      : "Your District";
 
   return (
     <section className="page-shell" aria-label="District lookup">
-      <TopIdentity title="District" subtitle="Find representatives without storing your address." />
+      <TopIdentity
+        title="District"
+        subtitle="Find representatives without storing your address."
+      />
 
       <form className="form-grid" onSubmit={handleSubmit}>
         <label className="sr-only" htmlFor="address">
@@ -104,11 +152,21 @@ export function DistrictLookup() {
             placeholder="1600 Pennsylvania Ave NW, Washington, DC"
             required
           />
-          <button className="button secondary" type="submit" disabled={loading} aria-label="Look up district">
+          <button
+            className="button secondary"
+            type="submit"
+            disabled={loading}
+            aria-label="Look up district"
+          >
             <ArrowRight aria-hidden="true" size={22} />
           </button>
         </div>
-        <button className="button secondary location-button" type="button" onClick={handleUseLocation} disabled={loading}>
+        <button
+          className="button secondary location-button"
+          type="button"
+          onClick={handleUseLocation}
+          disabled={loading}
+        >
           <LocateFixed aria-hidden="true" size={20} /> Use my location
         </button>
         {error ? (
@@ -118,15 +176,28 @@ export function DistrictLookup() {
         ) : null}
       </form>
 
-      {loading ? <p className="empty-state">Looking up your district...</p> : null}
+      {loading ? (
+        <p className="empty-state">Looking up your district...</p>
+      ) : null}
 
       {result ? (
-        <>
-          <DistrictHeroCard districtCode={districtCode} location={result.stateCode ? `${result.stateCode}` : undefined} />
+        <div ref={resultRef} tabIndex={-1} aria-label="District result">
+          {isDemo ? (
+            <p className="status-pill warning" role="status">
+              Sample result — not your district.
+            </p>
+          ) : null}
+          <DistrictHeroCard
+            districtCode={districtCode}
+            location={result.stateCode ? `${result.stateCode}` : undefined}
+            sample={isDemo}
+          />
 
           <section className="page-shell">
             <div className="section-row">
-              <h2>Your Representatives</h2>
+              <h2>
+                {isDemo ? "Sample Representatives" : "Your Representatives"}
+              </h2>
               <span className="status-pill good">Why these?</span>
             </div>
             <div className="representatives-row">
@@ -136,8 +207,17 @@ export function DistrictLookup() {
                     key={`${memberName(member)}-${index}`}
                     name={memberName(member)}
                     role={memberRole(member, "U.S. House")}
-                    label={String(result.district ? `${result.stateCode}-${result.district}` : "House")}
+                    label={String(
+                      result.district
+                        ? `${result.stateCode}-${result.district}`
+                        : "House",
+                    )}
                     photoUrl={memberPhoto(member)}
+                    officialUrl={
+                      typeof member === "string"
+                        ? undefined
+                        : member.officialUrl
+                    }
                     tone="blue"
                   />
                 ))
@@ -152,6 +232,11 @@ export function DistrictLookup() {
                     role={memberRole(member, "U.S. Senate")}
                     label={result.stateCode}
                     photoUrl={memberPhoto(member)}
+                    officialUrl={
+                      typeof member === "string"
+                        ? undefined
+                        : member.officialUrl
+                    }
                     tone={index % 2 ? "purple" : "teal"}
                   />
                 ))
@@ -165,7 +250,10 @@ export function DistrictLookup() {
             <ShieldCheck aria-hidden="true" size={50} color="#00A98F" />
             <div>
               <h3>Your privacy matters</h3>
-              <p>{result.privacyNote ?? "We don't store your address. It's used only to find your district."}</p>
+              <p>
+                {result.privacyNote ??
+                  "We don't store your address. It's used only to find your district."}
+              </p>
             </div>
             <Lock aria-hidden="true" size={28} color="#007C6B" />
           </section>
@@ -200,7 +288,7 @@ export function DistrictLookup() {
               tone="blue"
             />
           </div>
-        </>
+        </div>
       ) : !loading ? (
         <section className="district-hero-card">
           <div>
@@ -208,7 +296,8 @@ export function DistrictLookup() {
             <h2>Find it</h2>
             <p>Use an address once to find your district.</p>
             <span className="privacy-note">
-              <ShieldCheck aria-hidden="true" size={24} /> We use this only for lookup.
+              <ShieldCheck aria-hidden="true" size={24} /> We use this only for
+              lookup.
             </span>
           </div>
         </section>

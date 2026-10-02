@@ -8,7 +8,8 @@ export const metadata: Metadata = {
     default: "CivicLens",
     template: "%s | CivicLens",
   },
-  description: "Mobile-first civic literacy lessons, claim checks, bills, and district lookup for students.",
+  description:
+    "Mobile-first civic literacy lessons, claim checks, bills, and district lookup for students.",
   manifest: "/manifest.json",
   icons: {
     icon: "/icons/civiclens.svg",

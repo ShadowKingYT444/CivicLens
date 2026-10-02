@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   CheckCircle2,
@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { billHref, getJson, normalizeAnalyzeResponse } from "./api";
 import { takePendingClaim } from "../lib/client-claim-handoff";
+import { CitationDrawer } from "./citation-drawer";
 import { TopIdentity } from "./mobile/TopIdentity";
 import type { AnalysisResult, AnalyzeResponse } from "./types";
 
@@ -30,11 +31,25 @@ const examples = [
 ];
 
 export function AnalyzeClient() {
-  const [claim, setClaim] = useState(() => takePendingClaim().trim().slice(0, 2000));
+  const [claim, setClaim] = useState(() =>
+    takePendingClaim().trim().slice(0, 2000),
+  );
   const [response, setResponse] = useState<AnalyzeResponse | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [lastSubmittedClaim, setLastSubmittedClaim] = useState("");
+  const [requestStatus, setRequestStatus] = useState("");
+  const activeRequest = useRef<AbortController | null>(null);
+  const generation = useRef(0);
+  const claimRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(
+    () => () => {
+      generation.current += 1;
+      activeRequest.current?.abort();
+    },
+    [],
+  );
 
   const result = response?.result;
   const trimmedClaim = claim.trim();
@@ -55,56 +70,79 @@ export function AnalyzeClient() {
     !response.warnings?.some((warning) => /fallback/i.test(warning));
   const truthAssessment = getTruthAssessment(result);
 
+  function invalidateRequest() {
+    generation.current += 1;
+    activeRequest.current?.abort();
+    activeRequest.current = null;
+    setLoading(false);
+  }
+
+  function editClaim(nextClaim: string) {
+    invalidateRequest();
+    setClaim(nextClaim);
+    setResponse(null);
+    setError("");
+    setLastSubmittedClaim("");
+    setRequestStatus("");
+  }
+
+  function cancelAnalysis() {
+    invalidateRequest();
+    setRequestStatus("Analysis stopped. Your question is unchanged.");
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit) return;
-
+    if (!canSubmit || activeRequest.current) return;
+    const controller = new AbortController();
+    activeRequest.current = controller;
+    const requestGeneration = ++generation.current;
     setLoading(true);
     setError("");
     setResponse(null);
+    setRequestStatus("");
 
     try {
       const payload = await getJson<AnalyzeResponse>("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ claim: trimmedClaim }),
+        signal: controller.signal,
       });
-      setResponse(normalizeAnalyzeResponse(payload));
+      // An aborted fetch may still resolve in a mock or intermediary. Only the
+      // latest, unchanged question may publish an answer or clear pending state.
+      if (generation.current !== requestGeneration || controller.signal.aborted)
+        return;
+      const normalized = normalizeAnalyzeResponse(payload);
+      if (!normalized.result)
+        throw new Error("No answer was returned. Try your question again.");
+      setResponse(normalized);
       setLastSubmittedClaim(trimmedClaim);
+      setRequestStatus(
+        "Analysis ready. Review the answer and its sources below.",
+      );
     } catch (reason) {
+      if (generation.current !== requestGeneration || controller.signal.aborted)
+        return;
       setError(
         reason instanceof Error
           ? reason.message
           : "Claim check is unavailable right now.",
       );
     } finally {
-      setLoading(false);
+      if (generation.current === requestGeneration) {
+        activeRequest.current = null;
+        setLoading(false);
+      }
     }
-  }
-
-  function resetForEdit() {
-    setResponse(null);
-    setError("");
-    setLastSubmittedClaim("");
-  }
-
-  function clearClaim() {
-    setClaim("");
-    setResponse(null);
-    setError("");
-    setLastSubmittedClaim("");
-  }
-
-  function applyExample(nextClaim: string) {
-    setClaim(nextClaim);
-    setResponse(null);
-    setError("");
-    setLastSubmittedClaim("");
   }
 
   return (
     <section className="page-shell analyze-simple" aria-label="Analyze bills">
-      <TopIdentity title="CivicLens" subtitle="AI analysis in plain English." />
+      <TopIdentity
+        title="CivicLens"
+        subtitle="Claim checks in plain English."
+      />
 
       <form className="panel analyze-simple-card" onSubmit={handleSubmit}>
         <div className="analyze-simple-header">
@@ -118,7 +156,7 @@ export function AnalyzeClient() {
             ) : (
               <Sparkles aria-hidden="true" size={16} />
             )}
-            {isLiveAi ? "Live AI" : loading ? "Checking" : "AI ready"}
+            {isLiveAi ? "Live AI" : loading ? "Checking" : "Ready to check"}
           </span>
         </div>
 
@@ -128,14 +166,15 @@ export function AnalyzeClient() {
         </label>
         <div className={`analyze-simple-input${loading ? " is-checking" : ""}`}>
           <textarea
+            ref={claimRef}
+            aria-label="Claim or bill question"
             id="claim"
             className="textarea"
             value={claim}
             minLength={10}
             maxLength={2000}
             onChange={(event) => {
-              setClaim(event.target.value);
-              if (response) resetForEdit();
+              editClaim(event.target.value);
             }}
             placeholder="Type the claim or bill question here..."
             required
@@ -151,7 +190,10 @@ export function AnalyzeClient() {
               <button
                 className="button ghost"
                 type="button"
-                onClick={clearClaim}
+                onClick={() => {
+                  editClaim("");
+                  claimRef.current?.focus();
+                }}
                 aria-label="Clear text"
               >
                 <X aria-hidden="true" size={18} />
@@ -180,7 +222,10 @@ export function AnalyzeClient() {
               type="button"
               className="example-chip"
               aria-pressed={claim === example.claim}
-              onClick={() => applyExample(example.claim)}
+              onClick={() => {
+                editClaim(example.claim);
+                claimRef.current?.focus();
+              }}
             >
               {example.label}
             </button>
@@ -197,11 +242,21 @@ export function AnalyzeClient() {
           <p className="eyebrow">AI analysis</p>
           <h2>Reading sources...</h2>
           <p>
-            CivicLens is asking the AI for a short, plain-English answer
-            grounded in retrieved sources.
+            Checking the available source context. Demo answers are labeled.
+            Changing your question stops this request.
           </p>
+          <button
+            className="button secondary"
+            type="button"
+            onClick={cancelAnalysis}
+          >
+            Cancel analysis
+          </button>
         </section>
       ) : null}
+      <p className="sr-only" role="status">
+        {requestStatus}
+      </p>
 
       {error ? (
         <p className="empty-state" role="alert">
@@ -221,9 +276,19 @@ export function AnalyzeClient() {
             </div>
             <span className={`analyze-live-pill${isLiveAi ? " live" : ""}`}>
               <CheckCircle2 aria-hidden="true" size={16} />
-              {isLiveAi ? "Live AI" : "Fallback"}
+              {isLiveAi
+                ? "Live AI"
+                : response?.mode === "demo"
+                  ? "Demo fallback"
+                  : "Fallback answer"}
             </span>
           </div>
+          {!isLiveAi ? (
+            <p className="subtle">
+              This fallback answer was prepared without live AI. Check the cited
+              record.
+            </p>
+          ) : null}
           <p className="analyze-simple-answer">
             {analysisText || "The sources did not settle this claim."}
           </p>
@@ -270,7 +335,7 @@ export function AnalyzeClient() {
                 {response.citations.length} source
                 {response.citations.length === 1 ? "" : "s"}
               </span>
-              {response.citations.slice(0, 2).map((citation, index) =>
+              {response.citations.map((citation, index) =>
                 citation.url ? (
                   <a
                     key={citation.id ?? citation.url ?? index}
@@ -289,6 +354,9 @@ export function AnalyzeClient() {
             </div>
           ) : null}
 
+          {response?.citations?.length ? (
+            <CitationDrawer citations={response.citations} />
+          ) : null}
           {response?.relatedBills?.length ? (
             <div className="analyze-simple-links">
               {response.relatedBills.map((bill) => (
