@@ -1955,3 +1955,23 @@ p {
 .editorial-stage .editorial-quiz {
   background: var(--panel);
 }
+.editorial-stage .editorial-flashcard {
+  justify-items: stretch;
+  box-shadow: none;
+}
+.editorial-flashcard-content {
+  display: grid;
+  gap: 20px;
+  animation: editorial-route-in var(--duration) var(--ease);
+}
+.editorial-stage .analyze-simple-card {
+  display: block;
+}
+.editorial-lesson-row.locked {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .editorial-flashcard-content {
+    animation: none;
+  }
+}

@@ -125,9 +125,14 @@ export function BillBrowser() {
     setError("");
     try {
       const payload = await getJson<unknown>(
+        search ? "/api/search" : "/api/bills/recent",
         search
-          ? `/api/search?q=${encodeURIComponent(search)}`
-          : "/api/bills/recent",
+          ? {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ q: search }),
+            }
+          : undefined,
       );
       if (id !== requestId.current) return;
       setRows(rowsFrom(payload));
