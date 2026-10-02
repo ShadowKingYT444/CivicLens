@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { SiteShell } from "../components/site-shell";
 import "./globals.css";
+import "./editorial.css";
 
 export const metadata: Metadata = {
   title: {
